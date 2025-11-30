@@ -145,23 +145,40 @@ npm start
 - `GET /api/places/[id]` - Get place details
 
 ### Reviews
-- `POST /api/places/[id]/reviews` - Create review (auth required)
+- `GET /api/places/[id]/reviews` - Get reviews for a place
+- `POST /api/places/[id]/reviews` - Create review with photos (auth required)
+  - Supports `multipart/form-data` for photo uploads
+  - Max 5 photos per review, 10MB per photo
+
+### Photos
+- `GET /api/photos/:id` - Retrieve photo from GridFS by ID
 
 ## Features
 
 - ✅ User authentication (email/password)
 - ✅ Place creation and listing
 - ✅ Place detail pages
-- ✅ Review system
+- ✅ Review system with photo uploads
+- ✅ Photo storage in MongoDB GridFS (no external storage needed)
 - ✅ User dashboard
 - ✅ Accessibility filtering
 - ✅ Responsive design
 - ✅ Docker support
 
+## Photo Storage
+
+AccessLens uses **MongoDB GridFS** to store photos directly in the database. No external storage services required!
+
+- Photos stored in MongoDB GridFS bucket `photos`
+- Max 5 photos per review
+- Max 10MB per photo
+- Automatic image serving via `/api/photos/:id`
+- See [docs/PHOTO_UPLOAD.md](docs/PHOTO_UPLOAD.md) for detailed documentation
+
 ## Future Enhancements
 
 - Rate limiting
-- File uploads (S3/Cloudinary)
+- Image optimization/thumbnails
 - Maps integration (Leaflet/Mapbox)
 - Email notifications
 - Search functionality
