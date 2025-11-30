@@ -28,6 +28,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+# Install wget for health check (must be done as root, before USER switch)
+RUN apk add --no-cache wget
+
 # Copy necessary files
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
@@ -41,9 +44,7 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Health check - use wget (available in alpine) or node
-# Install wget for better health check compatibility
-RUN apk add --no-cache wget
+# Health check - use wget (available in alpine)
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
