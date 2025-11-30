@@ -3,8 +3,62 @@ import { reviewSchema } from '@/lib/validation/schemas';
 import { getCollection } from '@/lib/db/mongoClient';
 import { Review } from '@/models/Review';
 import { Place } from '@/models/Place';
+import { User } from '@/models/User';
 import { getSession } from '@/lib/auth/session';
 import { ObjectId } from 'mongodb';
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+
+    if (!ObjectId.isValid(id)) {
+      return NextResponse.json(
+        { error: 'Invalid place ID' },
+        { status: 400 }
+      );
+    }
+
+    const reviewsCollection = await getCollection<Review>('reviews');
+    const usersCollection = await getCollection<User>('users');
+
+    const reviews = await reviewsCollection
+      .find({ placeId: new ObjectId(id) })
+      .sort({ createdAt: -1 })
+      .limit(50)
+      .toArray();
+
+    // Fetch user names for reviews
+    const userIds = [...new Set(reviews.map((r) => r.userId.toString()))];
+    const users = await usersCollection
+      .find({ _id: { $in: userIds.map((uid) => new ObjectId(uid)) } })
+      .project({ _id: 1, name: 1 })
+      .toArray();
+
+    const userMap = new Map(users.map((u) => [u._id.toString(), u.name]));
+
+    const reviewsWithAuthor = reviews.map((review) => ({
+      id: review._id.toString(),
+      placeId: review.placeId.toString(),
+      userId: review.userId.toString(),
+      authorName: userMap.get(review.userId.toString()) || 'Anonymous',
+      rating: review.rating,
+      comment: review.comment,
+      photoUrls: review.photoUrls,
+      createdAt: review.createdAt.toISOString(),
+    }));
+
+    return NextResponse.json({ reviews: reviewsWithAuthor });
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
 
 export async function POST(
   request: NextRequest,
