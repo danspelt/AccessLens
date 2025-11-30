@@ -43,14 +43,30 @@ export function ReviewList({ reviews }: ReviewListProps) {
             </div>
           </div>
           <p className="text-gray-700 whitespace-pre-wrap">{review.comment}</p>
-          {review.photoUrls && review.photoUrls.length > 0 && (
-            <div className="mt-4 grid grid-cols-2 gap-2">
+          {/* Display photos from GridFS */}
+          {review.photoIds && review.photoIds.length > 0 && (
+            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {review.photoIds.map((photoId, index) => (
+                <img
+                  key={index}
+                  src={`/api/photos/${photoId}`}
+                  alt={`Review photo ${index + 1}`}
+                  className="rounded-md w-full h-32 object-cover"
+                  loading="lazy"
+                />
+              ))}
+            </div>
+          )}
+          {/* Fallback for old photoUrls (backward compatibility) */}
+          {(!review.photoIds || review.photoIds.length === 0) && review.photoUrls && review.photoUrls.length > 0 && (
+            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
               {review.photoUrls.map((url, index) => (
                 <img
                   key={index}
                   src={url}
                   alt={`Review photo ${index + 1}`}
-                  className="rounded-md"
+                  className="rounded-md w-full h-32 object-cover"
+                  loading="lazy"
                 />
               ))}
             </div>

@@ -6,7 +6,8 @@ export interface Review {
   userId: ObjectId;
   rating: number; // 1-5
   comment: string;
-  photoUrls?: string[];
+  photoUrls?: string[]; // Deprecated - use photoIds instead
+  photoIds?: string[]; // GridFS file IDs
   createdAt: Date;
   updatedAt: Date;
 }

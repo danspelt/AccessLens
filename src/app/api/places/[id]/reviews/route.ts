@@ -5,6 +5,7 @@ import { Review } from '@/models/Review';
 import { Place } from '@/models/Place';
 import { User } from '@/models/User';
 import { getSession } from '@/lib/auth/session';
+import { getGridFSBucket } from '@/lib/db/mongoose';
 import { ObjectId } from 'mongodb';
 
 export async function GET(
@@ -46,7 +47,7 @@ export async function GET(
       authorName: userMap.get(review.userId.toString()) || 'Anonymous',
       rating: review.rating,
       comment: review.comment,
-      photoUrls: review.photoUrls,
+      photoIds: review.photoIds || [],
       createdAt: review.createdAt.toISOString(),
     }));
 
@@ -82,9 +83,6 @@ export async function POST(
       );
     }
 
-    const body = await request.json();
-    const validated = reviewSchema.parse(body);
-
     // Verify place exists
     const placesCollection = await getCollection<Place>('places');
     const place = await placesCollection.findOne({ _id: new ObjectId(id) });
@@ -95,10 +93,69 @@ export async function POST(
       );
     }
 
-    // Verify placeId matches
-    if (validated.placeId !== id) {
+    // Parse FormData (supports both JSON and multipart/form-data)
+    const contentType = request.headers.get('content-type') || '';
+    let rating: number;
+    let comment: string;
+    let photoIds: string[] = [];
+
+    if (contentType.includes('multipart/form-data')) {
+      // Handle file uploads
+      const formData = await request.formData();
+      
+      rating = Number(formData.get('rating'));
+      comment = formData.get('comment') as string;
+      const photos = formData.getAll('photos') as File[];
+
+      if (!rating || !comment) {
+        return NextResponse.json(
+          { error: 'Rating and comment are required' },
+          { status: 400 }
+        );
+      }
+
+      // Upload photos to GridFS
+      const bucket = await getGridFSBucket();
+      const uploadPromises = photos.map(async (photo) => {
+        const bytes = await photo.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+        const filename = `photo_${Date.now()}_${photo.name}`;
+
+        return new Promise<string>((resolve, reject) => {
+          const uploadStream = bucket.openUploadStream(filename, {
+            contentType: photo.type,
+            metadata: {
+              placeId: id,
+              userId: session.userId,
+            },
+          });
+
+          uploadStream.on('finish', () => {
+            resolve(uploadStream.id.toString());
+          });
+
+          uploadStream.on('error', (error) => {
+            reject(error);
+          });
+
+          uploadStream.end(buffer);
+        });
+      });
+
+      photoIds = await Promise.all(uploadPromises);
+    } else {
+      // Handle JSON request (backward compatibility)
+      const body = await request.json();
+      const validated = reviewSchema.parse(body);
+      rating = validated.rating;
+      comment = validated.comment;
+      // photoUrls can be converted to photoIds if needed
+    }
+
+    // Validate rating
+    if (rating < 1 || rating > 5) {
       return NextResponse.json(
-        { error: 'Place ID mismatch' },
+        { error: 'Rating must be between 1 and 5' },
         { status: 400 }
       );
     }
@@ -108,9 +165,9 @@ export async function POST(
     const newReview: Omit<Review, '_id'> = {
       placeId: new ObjectId(id),
       userId: new ObjectId(session.userId),
-      rating: validated.rating,
-      comment: validated.comment,
-      photoUrls: validated.photoUrls,
+      rating,
+      comment,
+      photoIds, // Store GridFS IDs instead of URLs
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -122,7 +179,10 @@ export async function POST(
       {
         review: {
           id: reviewId,
-          ...validated,
+          placeId: id,
+          rating,
+          comment,
+          photoIds,
         },
       },
       { status: 201 }
@@ -142,4 +202,3 @@ export async function POST(
     );
   }
 }
-
