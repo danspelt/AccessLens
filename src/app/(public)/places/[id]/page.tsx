@@ -1,6 +1,8 @@
 import { getCollection } from '@/lib/db/mongoClient';
 import { Place } from '@/models/Place';
 import { Review } from '@/models/Review';
+import { PlaceSnapshot, SnapshotFieldName } from '@/models/PlaceSnapshot';
+import { ReportVote } from '@/models/ReportVote';
 import { User } from '@/models/User';
 import { ObjectId } from 'mongodb';
 import { notFound } from 'next/navigation';
@@ -21,12 +23,41 @@ async function getPlace(id: string) {
 async function getPlaceReviews(placeId: ObjectId) {
   const reviewsCollection = await getCollection<Review>('reviews');
   const usersCollection = await getCollection<User>('users');
+  const reportVotesCollection = await getCollection<ReportVote>('report_votes');
 
   const reviews = await reviewsCollection
     .find({ placeId })
     .sort({ createdAt: -1 })
     .limit(50)
     .toArray();
+
+  const reviewIds = reviews.map((r) => r._id);
+  const voteCounts =
+    reviewIds.length === 0
+      ? []
+      : await reportVotesCollection
+          .aggregate([
+            { $match: { reviewId: { $in: reviewIds } } },
+            {
+              $group: {
+                _id: { reviewId: '$reviewId', value: '$value' },
+                count: { $sum: 1 },
+              },
+            },
+          ])
+          .toArray();
+
+  const voteMap = new Map<string, { helpful: number; notHelpful: number }>();
+  for (const row of voteCounts as Array<{
+    _id: { reviewId: ObjectId; value: 1 | -1 };
+    count: number;
+  }>) {
+    const key = row._id.reviewId.toString();
+    const current = voteMap.get(key) ?? { helpful: 0, notHelpful: 0 };
+    if (row._id.value === 1) current.helpful = row.count;
+    if (row._id.value === -1) current.notHelpful = row.count;
+    voteMap.set(key, current);
+  }
 
   // Enrich reviews with user names
   const reviewsWithUsers = await Promise.all(
@@ -35,11 +66,36 @@ async function getPlaceReviews(placeId: ObjectId) {
       return {
         ...review,
         userName: user?.name || 'Anonymous',
+        voteCounts: voteMap.get(review._id.toString()) ?? { helpful: 0, notHelpful: 0 },
       };
     })
   );
 
   return reviewsWithUsers;
+}
+
+async function getPlaceSnapshot(placeId: ObjectId) {
+  const snapshotsCollection = await getCollection<PlaceSnapshot>('place_snapshots');
+  return snapshotsCollection.findOne({ placeId });
+}
+
+function formatSnapshotValue(value: unknown) {
+  if (value === 'yes') return 'Yes';
+  if (value === 'no') return 'No';
+  if (value === 'partial') return 'Partial';
+  if (value === 'unknown') return 'Unknown';
+  return '—';
+}
+
+function labelForField(field: SnapshotFieldName) {
+  const map: Record<SnapshotFieldName, string> = {
+    stepFreeEntrance: 'Step-free entrance',
+    ramp: 'Ramp',
+    accessibleWashroom: 'Accessible washroom',
+    elevator: 'Elevator',
+    accessibleParking: 'Accessible parking',
+  };
+  return map[field];
 }
 
 interface PlacePageProps {
@@ -55,6 +111,7 @@ export default async function PlacePage({ params }: PlacePageProps) {
   }
 
   const reviews = await getPlaceReviews(place._id);
+  const snapshot = await getPlaceSnapshot(place._id);
   const user = await getCurrentUser();
 
   const categoryLabels: Record<Place['category'], string> = {
@@ -88,6 +145,51 @@ export default async function PlacePage({ params }: PlacePageProps) {
             <span className="ml-2 text-gray-600">
               ({reviews.length} {reviews.length === 1 ? 'review' : 'reviews'})
             </span>
+          </div>
+        )}
+      </div>
+
+      <div className="mb-8 rounded-lg border border-gray-200 bg-white p-6">
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-lg font-semibold text-gray-900">Community Snapshot</h2>
+          {snapshot?.signals && (
+            <p className="text-sm text-gray-500">
+              Updated {new Date(snapshot.lastComputedAt).toLocaleDateString('en-US')} •{' '}
+              {snapshot.signals.reportCount} report{snapshot.signals.reportCount === 1 ? '' : 's'}
+            </p>
+          )}
+        </div>
+
+        {!snapshot ? (
+          <p className="mt-3 text-sm text-gray-600">No snapshot yet. Add a report to help build one.</p>
+        ) : (
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {(
+              [
+                'stepFreeEntrance',
+                'ramp',
+                'accessibleWashroom',
+                'elevator',
+                'accessibleParking',
+              ] as const
+            ).map((field) => {
+              const value = snapshot.fields?.[field];
+              const isConflict = Boolean(snapshot.conflicts?.[field]);
+
+              return (
+                <div key={field} className="rounded-lg border border-gray-100 bg-gray-50 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="text-sm font-medium text-gray-900">{labelForField(field)}</p>
+                    {isConflict && (
+                      <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-900">
+                        Conflicting
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-2 text-2xl font-semibold text-gray-900">{formatSnapshotValue(value)}</p>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
@@ -145,7 +247,7 @@ export default async function PlacePage({ params }: PlacePageProps) {
         <h2 className="text-2xl font-bold text-gray-900 mb-4">
           Reviews ({reviews.length})
         </h2>
-        <ReviewList reviews={reviews} />
+        <ReviewList reviews={reviews} currentUserId={user?._id.toString()} />
       </div>
     </div>
   );

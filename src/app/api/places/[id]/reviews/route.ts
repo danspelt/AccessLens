@@ -6,7 +6,15 @@ import { Place } from '@/models/Place';
 import { User } from '@/models/User';
 import { getSession } from '@/lib/auth/session';
 import { getGridFSBucket } from '@/lib/db/mongoose';
+import { recomputePlaceSnapshot } from '@/lib/trust/recomputePlaceSnapshot';
 import { ObjectId } from 'mongodb';
+
+function parseAccessibilityAnswer(value: unknown) {
+  if (value === 'yes' || value === 'no' || value === 'partial' || value === 'unknown') {
+    return value;
+  }
+  return undefined;
+}
 
 export async function GET(
   request: NextRequest,
@@ -47,6 +55,12 @@ export async function GET(
       authorName: userMap.get(review.userId.toString()) || 'Anonymous',
       rating: review.rating,
       comment: review.comment,
+      stepFreeEntrance: review.stepFreeEntrance,
+      ramp: review.ramp,
+      accessibleWashroom: review.accessibleWashroom,
+      elevator: review.elevator,
+      accessibleParking: review.accessibleParking,
+      confidence: review.confidence,
       photoIds: review.photoIds || [],
       createdAt: review.createdAt.toISOString(),
     }));
@@ -98,6 +112,12 @@ export async function POST(
     let rating: number;
     let comment: string;
     let photoIds: string[] = [];
+    let stepFreeEntrance: Review['stepFreeEntrance'];
+    let ramp: Review['ramp'];
+    let accessibleWashroom: Review['accessibleWashroom'];
+    let elevator: Review['elevator'];
+    let accessibleParking: Review['accessibleParking'];
+    let confidence: Review['confidence'];
 
     if (contentType.includes('multipart/form-data')) {
       // Handle file uploads
@@ -105,6 +125,13 @@ export async function POST(
       
       rating = Number(formData.get('rating'));
       comment = formData.get('comment') as string;
+      stepFreeEntrance = parseAccessibilityAnswer(formData.get('stepFreeEntrance'));
+      ramp = parseAccessibilityAnswer(formData.get('ramp'));
+      accessibleWashroom = parseAccessibilityAnswer(formData.get('accessibleWashroom'));
+      elevator = parseAccessibilityAnswer(formData.get('elevator'));
+      accessibleParking = parseAccessibilityAnswer(formData.get('accessibleParking'));
+      const confidenceValue = formData.get('confidence');
+      confidence = confidenceValue ? Number(confidenceValue) : undefined;
       const photos = formData.getAll('photos') as File[];
 
       if (!rating || !comment) {
@@ -123,10 +150,10 @@ export async function POST(
 
         return new Promise<string>((resolve, reject) => {
           const uploadStream = bucket.openUploadStream(filename, {
-            contentType: photo.type,
             metadata: {
               placeId: id,
               userId: session.userId,
+              contentType: photo.type,
             },
           });
 
@@ -149,6 +176,12 @@ export async function POST(
       const validated = reviewSchema.parse(body);
       rating = validated.rating;
       comment = validated.comment;
+      stepFreeEntrance = validated.stepFreeEntrance;
+      ramp = validated.ramp;
+      accessibleWashroom = validated.accessibleWashroom;
+      elevator = validated.elevator;
+      accessibleParking = validated.accessibleParking;
+      confidence = validated.confidence;
       // photoUrls can be converted to photoIds if needed
     }
 
@@ -160,6 +193,13 @@ export async function POST(
       );
     }
 
+    if (confidence !== undefined && (Number.isNaN(confidence) || confidence < 1 || confidence > 5)) {
+      return NextResponse.json(
+        { error: 'Confidence must be between 1 and 5' },
+        { status: 400 }
+      );
+    }
+
     const reviewsCollection = await getCollection<Review>('reviews');
 
     const newReview: Omit<Review, '_id'> = {
@@ -167,6 +207,12 @@ export async function POST(
       userId: new ObjectId(session.userId),
       rating,
       comment,
+      stepFreeEntrance,
+      ramp,
+      accessibleWashroom,
+      elevator,
+      accessibleParking,
+      confidence,
       photoIds, // Store GridFS IDs instead of URLs
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -175,6 +221,8 @@ export async function POST(
     const result = await reviewsCollection.insertOne(newReview as Review);
     const reviewId = result.insertedId.toString();
 
+    await recomputePlaceSnapshot(id);
+
     return NextResponse.json(
       {
         review: {
@@ -182,6 +230,12 @@ export async function POST(
           placeId: id,
           rating,
           comment,
+          stepFreeEntrance,
+          ramp,
+          accessibleWashroom,
+          elevator,
+          accessibleParking,
+          confidence,
           photoIds,
         },
       },

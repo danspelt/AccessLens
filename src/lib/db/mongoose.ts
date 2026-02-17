@@ -1,5 +1,14 @@
-import mongoose from 'mongoose';
+import mongoose, { type Mongoose } from 'mongoose';
 import { GridFSBucket } from 'mongodb';
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __mongooseCache: {
+    conn: Mongoose | null;
+    promise: Promise<Mongoose> | null;
+    bucket: GridFSBucket | null;
+  } | undefined;
+}
 
 if (!process.env.MONGODB_URI) {
   throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
@@ -12,11 +21,17 @@ if (!process.env.MONGODB_DB) {
 const uri = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB;
 
-let cached = global.mongoose;
+const globalWithMongoose = global as typeof globalThis & {
+  __mongooseCache?: {
+    conn: Mongoose | null;
+    promise: Promise<Mongoose> | null;
+    bucket: GridFSBucket | null;
+  };
+};
 
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null, bucket: null };
-}
+const cached =
+  globalWithMongoose.__mongooseCache ??
+  (globalWithMongoose.__mongooseCache = { conn: null, promise: null, bucket: null });
 
 async function connectMongoose() {
   if (cached.conn) {
@@ -29,12 +44,15 @@ async function connectMongoose() {
       dbName,
     };
 
-    cached.promise = mongoose.connect(uri, opts).then((mongoose) => {
+    cached.promise = mongoose.connect(uri, opts).then((mongooseConn) => {
       // Initialize GridFS bucket for photos
-      const db = mongoose.connection.db;
+      const db = mongooseConn.connection.db;
+      if (!db) {
+        throw new Error('MongoDB connection database handle is not available');
+      }
       const bucket = new GridFSBucket(db, { bucketName: 'photos' });
       cached.bucket = bucket;
-      return mongoose;
+      return mongooseConn;
     });
   }
 

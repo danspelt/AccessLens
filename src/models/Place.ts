@@ -9,6 +9,11 @@ export type PlaceCategory =
   | 'business'
   | 'other';
 
+export type GeoPoint = {
+  type: 'Point';
+  coordinates: [number, number];
+};
+
 export interface Place {
   _id: ObjectId;
   name: string;
@@ -18,6 +23,7 @@ export interface Place {
   province?: string;
   country: string;
   description?: string;
+  location?: GeoPoint;
   // Accessibility flags
   stepFreeAccess: boolean;
   accessibleWashroom: boolean;

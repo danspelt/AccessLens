@@ -4,6 +4,9 @@ import { cookies } from 'next/headers';
 export interface SessionData {
   userId?: string;
   email?: string;
+  oauthState?: string;
+  oauthCodeVerifier?: string;
+  oauthRedirectTo?: string;
 }
 
 export type AppSession = IronSession<SessionData>;

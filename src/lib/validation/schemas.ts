@@ -31,6 +31,14 @@ export const placeSchema = z.object({
   province: z.string().optional(),
   country: z.string().default('Canada'),
   description: z.string().optional(),
+  location: z
+    .object({
+      type: z.literal('Point'),
+      coordinates: z
+        .tuple([z.number().min(-180).max(180), z.number().min(-90).max(90)])
+        .describe('[lng, lat]'),
+    })
+    .optional(),
   // Accessibility flags
   stepFreeAccess: z.boolean().default(false),
   accessibleWashroom: z.boolean().default(false),
@@ -42,10 +50,18 @@ export const placeSchema = z.object({
 });
 
 // Review schemas
+export const accessibilityAnswerSchema = z.enum(['yes', 'no', 'partial', 'unknown']);
+
 export const reviewSchema = z.object({
   placeId: z.string().min(1, 'Place ID is required'),
   rating: z.number().int().min(1).max(5),
   comment: z.string().min(1, 'Comment is required'),
+  stepFreeEntrance: accessibilityAnswerSchema.optional(),
+  ramp: accessibilityAnswerSchema.optional(),
+  accessibleWashroom: accessibilityAnswerSchema.optional(),
+  elevator: accessibilityAnswerSchema.optional(),
+  accessibleParking: accessibilityAnswerSchema.optional(),
+  confidence: z.number().int().min(1).max(5).optional(),
   photoUrls: z.array(z.string().url()).optional(),
 });
 
@@ -54,5 +70,6 @@ export type SignupInput = z.infer<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type PlaceInput = z.infer<typeof placeSchema>;
 export type ReviewInput = z.infer<typeof reviewSchema>;
+export type AccessibilityAnswer = z.infer<typeof accessibilityAnswerSchema>;
 export type PlaceCategory = z.infer<typeof placeCategorySchema>;
 

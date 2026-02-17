@@ -14,6 +14,8 @@ export function middleware(request: NextRequest) {
     '/signup',
     '/explore',
     '/places',
+    '/api/places',
+    '/api/photos',
     '/api/health',
     '/api/auth',
   ];
@@ -22,6 +24,12 @@ export function middleware(request: NextRequest) {
   const isPublicRoute = publicRoutes.some((route) => {
     if (route === '/places') {
       return pathname.startsWith('/places');
+    }
+    if (route === '/api/places') {
+      return pathname.startsWith('/api/places');
+    }
+    if (route === '/api/photos') {
+      return pathname.startsWith('/api/photos');
     }
     if (route === '/api/auth') {
       return pathname.startsWith('/api/auth');

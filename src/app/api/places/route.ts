@@ -65,8 +65,30 @@ export async function POST(request: NextRequest) {
 
     const placesCollection = await getCollection<Place>('places');
 
+    const latitude = validated.latitude;
+    const longitude = validated.longitude;
+
+    const location =
+      validated.location ??
+      (typeof latitude === 'number' && typeof longitude === 'number'
+        ? { type: 'Point' as const, coordinates: [longitude, latitude] as [number, number] }
+        : undefined);
+
     const newPlace: Omit<Place, '_id'> = {
       ...validated,
+      location,
+      latitude:
+        typeof latitude === 'number'
+          ? latitude
+          : location
+            ? location.coordinates[1]
+            : undefined,
+      longitude:
+        typeof longitude === 'number'
+          ? longitude
+          : location
+            ? location.coordinates[0]
+            : undefined,
       createdByUserId: new ObjectId(session.userId),
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -80,6 +102,7 @@ export async function POST(request: NextRequest) {
         place: {
           id: placeId,
           ...validated,
+          location,
         },
       },
       { status: 201 }

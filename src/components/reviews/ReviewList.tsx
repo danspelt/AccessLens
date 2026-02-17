@@ -1,14 +1,20 @@
 import { Review } from '@/models/Review';
+import { ReviewVoteButtons } from './ReviewVoteButtons';
 
 interface ReviewWithUser extends Review {
   userName: string;
+  voteCounts?: {
+    helpful: number;
+    notHelpful: number;
+  };
 }
 
 interface ReviewListProps {
   reviews: ReviewWithUser[];
+  currentUserId?: string;
 }
 
-export function ReviewList({ reviews }: ReviewListProps) {
+export function ReviewList({ reviews, currentUserId }: ReviewListProps) {
   if (reviews.length === 0) {
     return (
       <div className="rounded-lg border border-gray-200 bg-white p-6 text-center">
@@ -43,6 +49,20 @@ export function ReviewList({ reviews }: ReviewListProps) {
             </div>
           </div>
           <p className="text-gray-700 whitespace-pre-wrap">{review.comment}</p>
+
+          <p className="mt-3 text-sm text-gray-600">
+            {review.voteCounts?.helpful ?? 0} Helpful • {review.voteCounts?.notHelpful ?? 0} Not helpful
+          </p>
+
+          {currentUserId && (
+            <ReviewVoteButtons
+              reviewId={review._id.toString()}
+              disabled={review.userId.toString() === currentUserId}
+              helpfulCount={review.voteCounts?.helpful ?? 0}
+              notHelpfulCount={review.voteCounts?.notHelpful ?? 0}
+            />
+          )}
+
           {/* Display photos from GridFS */}
           {review.photoIds && review.photoIds.length > 0 && (
             <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">

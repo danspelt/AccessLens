@@ -31,9 +31,15 @@ export async function GET(
 
     const file = files[0];
 
+    const contentType =
+      (file as unknown as { contentType?: string }).contentType ??
+      (file.metadata as unknown as { contentType?: string; mimeType?: string } | undefined)?.contentType ??
+      (file.metadata as unknown as { contentType?: string; mimeType?: string } | undefined)?.mimeType ??
+      'image/jpeg';
+
     // Set appropriate headers
     const headers = new Headers();
-    headers.set('Content-Type', file.contentType || 'image/jpeg');
+    headers.set('Content-Type', contentType);
     headers.set('Content-Length', file.length.toString());
     headers.set('Cache-Control', 'public, max-age=31536000, immutable');
 
