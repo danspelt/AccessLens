@@ -3,16 +3,23 @@ import { clsx } from 'clsx';
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   hover?: boolean;
+  padding?: 'none' | 'sm' | 'md' | 'lg';
 }
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
-  ({ className, hover = false, ...props }, ref) => {
+  ({ className, hover = false, padding = 'md', ...props }, ref) => {
     return (
       <div
         ref={ref}
         className={clsx(
-          'rounded-lg border border-gray-200 bg-white p-6',
-          hover && 'transition-shadow hover:shadow-md',
+          'rounded-xl border border-slate-200 bg-white shadow-card',
+          hover && 'transition-shadow hover:shadow-card-hover cursor-pointer',
+          {
+            'p-0': padding === 'none',
+            'p-4': padding === 'sm',
+            'p-6': padding === 'md',
+            'p-8': padding === 'lg',
+          },
           className
         )}
         {...props}
@@ -20,6 +27,4 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     );
   }
 );
-
 Card.displayName = 'Card';
-

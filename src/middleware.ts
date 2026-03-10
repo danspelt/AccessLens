@@ -7,34 +7,23 @@ export function middleware(request: NextRequest) {
     process.env.SESSION_COOKIE_NAME || 'accesslens_session'
   );
 
-  // Public routes that don't require authentication
-  const publicRoutes = [
-    '/',
-    '/login',
-    '/signup',
-    '/explore',
-    '/places',
-    '/api/health',
-    '/api/auth',
-  ];
+  // Routes that don't require authentication
+  const isPublicRoute =
+    pathname === '/' ||
+    pathname.startsWith('/login') ||
+    pathname.startsWith('/signup') ||
+    pathname.startsWith('/explore') ||
+    pathname.startsWith('/places') ||
+    pathname.startsWith('/cities') ||
+    pathname.startsWith('/api/health') ||
+    pathname.startsWith('/api/auth') ||
+    pathname.startsWith('/api/places') ||
+    pathname.startsWith('/api/reports') ||
+    pathname.startsWith('/uploads');
 
-  // Check if the current path is public
-  const isPublicRoute = publicRoutes.some((route) => {
-    if (route === '/places') {
-      return pathname.startsWith('/places');
-    }
-    if (route === '/api/auth') {
-      return pathname.startsWith('/api/auth');
-    }
-    return pathname === route;
-  });
+  if (isPublicRoute) return NextResponse.next();
 
-  // Allow public routes
-  if (isPublicRoute) {
-    return NextResponse.next();
-  }
-
-  // Protected routes require session cookie
+  // Protected routes require a session
   if (!sessionCookie) {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirectTo', pathname);
@@ -46,14 +35,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder
-     */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js)$).*)',
   ],
 };
-

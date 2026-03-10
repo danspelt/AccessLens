@@ -1,175 +1,139 @@
 # AccessLens
 
-Accessibility review platform for arenas, pools, rinks, parks, sidewalks, and businesses.
+**Accessibility Intelligence for Cities**
 
-## Tech Stack
+A community-driven accessibility platform where people upload photos, accessibility data, and experiences about real-world public places — starting with **Victoria, BC**.
 
-- **Frontend/API**: Next.js 16 (App Router), TypeScript, Tailwind CSS
-- **Backend**: MongoDB, custom auth with `iron-session` + `bcrypt`
-- **Email**: Resend (for transactional emails)
-- **Deployment**: Docker + Coolify
+> Think: Google Maps + Yelp + Accessibility Data
+
+## What It Does
+
+AccessLens helps people with disabilities navigate cities by providing:
+
+- **Accessibility scores** (0–100) for every place
+- **Photo evidence** of entrances, ramps, washrooms, and doors
+- **Detailed checklists**: ramps, automatic doors, elevators, accessible washrooms, parking, braille signage, service animal policies, and more
+- **Community reviews** with star ratings
+- **Live issue reports**: broken elevators, blocked ramps, construction barriers
+- **Interactive map** (colour-coded by accessibility: green/yellow/red)
+
+## Categories
+
+Libraries · Restaurants · Movie Theatres · Parks · Government Buildings · Transit Stops · Sidewalks · Shopping · Hospitals · Schools · Sports & Recreation
+
+## Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | Next.js 16, React 18, Tailwind CSS |
+| Backend | Next.js API Routes (App Router) |
+| Database | MongoDB (native driver) |
+| Auth | iron-session + bcryptjs |
+| Maps | Leaflet + OpenStreetMap |
+| Uploads | Local filesystem (`/public/uploads`) → swap for S3/MinIO |
+| Validation | Zod |
 
 ## Getting Started
 
-### Prerequisites
+### 1. Prerequisites
 
 - Node.js 20+
 - MongoDB (local or Atlas)
-- npm or yarn
 
-### Installation
+### 2. Install
 
-1. Clone the repository:
-```bash
-git clone <your-repo-url>
-cd AccessLens
-```
-
-2. Install dependencies:
 ```bash
 npm install
 ```
 
-3. Set up environment variables:
+### 3. Configure environment
+
 ```bash
-cp .env.example .env.local
+cp .env.local.example .env.local
+# Edit .env.local with your MongoDB URI and session secret
 ```
 
-Edit `.env.local` with your configuration:
-- `MONGODB_URI`: MongoDB connection string
-- `MONGODB_DB`: Database name
-- `SESSION_SECRET`: A secure random string (min 32 characters)
-- `SESSION_COOKIE_NAME`: Session cookie name (default: `accesslens_session`)
-- `RESEND_API_KEY`: Resend API key (optional for MVP)
-- `RESEND_FROM_EMAIL`: Email address for sending emails
-- `NEXT_PUBLIC_APP_URL`: Your app URL
+### 4. Initialize database indexes
 
-4. Initialize database indexes:
 ```bash
 npx tsx scripts/initIndexes.ts
 ```
 
-5. Run the development server:
+### 5. Seed Victoria BC places (50 real locations)
+
+```bash
+npx tsx scripts/seedVictoria.ts
+```
+
+### 6. Run development server
+
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000).
 
-## Project Structure
+## Key Pages
 
-```
-src/
-├── app/                    # Next.js App Router
-│   ├── (public)/           # Public routes
-│   ├── (protected)/       # Protected routes
-│   └── api/               # API routes
-├── components/            # React components
-│   ├── layout/            # Layout components
-│   ├── places/            # Place-related components
-│   ├── reviews/           # Review components
-│   └── ui/                # Reusable UI components
-├── lib/                   # Core libraries
-│   ├── auth/              # Authentication helpers
-│   ├── db/                # Database client
-│   └── validation/        # Validation schemas
-└── models/                # TypeScript interfaces
-```
+| Route | Description |
+|---|---|
+| `/` | Landing page |
+| `/explore` | Browse all places with map + filters |
+| `/places/[id]` | Place detail: checklist, score, photos, reviews, map |
+| `/cities/victoria-bc` | Victoria city page with category browsing |
+| `/cities/victoria-bc/[category]` | Category listing (e.g. libraries, parks) |
+| `/add-place` | Add a new place (authenticated) |
+| `/places/[id]/report` | Report an accessibility issue |
+| `/dashboard` | User dashboard (authenticated) |
 
-## Git Workflow
+## API Routes
 
-This project uses a simple branching model:
+| Method | Route | Description |
+|---|---|---|
+| GET | `/api/places` | List places (with filters) |
+| POST | `/api/places` | Create a place (auth required) |
+| GET | `/api/places/[id]` | Get place detail + stats |
+| PATCH | `/api/places/[id]` | Update a place (auth required) |
+| GET | `/api/places/[id]/reviews` | Get reviews for a place |
+| POST | `/api/places/[id]/reviews` | Submit a review (auth required) |
+| POST | `/api/reports` | Submit an accessibility issue (auth required) |
+| POST | `/api/upload` | Upload photos (auth required) |
+| POST | `/api/auth/signup` | Create account |
+| POST | `/api/auth/login` | Sign in |
+| POST | `/api/auth/logout` | Sign out |
+| GET | `/api/health` | Health check (DB ping) |
 
-- `main`: Production branch (tagged releases only)
-- `develop`: Integration branch
-- `feature/*`: Feature branches
+## Accessibility Score
 
-### Workflow
+Each place gets a score from **0–100** based on its accessibility checklist:
 
-1. Create a feature branch from `develop`:
-```bash
-git checkout develop
-git pull
-git checkout -b feature/your-feature-name
-```
+- **70–100**: Green — Highly Accessible
+- **40–69**: Yellow — Partially Accessible
+- **0–39**: Red — Accessibility Barriers
 
-2. Make changes and commit:
-```bash
-git add .
-git commit -m "feat: your feature description"
-```
+The score is calculated from 10 key criteria: entrance ramp, automatic door, level entrance, elevator, wide aisles, accessible washroom, accessible parking, transit access, braille signage, and service animal policy.
 
-3. Push and create a PR:
-```bash
-git push -u origin feature/your-feature-name
-```
+## Deployment
 
-4. Merge PR into `develop`, then periodically merge `develop` → `main` with tags.
-
-## Building for Production
-
-### Docker Build
+The app includes a production-ready `Dockerfile` (3-stage build: deps → builder → runner).
 
 ```bash
 docker build -t accesslens .
 docker run -p 3000:3000 --env-file .env.local accesslens
 ```
 
-### Standalone Build
+Deploy to [Coolify](https://coolify.io), Railway, Fly.io, or any Docker host.
 
-```bash
-npm run build
-npm start
-```
+## Legal
 
-## Deployment with Coolify
+Built in alignment with the **Accessible Canada Act** and the **BC Accessibility Act**. This platform helps communities track, document, and improve real-world accessibility.
 
-1. Connect your Git repository to Coolify
-2. Set build type to "Dockerfile"
-3. Configure all environment variables in Coolify UI
-4. Deploy from `main` branch
+## Roadmap
 
-## API Endpoints
-
-### Health Check
-- `GET /api/health` - Health check endpoint
-
-### Authentication
-- `POST /api/auth/signup` - Create new user
-- `POST /api/auth/login` - Login user
-- `POST /api/auth/logout` - Logout user
-
-### Places
-- `GET /api/places` - List places (with optional filters)
-- `POST /api/places` - Create new place (auth required)
-- `GET /api/places/[id]` - Get place details
-
-### Reviews
-- `POST /api/places/[id]/reviews` - Create review (auth required)
-
-## Features
-
-- ✅ User authentication (email/password)
-- ✅ Place creation and listing
-- ✅ Place detail pages
-- ✅ Review system
-- ✅ User dashboard
-- ✅ Accessibility filtering
-- ✅ Responsive design
-- ✅ Docker support
-
-## Future Enhancements
-
-- Rate limiting
-- File uploads (S3/Cloudinary)
-- Maps integration (Leaflet/Mapbox)
-- Email notifications
-- Search functionality
-- Advanced filtering
-- User profiles
-- Admin panel
-
-## License
-
-MIT License - see LICENSE file for details
-
+- [ ] AI-powered accessibility detection from photos
+- [ ] Street-view scanning integration
+- [ ] Vancouver expansion
+- [ ] Government compliance reporting dashboard
+- [ ] Native mobile app (iOS / Android)
+- [ ] S3/MinIO photo storage
+- [ ] OAuth (Google, Apple)

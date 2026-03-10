@@ -1,4 +1,4 @@
-# AccessLens – Build Checklist
+# AccessLens — Build Checklist
 
 End-to-end implementation plan, structured for Git feature branches + PRs.
 
@@ -7,316 +7,211 @@ End-to-end implementation plan, structured for Git feature branches + PRs.
 ## 0. Repo & Branching
 - [x] Create `accesslens` repo (GitHub)
 - [x] `git init` locally and connect remote
-- [x] Create and push branches:
-  - [x] `main` (protected, production)
-  - [x] `develop` (integration)
 - [x] Branch naming: `feature/<short-name>`
 
 ---
 
-## 1. Bootstrap Next.js App
-**Branch:** `feature/bootstrap` ✅ COMPLETE
+## 1. Bootstrap & Core Stack ✅ COMPLETE
 
-- [x] Run `create-next-app` with:
-  - [x] TypeScript
-  - [x] Tailwind
-  - [x] ESLint
-  - [x] App Router
-  - [x] `src/` directory
-- [x] Verify `npm run dev` works
-- [x] Commit scaffold
-- [x] PR → merge into develop
+- [x] Next.js 16 with TypeScript, Tailwind, ESLint, App Router, `src/` directory
+- [x] MongoDB (native driver), iron-session, bcryptjs, Zod, slugify, date-fns
+- [x] Leaflet + react-leaflet for maps
+- [x] Lucide React icons
 
 ---
 
-## 2. Install Core Stack Dependencies
-**Branch:** `feature/core-deps` ✅ COMPLETE
+## 2. Data Models ✅ COMPLETE
 
-- [x] Install DB: `mongodb`
-- [x] Install auth/session: `bcryptjs`, `jsonwebtoken`, `iron-session`
-- [x] Install email: `resend`
-- [x] Install UI helpers: `lucide-react`, `clsx`, `tailwind-merge`
-- [x] Install validation/utils: `zod`, `slugify`
-- [x] Commit `package.json`/lockfile
-- [x] PR → merge into develop
+### Users
+```
+_id, email, passwordHash, name, role, badges[], bio, avatarUrl, timestamps
+```
 
----
+### Places
+```
+_id, name, slug, category, address, city, citySlug, province, country,
+description, website, phone, checklist{}, accessibilityScore, accessibilityNotes,
+photoUrls[], latitude, longitude, createdByUserId, verifiedAt, timestamps
+```
 
-## 3. Core Infrastructure Layer
-**Branch:** `feature/core-infra` ✅ COMPLETE
+### Categories
+```
+library | restaurant | movie_theatre | park | government | transit |
+sidewalk | shopping | hospital | school | sports | other
+```
 
-- [x] Add `src/lib/db/mongoClient.ts`
-  - [x] Uses `MONGODB_URI`, `MONGODB_DB`
-  - [x] Global singleton in dev
-  - [x] `getDb()` helper
-- [x] Add `src/lib/auth/session.ts`
-  - [x] `getSession`, `createSession`, `destroySession` with iron-session
-  - [x] `SESSION_SECRET`, `SESSION_COOKIE_NAME=accesslens_session`
-- [x] Add `src/lib/auth/authHelpers.ts`
-  - [x] `hashPassword(password)`
-  - [x] `verifyPassword(password, hash)`
-- [x] Add `src/lib/validation/schemas.ts`:
-  - [x] `signupSchema`
-  - [x] `loginSchema`
-  - [x] `placeSchema` (name, category, address, city, flags)
-  - [x] `reviewSchema` (rating, comment, optional photos)
-- [x] Add health check route `src/app/api/health/route.ts` using `db.command({ ping: 1 })`
-- [x] PR → merge into develop
+### Reviews
+```
+_id, placeId, userId, rating(1-5), comment, photoUrls[], timestamps
+```
+
+### Reports
+```
+_id, placeId, userId, type, description, photoUrls[], status, timestamps
+```
 
 ---
 
-## 4. Domain Model & Index Strategy
-**Branch:** `feature/domain-model` ✅ COMPLETE
+## 3. Accessibility Checklist ✅ COMPLETE
 
-- [x] Create `src/models/user.ts`, `place.ts`, `review.ts` (TS interfaces)
-- [x] Define:
-  - [x] `User` with email, passwordHash, name, role, timestamps
-  - [x] `Place` with category, address, city, indoor, accessibility flags, timestamps
-  - [x] `Review` with placeId, userId, ratingOverall, comment, photoUrls, timestamps
-- [x] Add `scripts/initIndexes.ts` to create:
-  - [x] `users.email` unique
-  - [x] `places.city+category`, future location index
-  - [x] `reviews.placeId+createdAt`
-- [x] PR → merge into develop
+Per-place boolean flags:
+- entranceRamp, automaticDoor, levelEntrance
+- elevator, wideAisles, accessibleSeating
+- accessibleWashroom, genderNeutralWashroom
+- accessibleParking, transitAccessible
+- brailleSignage, audioAnnouncements
+- serviceAnimalWelcome, quietSpace
 
 ---
 
-## 5. App Routing, Layouts & Middleware
-**Branch:** `feature/routing-middleware` ✅ COMPLETE
+## 4. Accessibility Score System ✅ COMPLETE
 
-- [x] Create app structure:
-  - [x] `src/app/layout.tsx` – root layout, `<Navbar />`, `<main id="main">`
-  - [x] `src/app/(public)/page.tsx` – landing (at `src/app/page.tsx`)
-  - [x] `src/app/(public)/explore/page.tsx`
-  - [x] `src/app/(public)/places/[id]/page.tsx`
-  - [x] `src/app/(public)/login/page.tsx`
-  - [x] `src/app/(public)/signup/page.tsx`
-  - [x] `src/app/(protected)/layout.tsx`
-  - [x] `src/app/(protected)/dashboard/page.tsx`
-  - [x] `src/app/(protected)/add-place/page.tsx`
-- [x] Add `src/middleware.ts`:
-  - [x] Public routes: `/`, `/login`, `/signup`, `/explore`, `/places`, `/api/health`
-  - [x] Enforce session cookie on protected routes; redirect to `/login` if absent
-- [x] PR → merge into develop
+`score = (trueCount / 10 key criteria) × 100`
+
+| Score | Colour | Label |
+|---|---|---|
+| 70–100 | Green | Highly Accessible |
+| 40–69 | Yellow | Partially Accessible |
+| 0–39 | Red | Accessibility Barriers |
 
 ---
 
-## 6. Auth (API + Pages)
-**Branch:** `feature/auth` ✅ COMPLETE
+## 5. Auth ✅ COMPLETE
 
-- [x] Implement `POST /api/auth/signup`:
-  - [x] Validate body with `signupSchema`
-  - [x] Check email uniqueness
-  - [x] Hash password, insert user
-  - [x] Create session, respond with minimal user info
-- [x] Implement `POST /api/auth/login`:
-  - [x] Validate with `loginSchema`
-  - [x] Lookup user by email
-  - [x] Verify password
-  - [x] Create session
-- [x] Implement `POST /api/auth/logout`:
-  - [x] Destroy session
-- [x] Build `/signup` page:
-  - [x] Accessible form with email, password, name
-  - [x] On success, redirect `/dashboard`
-- [x] Build `/login` page:
-  - [x] Accessible email/password form
-  - [x] On success, redirect to `/dashboard`
-- [x] PR → merge into develop
+- [x] `POST /api/auth/signup` — bcrypt password hash, iron-session
+- [x] `POST /api/auth/login` — verify password, create session
+- [x] `POST /api/auth/logout` — destroy session
+- [x] Beautiful login + signup pages
+- [x] Middleware: protected routes redirect to `/login`
 
 ---
 
-## 7. Places: API + Explore + Detail + Add Place
-**Branch:** `feature/places` ✅ COMPLETE
+## 6. Places API ✅ COMPLETE
 
-### API
-- [x] `GET /api/places`:
-  - [x] Query all places (later add filters)
-  - [x] Sort by `createdAt` desc
-- [x] `POST /api/places` (auth required):
-  - [x] Validate body with `placeSchema`
-  - [x] Insert in places with `createdByUserId`
-  - [x] Return inserted document or ID
-- [x] `GET /api/places/[id]`:
-  - [x] Lookup place by `_id`
-  - [x] Return place plus optional basic stats (avgRating, review count)
-
-### Pages / Components
-- [x] Explore page `(public)/explore/page.tsx`:
-  - [x] Server component using `getDb()` (no client fetch)
-  - [x] Filter bar (category chips, city search)
-  - [x] Grid of `<PlaceCard />`
-- [x] `PlaceCard` component `components/places/PlaceCard.tsx`:
-  - [x] Display name, category, city
-  - [x] Show accessibility tags (step-free, washroom, parking)
-  - [x] Optional average rating badge
-- [x] Add Place page `(protected)/add-place/page.tsx`:
-  - [x] Client form mapped to `placeSchema` fields
-  - [x] Uses `fetch("/api/places", { method: "POST" })`
-  - [x] On success, redirect to `/places/[id]`
-- [x] Place Detail page `(public)/places/[id]/page.tsx`:
-  - [x] Server component
-  - [x] Load place by ID & recent reviews
-  - [x] Render accessibility summary and `<ReviewList />`
-- [x] PR → merge into develop
+- [x] `GET /api/places` — filters: city, category, accessibility features, search
+- [x] `POST /api/places` — auth required; calculates score from checklist
+- [x] `GET /api/places/[id]` — with review stats
+- [x] `PATCH /api/places/[id]` — update place + recalculate score
 
 ---
 
-## 8. Reviews: API + Components
-**Branch:** `feature/reviews` ✅ COMPLETE
+## 7. Reviews API ✅ COMPLETE
 
-### API
-- [x] `POST /api/places/[id]/reviews` (auth required):
-  - [x] Validate body with `reviewSchema`
-  - [x] Verify place exists
-  - [x] Insert into reviews with `userId`, `placeId`
-- [x] `GET /api/places/[id]/reviews`:
-  - [x] List latest reviews for that place with author names
-
-### Components
-- [x] `ReviewForm` `components/reviews/ReviewForm.tsx`:
-  - [x] Props: `placeId`, `userId` (or session user)
-  - [x] Rating input (1–5) + comment + photo URL(s)
-  - [x] Client-side validation, POST to API
-  - [x] On success, refresh page or update state
-- [x] `ReviewList` `components/places/ReviewList.tsx`:
-  - [x] Props: `reviews`
-  - [x] Display author name, rating, comment, optional image, date
-- [x] Wire `ReviewForm` and `ReviewList` into `/places/[id]` page:
-  - [x] Show form only for authenticated users
-  - [x] Show "Log in to leave an accessibility review" CTA for guests
-- [x] PR → merge into develop
+- [x] `GET /api/places/[id]/reviews` — enriched with author names
+- [x] `POST /api/places/[id]/reviews` — auth required; Zod validation
 
 ---
 
-## 9. Dashboard
-**Branch:** `feature/dashboard` 
-- [x] `/dashboard` (protected):
-  - [x] Server component; uses `getSession()` to get `userId`
-  - [x] Query places where `createdByUserId = userId`
-  - [x] Query reviews where `userId = userId`, join place names in code
-- [x] UI sections:
-  - [x] "Your contributed places" list with links to `/places/[id]`
-  - [x] "Your reviews" list (short) with links to places
-- [x] PR → merge into develop
+## 8. Reports API ✅ COMPLETE
+
+- [x] `POST /api/reports` — broken elevator, blocked ramp, construction barrier, etc.
+- [x] `GET /api/reports` — filter by placeId, status
 
 ---
 
-## 10. UI System & Accessibility Hardening
-**Branch:** `feature/ui-accessibility` ✅ COMPLETE
+## 9. Photo Upload ✅ COMPLETE
 
-- [x] `components/ui`:
-  - [x] `Button`, `Card`, `Badge` (missing: `Input`, `Textarea`, `Chip`)
-  - [x] Tailwind-based, consistent spacing, high contrast
-- [x] `components/accessibility/SkipLink.tsx` (at `components/layout/SkipLink.tsx`)
-  - [x] "Skip to main content" link, visible on focus
-- [x] Update `layout.tsx`:
-  - [x] Include `<SkipLink />`
-  - [x] `<main id="main">` for target
-- [ ] Add meaningful landmarks & headings:
-  - [ ] Audit: Only one `h1` per page
-  - [ ] Audit: Logical `h2`, `h3` nesting
-- [ ] Keyboard / screenreader checks:
-  - [ ] Test tab order
-  - [ ] Ensure rating control is screenreader-friendly (`aria-label`)
-- [ ] Mobile layout review:
-  - [ ] Ensure filters & cards are responsive at 375px width
-- [ ] PR → merge into develop
+- [x] `POST /api/upload` — multipart form, stores in `/public/uploads/{context}/`
+- [x] `PhotoUpload` component — drag-and-drop, preview, multi-file
+- [x] `PhotoGallery` component — lightbox viewer
 
 ---
 
-## 11. Configuration & Env Management
-**Branch:** `feature/config-env` ✅ COMPLETE
+## 10. UI Pages ✅ COMPLETE
 
-- [x] Add `.env.local.example` (no secrets):
-  ```
-  MONGODB_URI=
-  MONGODB_DB=
-  SESSION_SECRET=
-  SESSION_COOKIE_NAME=accesslens_session
-  JWT_SECRET=
-  RESEND_API_KEY=
-  RESEND_FROM_EMAIL=
-  NEXT_PUBLIC_APP_URL=
-  ```
-- [x] Update `.gitignore` to include `.env*`
-- [x] Document env variables in `.env.local.example`
-- [ ] PR → merge into develop
+| Page | Route | Status |
+|---|---|---|
+| Landing | `/` | ✅ |
+| Explore | `/explore` | ✅ |
+| Place Detail | `/places/[id]` | ✅ |
+| City | `/cities/victoria-bc` | ✅ |
+| Category | `/cities/victoria-bc/[category]` | ✅ |
+| Add Place | `/add-place` | ✅ |
+| Report Issue | `/places/[id]/report` | ✅ |
+| Dashboard | `/dashboard` | ✅ |
+| Login | `/login` | ✅ |
+| Signup | `/signup` | ✅ |
 
 ---
 
-## 12. Dockerization
-**Branch:** `feature/docker` ✅ COMPLETE
+## 11. Map Integration ✅ COMPLETE
 
-- [x] Add `Dockerfile`:
-  - [x] `deps` stage (`npm ci`)
-  - [x] `builder` stage (`npm run build`)
-  - [x] `runner` stage (Node 20, `node server.js`)
-  - [x] Healthcheck hitting `/api/health`
-- [x] Add `.dockerignore`:
-  - [x] `node_modules`, `.next`, `.env*`, `.git`, etc.
-- [x] Local test:
-  - [x] `docker build -t accesslens .`
-  - [x] `docker run -p 3000:3000 accesslens`
-- [x] PR → merge into develop
+- [x] `ExploreMap` — shows all filtered places, colour-coded by score
+- [x] `PlaceMap` — single place location with score-coloured marker
+- [x] OpenStreetMap tiles (no API key required)
+- [x] Custom accessibility score marker icons
 
 ---
 
-## 13. Deployment via Coolify
-**Branch:** `feature/deployment-docs` ✅ COMPLETE
+## 12. UI Components ✅ COMPLETE
 
-- [x] Coolify app creation:
-  - [x] Repo, branch `main`, build from Dockerfile
-  - [x] Env var setup on Coolify
-  - [x] Domain & auto-SSL
-- [x] After first deploy:
-  - [x] Validate `https://accesslens.yourdomain/api/health`
-  - [ ] Smoke-test flows: signup, login, add place, add review, explore
-- [ ] Document in `README.md` or `DEPLOYMENT.md`
-- [ ] PR → merge into develop
+- [x] Button (primary, secondary, outline, ghost, danger)
+- [x] Card, Badge, Alert
+- [x] Input, Textarea, Select, Label
+- [x] StarRating (interactive + readonly)
+- [x] AccessibilityScore display
+- [x] ChecklistItem (yes/no/unknown)
+- [x] SkipLink (accessibility)
+- [x] Navbar (responsive, mobile menu, server+client split)
 
 ---
 
-## 14. First Production Release
-**Branch:** N/A (release process)
+## 13. Seed Data ✅ COMPLETE
 
-- [ ] Ensure `develop` is green (build, lint, basic manual QA)
-- [ ] `git checkout main`
-- [ ] `git merge --no-ff develop`
-- [ ] Tag release:
-  ```bash
-  git tag -a v0.1.0 -m "AccessLens MVP"
-  git push origin main --tags
-  ```
-- [ ] Confirm Coolify deploy
-- [ ] Run final smoke tests on production URL
+`scripts/seedVictoria.ts` — **50 real places** in Victoria BC:
+
+| Category | Count |
+|---|---|
+| Restaurants | 7 |
+| Government | 6 |
+| Parks | 5 |
+| Shopping | 5 |
+| Transit | 4 |
+| Libraries | 3 |
+| Hospitals | 3 |
+| Sports | 4 |
+| Schools | 3 |
+| Movie Theatres | 3 |
+| Sidewalks | 4 |
+| Other | 3 |
+
+---
+
+## 14. Dockerization ✅ COMPLETE
+
+- [x] 3-stage Dockerfile (deps → builder → runner)
+- [x] Healthcheck on `/api/health`
+- [x] `.dockerignore`
+
+---
+
+## Next Priority Tasks
+
+1. **Run seed data** → `npx tsx scripts/seedVictoria.ts`
+2. **Add S3/MinIO** → swap local file uploads for cloud storage
+3. **OAuth** → add Google/Apple sign-in via Auth.js
+4. **Admin moderation** → review queue for photos and reports
+5. **Gamification** → badges: Explorer, Accessibility Hero, City Mapper
+6. **AI photo analysis** → detect ramps, doors, barriers from uploaded photos
+7. **Vancouver expansion** → replicate for next city
 
 ---
 
 ## Summary
 
 | Section | Status |
-|---------|--------|
-| 0. Repo & Branching | ✅ Complete |
-| 1. Bootstrap Next.js | ✅ Complete |
-| 2. Core Dependencies | ✅ Complete |
-| 3. Core Infrastructure | ✅ Complete |
-| 4. Domain Model | ✅ Complete |
-| 5. Routing & Middleware | ✅ Complete |
-| 6. Auth | ✅ Complete |
-| 7. Places | ✅ Complete |
-| 8. Reviews | ✅ Complete |
-| 9. Dashboard | ✅ Complete |
-| 10. UI & Accessibility | 🔶 Needs audit |
-| 11. Config & Env | ✅ Complete |
-| 12. Docker | ✅ Complete |
-| 13. Coolify Deployment | 🔶 Needs docs |
-| 14. Production Release | ⬜ Pending |
-
----
-
-## Next Priority Tasks
-
-1. **Accessibility audit** – Heading hierarchy, keyboard nav, ARIA labels
-2. **Smoke test all flows** – Signup → Login → Add Place → Add Review → Explore
-3. **Tag v0.1.0 release** – After QA passes
+|---|---|
+| Bootstrap & Stack | ✅ Complete |
+| Data Models | ✅ Complete |
+| Accessibility Checklist + Score | ✅ Complete |
+| Auth (signup/login/logout) | ✅ Complete |
+| Places API | ✅ Complete |
+| Reviews API | ✅ Complete |
+| Reports API | ✅ Complete |
+| Photo Upload | ✅ Complete |
+| Maps (Leaflet) | ✅ Complete |
+| All UI Pages | ✅ Complete |
+| UI Component Library | ✅ Complete |
+| Seed Data (50 Victoria places) | ✅ Complete |
+| Docker | ✅ Complete |
+| Production Release | ⬜ Pending |

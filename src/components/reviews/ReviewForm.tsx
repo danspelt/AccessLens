@@ -1,7 +1,14 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { StarRating } from '@/components/ui/StarRating';
+import { Button } from '@/components/ui/Button';
+import { Label } from '@/components/ui/Label';
+import { Textarea } from '@/components/ui/Textarea';
+import { Alert } from '@/components/ui/Alert';
+import { PhotoUpload } from '@/components/photos/PhotoUpload';
+import { MessageSquare } from 'lucide-react';
 
 interface ReviewFormProps {
   placeId: string;
@@ -9,103 +16,122 @@ interface ReviewFormProps {
 
 export function ReviewForm({ placeId }: ReviewFormProps) {
   const router = useRouter();
-  const [rating, setRating] = useState(5);
+  const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [photoUrls, setPhotoUrls] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError('');
-    setIsLoading(true);
+    if (rating === 0) {
+      setError('Please select a star rating.');
+      return;
+    }
+    if (comment.length < 10) {
+      setError('Comment must be at least 10 characters.');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
 
     try {
-      const response = await fetch(`/api/places/${placeId}/reviews`, {
+      const res = await fetch(`/api/places/${placeId}/reviews`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          placeId,
-          rating,
-          comment,
-        }),
+        body: JSON.stringify({ rating, comment, photoUrls }),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error || 'Failed to submit review');
-        setIsLoading(false);
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'Failed to submit review.');
         return;
       }
 
-      // Reset form and refresh page
+      setSuccess(true);
+      setRating(0);
       setComment('');
-      setRating(5);
+      setPhotoUrls([]);
       router.refresh();
-    } catch (err) {
-      setError('An unexpected error occurred');
-      setIsLoading(false);
+    } catch {
+      setError('Failed to submit review. Please try again.');
+    } finally {
+      setLoading(false);
     }
-  };
+  }
+
+  if (success) {
+    return (
+      <Alert variant="success" title="Review submitted!">
+        Thank you for helping the community. Your review has been posted.
+      </Alert>
+    );
+  }
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white p-6">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Write a Review</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {error && (
-          <div className="rounded-md bg-red-50 p-4">
-            <p className="text-sm text-red-800">{error}</p>
-          </div>
-        )}
+    <form onSubmit={handleSubmit} noValidate className="space-y-5" aria-label="Submit accessibility review">
+      <div className="flex items-center gap-2 mb-1">
+        <MessageSquare className="h-5 w-5 text-primary-600" aria-hidden="true" />
+        <h3 className="text-lg font-semibold text-slate-900">Share your experience</h3>
+      </div>
 
-        <div>
-          <label htmlFor="rating" className="block text-sm font-medium text-gray-700 mb-2">
-            Rating
-          </label>
-          <div className="flex items-center space-x-2">
-            {[1, 2, 3, 4, 5].map((value) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setRating(value)}
-                className={`rounded-md px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  rating >= value
-                    ? 'bg-yellow-400 text-yellow-900'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-                aria-label={`Rate ${value} out of 5`}
-              >
-                ★
-              </button>
-            ))}
-            <span className="ml-2 text-sm text-gray-600">{rating} out of 5</span>
-          </div>
+      {error && <Alert variant="error">{error}</Alert>}
+
+      <div>
+        <Label required id="rating-label">Accessibility rating</Label>
+        <div className="mt-2">
+          <StarRating
+            value={rating}
+            onChange={setRating}
+            size="lg"
+            label="Accessibility rating"
+          />
+          <p className="mt-1 text-xs text-slate-500">
+            1 = Very inaccessible · 5 = Fully accessible
+          </p>
         </div>
+      </div>
 
-        <div>
-          <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-2">
-            Comment *
-          </label>
-          <textarea
-            id="comment"
-            required
-            rows={4}
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-            placeholder="Share your experience with this place..."
+      <div>
+        <Label htmlFor="review-comment" required>
+          Your review
+        </Label>
+        <Textarea
+          id="review-comment"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          placeholder="Describe the accessibility — entrance, washrooms, elevators, parking, obstacles…"
+          rows={4}
+          className="mt-1.5"
+          required
+          minLength={10}
+          maxLength={2000}
+          aria-describedby="comment-hint"
+        />
+        <p id="comment-hint" className="mt-1 text-xs text-slate-500">
+          {comment.length}/2000 characters · Minimum 10 characters
+        </p>
+      </div>
+
+      <div>
+        <Label>Accessibility photos (optional)</Label>
+        <div className="mt-1.5">
+          <PhotoUpload
+            onUpload={setPhotoUrls}
+            context="reviews"
+            maxFiles={3}
           />
         </div>
+        <p className="mt-1 text-xs text-slate-500">
+          Photos of entrances, ramps, washrooms, and barriers are most helpful.
+        </p>
+      </div>
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-        >
-          {isLoading ? 'Submitting...' : 'Submit Review'}
-        </button>
-      </form>
-    </div>
+      <Button type="submit" loading={loading} size="lg" className="w-full">
+        Submit Review
+      </Button>
+    </form>
   );
 }
-

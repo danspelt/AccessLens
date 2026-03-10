@@ -1,0 +1,171 @@
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { getCollection } from '@/lib/db/mongoClient';
+import { Place, PLACE_CATEGORIES, CATEGORY_ICONS } from '@/models/Place';
+import { MapPin, ArrowRight } from 'lucide-react';
+
+const KNOWN_CITIES: Record<string, { name: string; province: string; description: string }> = {
+  'victoria-bc': {
+    name: 'Victoria',
+    province: 'BC',
+    description: 'The capital city of British Columbia, home to beautiful parks, historic buildings, and a vibrant downtown core.',
+  },
+};
+
+interface Props {
+  params: Promise<{ citySlug: string }>;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { citySlug } = await params;
+  const city = KNOWN_CITIES[citySlug];
+  if (!city) return {};
+  return {
+    title: `Accessible Places in ${city.name}, ${city.province}`,
+    description: `Find accessible places in ${city.name}, ${city.province} — libraries, restaurants, parks, transit, and more.`,
+  };
+}
+
+export default async function CityPage({ params }: Props) {
+  const { citySlug } = await params;
+  const city = KNOWN_CITIES[citySlug];
+  if (!city) notFound();
+
+  const placesCollection = await getCollection<Place>('places');
+
+  // Count places per category
+  const pipeline = [
+    { $match: { citySlug } },
+    { $group: { _id: '$category', count: { $sum: 1 }, avgScore: { $avg: '$accessibilityScore' } } },
+    { $sort: { count: -1 } },
+  ];
+  const categoryCounts = await placesCollection.aggregate<{
+    _id: string;
+    count: number;
+    avgScore: number | null;
+  }>(pipeline).toArray();
+
+  const totalPlaces = categoryCounts.reduce((sum, c) => sum + c.count, 0);
+
+  // Recent places
+  const recentPlaces = await placesCollection
+    .find({ citySlug })
+    .sort({ createdAt: -1 })
+    .limit(6)
+    .toArray();
+
+  return (
+    <div className="min-h-screen bg-slate-50">
+      {/* Hero */}
+      <div className="bg-gradient-to-br from-primary-900 to-primary-700 text-white">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-2 mb-4">
+            <MapPin className="h-5 w-5 text-primary-300" aria-hidden="true" />
+            <span className="text-primary-300 text-sm font-medium">Accessibility Map</span>
+          </div>
+          <h1 className="text-4xl font-bold">
+            {city.name}, <span className="text-primary-300">{city.province}</span>
+          </h1>
+          <p className="mt-3 text-lg text-primary-200 max-w-2xl">{city.description}</p>
+          <div className="mt-6 flex flex-wrap gap-4">
+            <div className="rounded-xl bg-white/10 px-4 py-3 backdrop-blur-sm text-center">
+              <p className="text-2xl font-bold">{totalPlaces}</p>
+              <p className="text-xs text-primary-200">Places reviewed</p>
+            </div>
+            <div className="rounded-xl bg-white/10 px-4 py-3 backdrop-blur-sm text-center">
+              <p className="text-2xl font-bold">{categoryCounts.length}</p>
+              <p className="text-xs text-primary-200">Categories</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        {/* Categories */}
+        <section aria-labelledby="categories-heading" className="mb-12">
+          <h2 id="categories-heading" className="text-2xl font-bold text-slate-900 mb-6">
+            Browse by Category
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {categoryCounts.map(({ _id: cat, count, avgScore }) => {
+              const label = PLACE_CATEGORIES[cat as keyof typeof PLACE_CATEGORIES] || cat;
+              const icon = CATEGORY_ICONS[cat as keyof typeof CATEGORY_ICONS] || '📍';
+              return (
+                <Link
+                  key={cat}
+                  href={`/cities/${citySlug}/${cat}`}
+                  className="group flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-card hover:shadow-card-hover transition-all hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                >
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-2xl">
+                    {icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-slate-900 group-hover:text-primary-700 truncate">{label}</p>
+                    <p className="text-xs text-slate-500">{count} place{count !== 1 ? 's' : ''}</p>
+                    {avgScore !== null && (
+                      <p className="text-xs text-slate-500">
+                        Avg score: {Math.round(avgScore)}/100
+                      </p>
+                    )}
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-primary-600 shrink-0" aria-hidden="true" />
+                </Link>
+              );
+            })}
+          </div>
+          {categoryCounts.length === 0 && (
+            <div className="rounded-xl border border-dashed border-slate-300 bg-white py-12 text-center">
+              <p className="text-slate-500">No places added yet. Be the first to contribute!</p>
+              <Link
+                href="/add-place"
+                className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-700"
+              >
+                Add a Place
+              </Link>
+            </div>
+          )}
+        </section>
+
+        {/* Recently added */}
+        {recentPlaces.length > 0 && (
+          <section aria-labelledby="recent-heading">
+            <div className="mb-6 flex items-center justify-between">
+              <h2 id="recent-heading" className="text-2xl font-bold text-slate-900">Recently Added</h2>
+              <Link href={`/explore?city=${citySlug}`} className="text-sm text-primary-600 hover:text-primary-700">
+                View all →
+              </Link>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {recentPlaces.map((place) => {
+                const cat = place.category as keyof typeof PLACE_CATEGORIES;
+                const label = PLACE_CATEGORIES[cat] || place.category;
+                const icon = CATEGORY_ICONS[cat] || '📍';
+                return (
+                  <Link
+                    key={place._id.toString()}
+                    href={`/places/${place._id}`}
+                    className="group flex gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-card hover:shadow-card-hover transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-xl">
+                      {icon}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-semibold text-slate-900 group-hover:text-primary-700 truncate">{place.name}</p>
+                      <p className="text-xs text-slate-500">{label} · {place.address}</p>
+                      {place.accessibilityScore !== undefined && (
+                        <p className="mt-1 text-xs font-medium text-slate-600">
+                          Score: {place.accessibilityScore}/100
+                        </p>
+                      )}
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        )}
+      </div>
+    </div>
+  );
+}

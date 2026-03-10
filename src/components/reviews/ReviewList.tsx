@@ -1,63 +1,73 @@
-import { Review } from '@/models/Review';
+import { formatDistanceToNow } from 'date-fns';
+import { Star, MessageSquare } from 'lucide-react';
 
-interface ReviewWithUser extends Review {
-  userName: string;
+interface Review {
+  _id: string;
+  rating: number;
+  comment: string;
+  authorName: string;
+  photoUrls?: string[];
+  createdAt: string;
 }
 
 interface ReviewListProps {
-  reviews: ReviewWithUser[];
+  reviews: Review[];
 }
 
 export function ReviewList({ reviews }: ReviewListProps) {
   if (reviews.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white p-6 text-center">
-        <p className="text-gray-500">No reviews yet. Be the first to review this place!</p>
+      <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 py-10 text-center">
+        <MessageSquare className="h-8 w-8 text-slate-300" aria-hidden="true" />
+        <p className="text-sm text-slate-500">No reviews yet. Be the first to share your experience.</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <ol className="space-y-4" aria-label="Accessibility reviews">
       {reviews.map((review) => (
-        <div
-          key={review._id.toString()}
-          className="rounded-lg border border-gray-200 bg-white p-6"
+        <li
+          key={review._id}
+          className="rounded-xl border border-slate-200 bg-white p-5 shadow-card"
         >
-          <div className="flex items-start justify-between mb-2">
-            <div>
-              <p className="font-semibold text-gray-900">{review.userName}</p>
-              <p className="text-sm text-gray-500">
-                {new Date(review.createdAt).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </p>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-100 text-sm font-semibold text-primary-700">
+                {review.authorName.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-slate-900">{review.authorName}</p>
+                <p className="text-xs text-slate-500">
+                  {formatDistanceToNow(new Date(review.createdAt), { addSuffix: true })}
+                </p>
+              </div>
             </div>
-            <div className="flex items-center">
-              <span className="text-lg font-semibold text-gray-900 mr-1">
-                {review.rating}
-              </span>
-              <span className="text-yellow-400">★</span>
+            <div
+              className="flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1"
+              aria-label={`${review.rating} out of 5 stars`}
+            >
+              <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" aria-hidden="true" />
+              <span className="text-xs font-semibold text-amber-700">{review.rating}/5</span>
             </div>
           </div>
-          <p className="text-gray-700 whitespace-pre-wrap">{review.comment}</p>
+          <p className="mt-3 text-sm text-slate-700 leading-relaxed">{review.comment}</p>
           {review.photoUrls && review.photoUrls.length > 0 && (
-            <div className="mt-4 grid grid-cols-2 gap-2">
-              {review.photoUrls.map((url, index) => (
-                <img
-                  key={index}
-                  src={url}
-                  alt={`Review photo ${index + 1}`}
-                  className="rounded-md"
-                />
+            <div className="mt-3 flex flex-wrap gap-2" role="list" aria-label="Review photos">
+              {review.photoUrls.map((url, i) => (
+                <div key={url} role="listitem" className="h-20 w-20 overflow-hidden rounded-lg border border-slate-200">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={url}
+                    alt={`Photo ${i + 1} from ${review.authorName}'s review`}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
               ))}
             </div>
           )}
-        </div>
+        </li>
       ))}
-    </div>
+    </ol>
   );
 }
-

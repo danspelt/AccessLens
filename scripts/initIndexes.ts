@@ -1,9 +1,7 @@
 /**
- * Initialize MongoDB indexes for AccessLens
- * Run this script once after setting up the database:
- * npx tsx scripts/initIndexes.ts
+ * Initialize MongoDB indexes for AccessLens.
+ * Run: npx tsx scripts/initIndexes.ts
  */
-
 import { getDb } from '../src/lib/db/mongoClient';
 
 async function initIndexes() {
@@ -11,31 +9,40 @@ async function initIndexes() {
     const db = await getDb();
 
     // Users collection
-    const usersCollection = db.collection('users');
-    await usersCollection.createIndex({ email: 1 }, { unique: true });
-    console.log('✓ Created index on users.email');
+    const users = db.collection('users');
+    await users.createIndex({ email: 1 }, { unique: true });
+    console.log('✓ users.email (unique)');
 
     // Places collection
-    const placesCollection = db.collection('places');
-    await placesCollection.createIndex({ city: 1, category: 1 });
-    await placesCollection.createIndex({ createdByUserId: 1 });
-    // Future: 2dsphere index for location-based queries
-    // await placesCollection.createIndex({ location: '2dsphere' });
-    console.log('✓ Created indexes on places');
+    const places = db.collection('places');
+    await places.createIndex({ citySlug: 1, category: 1 });
+    await places.createIndex({ slug: 1 });
+    await places.createIndex({ createdByUserId: 1 });
+    await places.createIndex({ accessibilityScore: -1 });
+    await places.createIndex({ name: 'text', address: 'text', description: 'text' });
+    // Geospatial index (for future location-based queries)
+    // await places.createIndex({ location: '2dsphere' });
+    console.log('✓ places indexes');
 
     // Reviews collection
-    const reviewsCollection = db.collection('reviews');
-    await reviewsCollection.createIndex({ placeId: 1, createdAt: -1 });
-    await reviewsCollection.createIndex({ userId: 1 });
-    console.log('✓ Created indexes on reviews');
+    const reviews = db.collection('reviews');
+    await reviews.createIndex({ placeId: 1, createdAt: -1 });
+    await reviews.createIndex({ userId: 1 });
+    console.log('✓ reviews indexes');
+
+    // Reports collection
+    const reports = db.collection('reports');
+    await reports.createIndex({ placeId: 1, status: 1 });
+    await reports.createIndex({ userId: 1 });
+    await reports.createIndex({ status: 1, createdAt: -1 });
+    console.log('✓ reports indexes');
 
     console.log('\n✅ All indexes created successfully!');
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error creating indexes:', error);
+    console.error('❌ Error:', error);
     process.exit(1);
   }
 }
 
 initIndexes();
-
