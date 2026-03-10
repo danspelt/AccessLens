@@ -17,10 +17,10 @@ async function initIndexes() {
 
     // Places collection
     const placesCollection = db.collection('places');
-    await placesCollection.createIndex({ city: 1, category: 1 });
+    await placesCollection.createIndex({ citySlug: 1, category: 1, slug: 1 }, { unique: true });
+    await placesCollection.createIndex({ citySlug: 1, category: 1 });
     await placesCollection.createIndex({ createdByUserId: 1 });
-    // Future: 2dsphere index for location-based queries
-    // await placesCollection.createIndex({ location: '2dsphere' });
+    await placesCollection.createIndex({ name: 'text', address: 'text', city: 'text' });
     console.log('✓ Created indexes on places');
 
     // Reviews collection

@@ -14,39 +14,65 @@ export const loginSchema = z.object({
 
 // Place schemas
 export const placeCategorySchema = z.enum([
-  'arena',
-  'pool',
-  'rink',
-  'park',
-  'sidewalk',
-  'business',
-  'other',
+  'libraries',
+  'restaurants',
+  'movie-theatres',
+  'parks',
+  'public-buildings',
+  'transit-stops',
+  'sidewalks',
+  'crosswalks',
+  'hospitals',
+  'schools',
+  'shopping-centres',
+  'government-buildings',
 ]);
+
+export const photoReferenceSchema = z
+  .string()
+  .trim()
+  .refine(
+    (value) => value.startsWith('/uploads/') || /^https?:\/\//.test(value),
+    'Photo URLs must be local uploads or absolute URLs'
+  );
+
+export const accessibilityChecklistSchema = z.object({
+  ramp: z.boolean().default(false),
+  automaticDoor: z.boolean().default(false),
+  elevator: z.boolean().default(false),
+  accessibleWashroom: z.boolean().default(false),
+  accessibleParking: z.boolean().default(false),
+  wideAisles: z.boolean().default(false),
+  smoothPath: z.boolean().default(false),
+});
 
 export const placeSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   category: placeCategorySchema,
   address: z.string().min(1, 'Address is required'),
   city: z.string().min(1, 'City is required'),
-  province: z.string().optional(),
+  province: z.string().default('BC'),
   country: z.string().default('Canada'),
-  description: z.string().optional(),
-  // Accessibility flags
-  stepFreeAccess: z.boolean().default(false),
-  accessibleWashroom: z.boolean().default(false),
-  accessibleParking: z.boolean().default(false),
-  indoor: z.boolean().default(false),
-  // Optional location for future map integration
-  latitude: z.number().optional(),
-  longitude: z.number().optional(),
+  description: z.string().max(1800).optional(),
+  accessibilityChecklist: accessibilityChecklistSchema,
+  accessibilityNotes: z.string().max(1500).optional(),
+  photoUrls: z.array(photoReferenceSchema).max(10).default([]),
+  latitude: z.number().min(-90).max(90).optional(),
+  longitude: z.number().min(-180).max(180).optional(),
 });
 
 // Review schemas
 export const reviewSchema = z.object({
   placeId: z.string().min(1, 'Place ID is required'),
   rating: z.number().int().min(1).max(5),
+  headline: z.string().max(120).optional(),
   comment: z.string().min(1, 'Comment is required'),
-  photoUrls: z.array(z.string().url()).optional(),
+  accessibilityNotes: z.string().max(800).optional(),
+  photoUrls: z.array(photoReferenceSchema).max(8).optional(),
+});
+
+export const placePhotoSchema = z.object({
+  photoUrls: z.array(photoReferenceSchema).min(1).max(10),
 });
 
 // Type exports

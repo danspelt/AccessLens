@@ -4,8 +4,10 @@ export interface Review {
   _id: ObjectId;
   placeId: ObjectId;
   userId: ObjectId;
-  rating: number; // 1-5
+  rating: number;
+  headline?: string;
   comment: string;
+  accessibilityNotes?: string;
   photoUrls?: string[];
   createdAt: Date;
   updatedAt: Date;

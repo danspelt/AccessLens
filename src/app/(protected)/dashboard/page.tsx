@@ -1,44 +1,8 @@
 import { getCurrentUser } from '@/lib/auth/getCurrentUser';
-import { getCollection } from '@/lib/db/mongoClient';
-import { Place } from '@/models/Place';
-import { Review } from '@/models/Review';
+import { getUserPlaces, getUserReviews } from '@/lib/accesslens/data';
+import { formatAccessibilityPercentage } from '@/lib/accesslens/constants';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { ObjectId } from 'mongodb';
-
-async function getUserPlaces(userId: ObjectId) {
-  const placesCollection = await getCollection<Place>('places');
-  const places = await placesCollection
-    .find({ createdByUserId: userId })
-    .sort({ createdAt: -1 })
-    .toArray();
-  return places;
-}
-
-async function getUserReviews(userId: ObjectId) {
-  const reviewsCollection = await getCollection<Review>('reviews');
-  const placesCollection = await getCollection<Place>('places');
-
-  const reviews = await reviewsCollection
-    .find({ userId })
-    .sort({ createdAt: -1 })
-    .limit(20)
-    .toArray();
-
-  // Enrich reviews with place names
-  const reviewsWithPlaces = await Promise.all(
-    reviews.map(async (review) => {
-      const place = await placesCollection.findOne({ _id: review.placeId });
-      return {
-        ...review,
-        placeName: place?.name || 'Unknown Place',
-        placeId: place?._id.toString(),
-      };
-    })
-  );
-
-  return reviewsWithPlaces;
-}
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
@@ -74,7 +38,7 @@ export default async function DashboardPage() {
           </div>
           {places.length === 0 ? (
             <div className="rounded-lg border border-gray-200 bg-white p-6 text-center">
-              <p className="text-gray-500 mb-4">You haven't added any places yet.</p>
+              <p className="mb-4 text-gray-500">You haven&apos;t added any places yet.</p>
               <Link
                 href="/add-place"
                 className="inline-block rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
@@ -87,13 +51,16 @@ export default async function DashboardPage() {
               {places.map((place) => (
                 <Link
                   key={place._id.toString()}
-                  href={`/places/${place._id.toString()}`}
+                  href={`/${place.citySlug}/${place.category}/${place.slug}`}
                   className="block rounded-lg border border-gray-200 bg-white p-4 hover:shadow-md transition-shadow"
                 >
                   <h3 className="font-semibold text-gray-900">{place.name}</h3>
                   <p className="mt-1 text-sm text-gray-600">
                     {place.city}
                     {place.province && `, ${place.province}`}
+                  </p>
+                  <p className="mt-2 text-sm font-medium text-blue-700">
+                    Access score {formatAccessibilityPercentage(place.accessibilityScore)}
                   </p>
                   <p className="mt-2 text-sm text-gray-500">
                     Added {new Date(place.createdAt).toLocaleDateString()}
@@ -111,7 +78,7 @@ export default async function DashboardPage() {
           </h2>
           {reviews.length === 0 ? (
             <div className="rounded-lg border border-gray-200 bg-white p-6 text-center">
-              <p className="text-gray-500">You haven't written any reviews yet.</p>
+              <p className="text-gray-500">You haven&apos;t written any reviews yet.</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -122,7 +89,7 @@ export default async function DashboardPage() {
                 >
                   <div className="flex items-start justify-between mb-2">
                     <Link
-                      href={`/places/${review.placeId}`}
+                      href={review.placePath}
                       className="font-semibold text-gray-900 hover:text-blue-600"
                     >
                       {review.placeName}

@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import { PhotoUploadField } from '@/components/ui/PhotoUploadField';
 
 interface ReviewFormProps {
   placeId: string;
@@ -10,7 +11,10 @@ interface ReviewFormProps {
 export function ReviewForm({ placeId }: ReviewFormProps) {
   const router = useRouter();
   const [rating, setRating] = useState(5);
+  const [headline, setHeadline] = useState('');
   const [comment, setComment] = useState('');
+  const [accessibilityNotes, setAccessibilityNotes] = useState('');
+  const [photoUrls, setPhotoUrls] = useState<string[]>([]);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,7 +30,10 @@ export function ReviewForm({ placeId }: ReviewFormProps) {
         body: JSON.stringify({
           placeId,
           rating,
+          headline,
           comment,
+          accessibilityNotes,
+          photoUrls,
         }),
       });
 
@@ -41,6 +48,10 @@ export function ReviewForm({ placeId }: ReviewFormProps) {
       // Reset form and refresh page
       setComment('');
       setRating(5);
+      setHeadline('');
+      setAccessibilityNotes('');
+      setPhotoUrls([]);
+      setIsLoading(false);
       router.refresh();
     } catch (err) {
       setError('An unexpected error occurred');
@@ -57,6 +68,21 @@ export function ReviewForm({ placeId }: ReviewFormProps) {
             <p className="text-sm text-red-800">{error}</p>
           </div>
         )}
+
+        <div>
+          <label htmlFor="headline" className="mb-2 block text-sm font-medium text-gray-700">
+            Headline
+          </label>
+          <input
+            id="headline"
+            type="text"
+            value={headline}
+            onChange={(event) => setHeadline(event.target.value)}
+            maxLength={120}
+            placeholder="Example: Strong entrance access, tight washroom turning space"
+            className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+          />
+        </div>
 
         <div>
           <label htmlFor="rating" className="block text-sm font-medium text-gray-700 mb-2">
@@ -96,6 +122,31 @@ export function ReviewForm({ placeId }: ReviewFormProps) {
             placeholder="Share your experience with this place..."
           />
         </div>
+
+        <div>
+          <label
+            htmlFor="accessibilityNotes"
+            className="mb-2 block text-sm font-medium text-gray-700"
+          >
+            Accessibility notes
+          </label>
+          <textarea
+            id="accessibilityNotes"
+            rows={3}
+            value={accessibilityNotes}
+            onChange={(event) => setAccessibilityNotes(event.target.value)}
+            className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            placeholder="Call out barriers, construction, staff help, washroom details, or route advice."
+          />
+        </div>
+
+        <PhotoUploadField
+          label="Upload evidence photos"
+          description="Upload entrance, ramp, washroom, or sidewalk photos that help other community members understand the space."
+          value={photoUrls}
+          onChange={setPhotoUrls}
+          maxFiles={6}
+        />
 
         <button
           type="submit"

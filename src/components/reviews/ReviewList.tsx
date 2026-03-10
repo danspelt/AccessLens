@@ -1,11 +1,8 @@
-import { Review } from '@/models/Review';
-
-interface ReviewWithUser extends Review {
-  userName: string;
-}
+/* eslint-disable @next/next/no-img-element */
+import { ReviewWithAuthor } from '@/lib/accesslens/data';
 
 interface ReviewListProps {
-  reviews: ReviewWithUser[];
+  reviews: ReviewWithAuthor[];
 }
 
 export function ReviewList({ reviews }: ReviewListProps) {
@@ -42,15 +39,28 @@ export function ReviewList({ reviews }: ReviewListProps) {
               <span className="text-yellow-400">★</span>
             </div>
           </div>
+          {review.headline ? (
+            <h3 className="mb-2 text-base font-semibold text-gray-900">{review.headline}</h3>
+          ) : null}
           <p className="text-gray-700 whitespace-pre-wrap">{review.comment}</p>
+          {review.accessibilityNotes ? (
+            <div className="mt-4 rounded-md bg-gray-50 p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Accessibility notes
+              </p>
+              <p className="mt-1 text-sm text-gray-700 whitespace-pre-wrap">
+                {review.accessibilityNotes}
+              </p>
+            </div>
+          ) : null}
           {review.photoUrls && review.photoUrls.length > 0 && (
             <div className="mt-4 grid grid-cols-2 gap-2">
               {review.photoUrls.map((url, index) => (
                 <img
                   key={index}
                   src={url}
-                  alt={`Review photo ${index + 1}`}
-                  className="rounded-md"
+                  alt={`Accessibility evidence photo ${index + 1}`}
+                  className="h-40 w-full rounded-md object-cover"
                 />
               ))}
             </div>

@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCollection } from '@/lib/db/mongoClient';
-import { Place } from '@/models/Place';
-import { ObjectId } from 'mongodb';
+import { getPlaceById, serializePlace } from '@/lib/accesslens/data';
 
 export async function GET(
   request: NextRequest,
@@ -9,25 +7,16 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-
-    if (!ObjectId.isValid(id)) {
-      return NextResponse.json(
-        { error: 'Invalid place ID' },
-        { status: 400 }
-      );
-    }
-
-    const placesCollection = await getCollection<Place>('places');
-    const place = await placesCollection.findOne({ _id: new ObjectId(id) });
+    const place = await getPlaceById(id);
 
     if (!place) {
       return NextResponse.json(
         { error: 'Place not found' },
-        { status: 404 }
+        { status: id.length === 24 ? 404 : 400 }
       );
     }
 
-    return NextResponse.json({ place });
+    return NextResponse.json({ place: serializePlace(place) });
   } catch (error) {
     console.error('Error fetching place:', error);
     return NextResponse.json(

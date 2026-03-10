@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getPlaceById, getReviewsForPlace, isDatabaseConfigured, serializeReview } from '@/lib/accesslens/data';
 import { reviewSchema } from '@/lib/validation/schemas';
 import { getCollection } from '@/lib/db/mongoClient';
 import { Review } from '@/models/Review';
-import { Place } from '@/models/Place';
-import { User } from '@/models/User';
 import { getSession } from '@/lib/auth/session';
 import { ObjectId } from 'mongodb';
 
@@ -21,36 +20,11 @@ export async function GET(
       );
     }
 
-    const reviewsCollection = await getCollection<Review>('reviews');
-    const usersCollection = await getCollection<User>('users');
+    const reviews = await getReviewsForPlace(new ObjectId(id));
 
-    const reviews = await reviewsCollection
-      .find({ placeId: new ObjectId(id) })
-      .sort({ createdAt: -1 })
-      .limit(50)
-      .toArray();
-
-    // Fetch user names for reviews
-    const userIds = [...new Set(reviews.map((r) => r.userId.toString()))];
-    const users = await usersCollection
-      .find({ _id: { $in: userIds.map((uid) => new ObjectId(uid)) } })
-      .project({ _id: 1, name: 1 })
-      .toArray();
-
-    const userMap = new Map(users.map((u) => [u._id.toString(), u.name]));
-
-    const reviewsWithAuthor = reviews.map((review) => ({
-      id: review._id.toString(),
-      placeId: review.placeId.toString(),
-      userId: review.userId.toString(),
-      authorName: userMap.get(review.userId.toString()) || 'Anonymous',
-      rating: review.rating,
-      comment: review.comment,
-      photoUrls: review.photoUrls,
-      createdAt: review.createdAt.toISOString(),
-    }));
-
-    return NextResponse.json({ reviews: reviewsWithAuthor });
+    return NextResponse.json({
+      reviews: reviews.map((review) => serializeReview(review)),
+    });
   } catch (error) {
     console.error('Error fetching reviews:', error);
     return NextResponse.json(
@@ -73,6 +47,13 @@ export async function POST(
       );
     }
 
+    if (!isDatabaseConfigured()) {
+      return NextResponse.json(
+        { error: 'Database is not configured. Add MONGODB_URI and MONGODB_DB to enable reviews.' },
+        { status: 503 }
+      );
+    }
+
     const { id } = await params;
 
     if (!ObjectId.isValid(id)) {
@@ -86,8 +67,7 @@ export async function POST(
     const validated = reviewSchema.parse(body);
 
     // Verify place exists
-    const placesCollection = await getCollection<Place>('places');
-    const place = await placesCollection.findOne({ _id: new ObjectId(id) });
+    const place = await getPlaceById(id);
     if (!place) {
       return NextResponse.json(
         { error: 'Place not found' },
@@ -109,7 +89,9 @@ export async function POST(
       placeId: new ObjectId(id),
       userId: new ObjectId(session.userId),
       rating: validated.rating,
+      headline: validated.headline,
       comment: validated.comment,
+      accessibilityNotes: validated.accessibilityNotes,
       photoUrls: validated.photoUrls,
       createdAt: new Date(),
       updatedAt: new Date(),

@@ -5,6 +5,7 @@ export interface User {
   email: string;
   passwordHash: string;
   name: string;
+  role?: 'member' | 'moderator' | 'admin';
   createdAt: Date;
   updatedAt: Date;
 }

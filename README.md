@@ -1,175 +1,212 @@
 # AccessLens
 
-Accessibility review platform for arenas, pools, rinks, parks, sidewalks, and businesses.
+**Accessibility Intelligence for Cities**
 
-## Tech Stack
+AccessLens is a community-driven accessibility platform for documenting the real-world accessibility
+of places like libraries, parks, sidewalks, restaurants, movie theatres, transit stops, hospitals,
+shopping centres, and public buildings.
 
-- **Frontend/API**: Next.js 16 (App Router), TypeScript, Tailwind CSS
-- **Backend**: MongoDB, custom auth with `iron-session` + `bcrypt`
-- **Email**: Resend (for transactional emails)
-- **Deployment**: Docker + Coolify
+This version launches with **Victoria, BC** as the first city experience and provides:
+
+- a city landing page
+- category directories
+- place detail pages with accessibility scoring
+- checklist-based place submissions
+- community reviews
+- local evidence photo uploads
+
+## Current Stack
+
+- **Frontend / App**: Next.js 16 App Router, React, TypeScript, Tailwind CSS
+- **Backend**: Route Handlers + server components
+- **Data**: MongoDB for persisted submissions
+- **Auth**: `iron-session` + `bcryptjs`
+- **Uploads**: Local `/public/uploads` storage for MVP evidence photos
+- **Deployment**: Docker + standalone Next.js build
+
+> Note: the public experience includes Victoria seed data fallback so the app still renders useful
+> content before a MongoDB instance is configured.
+
+## MVP Features
+
+- **Landing page** for AccessLens mission and launch status
+- **City page** for Victoria, BC (`/victoria-bc`)
+- **Category pages** like `/victoria-bc/libraries`
+- **Place pages** like `/victoria-bc/libraries/victoria-public-library-central-branch`
+- **Accessibility score** based on checklist items
+- **Community reviews** with notes and evidence photos
+- **Protected contributor flows** for adding places and uploading accessibility evidence
+- **Search and filters** from the `/explore` directory
+
+## Data Model
+
+### Users
+
+- `id`
+- `name`
+- `email`
+- `role`
+- `created_at`
+
+### Places
+
+- `id`
+- `slug`
+- `name`
+- `category`
+- `address`
+- `city`
+- `citySlug`
+- `province`
+- `country`
+- `accessibilityChecklist`
+- `accessibilityNotes`
+- `accessibilityScore`
+- `accessibilityStatus`
+- `photoUrls`
+- `latitude`
+- `longitude`
+
+### Reviews
+
+- `id`
+- `placeId`
+- `userId`
+- `rating`
+- `headline`
+- `comment`
+- `accessibilityNotes`
+- `photoUrls`
+
+## Route Map
+
+### Public
+
+- `/` — landing page
+- `/explore` — searchable directory
+- `/victoria-bc` — city page
+- `/victoria-bc/[category]` — category page
+- `/victoria-bc/[category]/[placeSlug]` — place page
+- `/login`
+- `/signup`
+
+### Protected
+
+- `/dashboard`
+- `/add-place`
+- `/upload`
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js 20+
-- MongoDB (local or Atlas)
-- npm or yarn
+- npm
+- MongoDB (optional for full submission/auth flows)
 
-### Installation
+### 1) Install dependencies
 
-1. Clone the repository:
-```bash
-git clone <your-repo-url>
-cd AccessLens
-```
-
-2. Install dependencies:
 ```bash
 npm install
 ```
 
-3. Set up environment variables:
+### 2) Configure environment variables
+
+Copy the example file:
+
 ```bash
-cp .env.example .env.local
+cp .env.local.example .env.local
 ```
 
-Edit `.env.local` with your configuration:
-- `MONGODB_URI`: MongoDB connection string
-- `MONGODB_DB`: Database name
-- `SESSION_SECRET`: A secure random string (min 32 characters)
-- `SESSION_COOKIE_NAME`: Session cookie name (default: `accesslens_session`)
-- `RESEND_API_KEY`: Resend API key (optional for MVP)
-- `RESEND_FROM_EMAIL`: Email address for sending emails
-- `NEXT_PUBLIC_APP_URL`: Your app URL
+Recommended variables:
 
-4. Initialize database indexes:
+- `MONGODB_URI` — MongoDB connection string
+- `MONGODB_DB` — database name
+- `SESSION_SECRET` — secure random string, minimum 32 characters
+- `SESSION_COOKIE_NAME` — session cookie name
+- `NEXT_PUBLIC_APP_URL` — app base URL
+
+Optional:
+
+- `RESEND_API_KEY`
+- `RESEND_FROM_EMAIL`
+- `JWT_SECRET`
+
+### 3) Create indexes
+
+If you are using MongoDB, initialize indexes:
+
 ```bash
 npx tsx scripts/initIndexes.ts
 ```
 
-5. Run the development server:
+### 4) Run the app
+
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open `http://localhost:3000`.
+
+## Upload Workflow
+
+The MVP supports authenticated local evidence uploads:
+
+- contributors upload image files through `/add-place`, `/upload`, or the review form
+- files are stored under `public/uploads/evidence`
+- the app stores resulting URLs on places and reviews
+
+This is intentionally simple for local development and can later be swapped for S3 or MinIO.
+
+## Scripts
+
+```bash
+npm run dev
+npm run lint
+npm run build
+npm run start
+```
+
+## Build Verification
+
+The current repository has been verified with:
+
+```bash
+npm run lint
+npm run build
+```
 
 ## Project Structure
 
-```
+```text
 src/
-├── app/                    # Next.js App Router
-│   ├── (public)/           # Public routes
-│   ├── (protected)/       # Protected routes
-│   └── api/               # API routes
-├── components/            # React components
-│   ├── layout/            # Layout components
-│   ├── places/            # Place-related components
-│   ├── reviews/           # Review components
-│   └── ui/                # Reusable UI components
-├── lib/                   # Core libraries
-│   ├── auth/              # Authentication helpers
-│   ├── db/                # Database client
-│   └── validation/        # Validation schemas
-└── models/                # TypeScript interfaces
+├── app/
+│   ├── (protected)/
+│   ├── (public)/
+│   ├── [citySlug]/
+│   └── api/
+├── components/
+│   ├── layout/
+│   ├── places/
+│   ├── reviews/
+│   └── ui/
+├── lib/
+│   ├── accesslens/
+│   ├── auth/
+│   ├── db/
+│   └── validation/
+└── models/
 ```
 
-## Git Workflow
+## Next Implementation Steps
 
-This project uses a simple branching model:
-
-- `main`: Production branch (tagged releases only)
-- `develop`: Integration branch
-- `feature/*`: Feature branches
-
-### Workflow
-
-1. Create a feature branch from `develop`:
-```bash
-git checkout develop
-git pull
-git checkout -b feature/your-feature-name
-```
-
-2. Make changes and commit:
-```bash
-git add .
-git commit -m "feat: your feature description"
-```
-
-3. Push and create a PR:
-```bash
-git push -u origin feature/your-feature-name
-```
-
-4. Merge PR into `develop`, then periodically merge `develop` → `main` with tags.
-
-## Building for Production
-
-### Docker Build
-
-```bash
-docker build -t accesslens .
-docker run -p 3000:3000 --env-file .env.local accesslens
-```
-
-### Standalone Build
-
-```bash
-npm run build
-npm start
-```
-
-## Deployment with Coolify
-
-1. Connect your Git repository to Coolify
-2. Set build type to "Dockerfile"
-3. Configure all environment variables in Coolify UI
-4. Deploy from `main` branch
-
-## API Endpoints
-
-### Health Check
-- `GET /api/health` - Health check endpoint
-
-### Authentication
-- `POST /api/auth/signup` - Create new user
-- `POST /api/auth/login` - Login user
-- `POST /api/auth/logout` - Logout user
-
-### Places
-- `GET /api/places` - List places (with optional filters)
-- `POST /api/places` - Create new place (auth required)
-- `GET /api/places/[id]` - Get place details
-
-### Reviews
-- `POST /api/places/[id]/reviews` - Create review (auth required)
-
-## Features
-
-- ✅ User authentication (email/password)
-- ✅ Place creation and listing
-- ✅ Place detail pages
-- ✅ Review system
-- ✅ User dashboard
-- ✅ Accessibility filtering
-- ✅ Responsive design
-- ✅ Docker support
-
-## Future Enhancements
-
-- Rate limiting
-- File uploads (S3/Cloudinary)
-- Maps integration (Leaflet/Mapbox)
-- Email notifications
-- Search functionality
-- Advanced filtering
-- User profiles
-- Admin panel
+- replace local uploads with S3 or MinIO
+- add moderation workflows for reports, photos, and spam
+- introduce city expansion tooling for Vancouver and beyond
+- connect a real map provider (Mapbox or Google Maps)
+- add admin seeding tools for the first 100 Victoria places
 
 ## License
 
-MIT License - see LICENSE file for details
+MIT
 

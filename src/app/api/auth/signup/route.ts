@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
       email: validated.email,
       passwordHash,
       name: validated.name,
+      role: 'member',
       createdAt: new Date(),
       updatedAt: new Date(),
     };
