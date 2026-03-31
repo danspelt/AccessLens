@@ -34,6 +34,9 @@ export interface User {
   badges: UserBadge[];
   bio?: string;
   avatarUrl?: string;
+  theme?: 'system' | 'light' | 'dark';
+  accentColor?: string;
+  fontScale?: 'sm' | 'md' | 'lg';
   createdAt: Date;
   updatedAt: Date;
 }

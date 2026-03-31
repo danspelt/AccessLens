@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCollection } from '@/lib/db/mongoClient';
-import { getSession } from '@/lib/auth/session';
+import { auth } from '@/auth';
 import { reviewSchema } from '@/lib/validation/schemas';
 import { Review } from '@/models/Review';
 import { Place } from '@/models/Place';
 import { User } from '@/models/User';
 import { ObjectId } from 'mongodb';
+import { logActivity } from '@/lib/db/activity';
 
 export async function GET(
   _request: NextRequest,
@@ -55,8 +56,8 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getSession();
-  if (!session.userId) {
+  const session = await auth();
+  if (!session?.user?.id) {
     return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
   }
 
@@ -79,15 +80,25 @@ export async function POST(
 
     const review: Omit<Review, '_id'> = {
       placeId: new ObjectId(id),
-      userId: new ObjectId(session.userId),
+      userId: new ObjectId(session.user.id),
       rating: validated.rating,
       comment: validated.comment,
-      photoUrls: validated.photoUrls || [],
+      photoUrls: validated.photoUrls?.length ? validated.photoUrls : undefined,
+      videoUrls: validated.videoUrls?.length ? validated.videoUrls : undefined,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
     const result = await reviewsCollection.insertOne(review as Review);
+
+    await logActivity({
+      userId: session.user.id,
+      type: 'review_created',
+      entityType: 'review',
+      entityId: result.insertedId.toString(),
+      message: `Reviewed ${place.name}`,
+      metadata: { placeId: id, placeName: place.name, rating: review.rating },
+    });
 
     return NextResponse.json(
       { review: { id: result.insertedId.toString(), ...review } },

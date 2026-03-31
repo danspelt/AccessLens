@@ -1,17 +1,21 @@
 import { redirect } from 'next/navigation';
-import { getCurrentUser } from '@/lib/auth/getCurrentUser';
+import { auth } from '@/auth';
+import { DashboardShell } from '@/components/dashboard/DashboardShell';
 
 export default async function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getCurrentUser();
+  const session = await auth();
 
-  if (!user) {
+  if (!session?.user) {
     redirect('/login');
   }
 
-  return <>{children}</>;
+  return (
+    <DashboardShell userName={session.user.name || session.user.email || 'Account'}>
+      {children}
+    </DashboardShell>
+  );
 }
-

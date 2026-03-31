@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { signOut } from 'next-auth/react';
 import { MapPin, Menu, X, Plus, LogOut, LogIn, UserPlus, LayoutDashboard } from 'lucide-react';
 import { clsx } from 'clsx';
 
@@ -23,6 +24,26 @@ export function NavbarClient({ user }: NavbarClientProps) {
     setMobileOpen(false);
   }, [pathname]);
 
+  // The dashboard area has its own shell + sidebar navigation.
+  // Hide the global navbar on those routes.
+  const hideOnDashboardRoutes =
+    pathname === '/dashboard' ||
+    pathname.startsWith('/dashboard/') ||
+    pathname === '/favorites' ||
+    pathname.startsWith('/favorites/') ||
+    pathname === '/my-reviews' ||
+    pathname.startsWith('/my-reviews/') ||
+    pathname === '/activities' ||
+    pathname.startsWith('/activities/') ||
+    pathname === '/my-places' ||
+    pathname.startsWith('/my-places/') ||
+    pathname === '/settings' ||
+    pathname.startsWith('/settings/');
+
+  if (hideOnDashboardRoutes) {
+    return null;
+  }
+
   const navLinks = [
     { href: '/explore', label: 'Explore' },
     ...(user
@@ -37,8 +58,7 @@ export function NavbarClient({ user }: NavbarClientProps) {
     href === '/' ? pathname === '/' : pathname.startsWith(href);
 
   async function handleLogout() {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    window.location.href = '/';
+    await signOut({ callbackUrl: '/' });
   }
 
   return (

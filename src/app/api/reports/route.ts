@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCollection } from '@/lib/db/mongoClient';
-import { getSession } from '@/lib/auth/session';
+import { auth } from '@/auth';
 import { reportSchema } from '@/lib/validation/schemas';
 import { Report } from '@/models/Report';
 import { Place } from '@/models/Place';
 import { ObjectId } from 'mongodb';
 
 export async function POST(request: NextRequest) {
-  const session = await getSession();
-  if (!session.userId) {
+  const session = await auth();
+  if (!session?.user?.id) {
     return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
   }
 
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 
     const report: Omit<Report, '_id'> = {
       placeId: new ObjectId(validated.placeId),
-      userId: new ObjectId(session.userId),
+      userId: new ObjectId(session.user.id),
       type: validated.type,
       description: validated.description,
       photoUrls: validated.photoUrls || [],

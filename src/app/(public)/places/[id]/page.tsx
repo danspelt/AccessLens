@@ -19,6 +19,7 @@ import { ChecklistItem } from '@/components/ui/ChecklistItem';
 import { PhotoGallery } from '@/components/photos/PhotoGallery';
 import { PlaceMap, NoMapPlaceholder } from '@/components/map/PlaceMap';
 import { Badge } from '@/components/ui/Badge';
+import { FavoriteButton } from '@/components/favorites/FavoriteButton';
 import {
   MapPin,
   Globe,
@@ -28,6 +29,7 @@ import {
   AlertTriangle,
   Flag,
 } from 'lucide-react';
+import { Favorite } from '@/models/Favorite';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -123,6 +125,14 @@ export default async function PlaceDetailPage({ params }: Props) {
 
   const { place, reviews, avgRating, reviewCount } = data;
   const currentUser = await getCurrentUser();
+  const favoritesCollection = await getCollection<Favorite>('favorites');
+  const isFavorited =
+    currentUser?._id && ObjectId.isValid(place._id)
+      ? !!(await favoritesCollection.findOne({
+          userId: currentUser._id,
+          placeId: new ObjectId(place._id),
+        }))
+      : false;
 
   const score = place.accessibilityScore;
   const scoreColor = score !== undefined ? getScoreColor(score) : null;
@@ -176,6 +186,12 @@ export default async function PlaceDetailPage({ params }: Props) {
                 <MapPin className="h-4 w-4 shrink-0 text-slate-400" aria-hidden="true" />
                 {place.address}
               </p>
+
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                {currentUser && (
+                  <FavoriteButton placeId={place._id} initialFavorited={isFavorited} />
+                )}
+              </div>
 
               <div className="mt-4 flex flex-wrap gap-3">
                 {/* Accessibility score */}

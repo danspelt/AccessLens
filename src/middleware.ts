@@ -1,13 +1,11 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import NextAuth from 'next-auth';
+import { authConfig } from './auth.config';
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  const sessionCookie = request.cookies.get(
-    process.env.SESSION_COOKIE_NAME || 'accesslens_session'
-  );
+const { auth } = NextAuth(authConfig);
 
-  // Routes that don't require authentication
+export default auth((req) => {
+  const { pathname } = req.nextUrl;
+
   const isPublicRoute =
     pathname === '/' ||
     pathname.startsWith('/login') ||
@@ -21,17 +19,14 @@ export function middleware(request: NextRequest) {
     pathname.startsWith('/api/reports') ||
     pathname.startsWith('/uploads');
 
-  if (isPublicRoute) return NextResponse.next();
+  if (isPublicRoute) return;
 
-  // Protected routes require a session
-  if (!sessionCookie) {
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('redirectTo', pathname);
-    return NextResponse.redirect(loginUrl);
+  if (!req.auth) {
+    const loginUrl = new URL('/login', req.url);
+    loginUrl.searchParams.set('callbackUrl', pathname);
+    return Response.redirect(loginUrl);
   }
-
-  return NextResponse.next();
-}
+});
 
 export const config = {
   matcher: [

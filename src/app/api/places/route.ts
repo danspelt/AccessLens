@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCollection } from '@/lib/db/mongoClient';
-import { getSession } from '@/lib/auth/session';
+import { auth } from '@/auth';
 import { placeSchema } from '@/lib/validation/schemas';
 import { Place, calculateAccessibilityScore } from '@/models/Place';
 import { ObjectId } from 'mongodb';
 import slugify from 'slugify';
+import { logActivity } from '@/lib/db/activity';
 
 export async function GET(request: NextRequest) {
   try {
@@ -53,8 +54,8 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const session = await getSession();
-  if (!session.userId) {
+  const session = await auth();
+  if (!session?.user?.id) {
     return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
   }
 
@@ -85,13 +86,22 @@ export async function POST(request: NextRequest) {
       photoUrls: [],
       latitude: validated.latitude,
       longitude: validated.longitude,
-      createdByUserId: new ObjectId(session.userId),
+      createdByUserId: new ObjectId(session.user.id),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
     const placesCollection = await getCollection<Place>('places');
     const result = await placesCollection.insertOne(place as Place);
+
+    await logActivity({
+      userId: session.user.id,
+      type: 'place_created',
+      entityType: 'place',
+      entityId: result.insertedId.toString(),
+      message: `Added ${place.name}`,
+      metadata: { placeId: result.insertedId.toString(), placeName: place.name },
+    });
 
     return NextResponse.json(
       { place: { id: result.insertedId.toString(), ...place } },

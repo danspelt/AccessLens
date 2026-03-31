@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCollection } from '@/lib/db/mongoClient';
-import { getSession } from '@/lib/auth/session';
+import { auth } from '@/auth';
 import { placeSchema } from '@/lib/validation/schemas';
 import { Place, calculateAccessibilityScore } from '@/models/Place';
 import { Review } from '@/models/Review';
@@ -53,8 +53,8 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await getSession();
-  if (!session.userId) {
+  const session = await auth();
+  if (!session?.user?.id) {
     return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
   }
 

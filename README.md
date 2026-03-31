@@ -28,7 +28,7 @@ Libraries · Restaurants · Movie Theatres · Parks · Government Buildings · T
 | Frontend | Next.js 16, React 18, Tailwind CSS |
 | Backend | Next.js API Routes (App Router) |
 | Database | MongoDB (native driver) |
-| Auth | iron-session + bcryptjs |
+| Auth | Auth.js (NextAuth v5) — Google, email magic link, credentials |
 | Maps | Leaflet + OpenStreetMap |
 | Uploads | Local filesystem (`/public/uploads`) → swap for S3/MinIO |
 | Validation | Zod |
@@ -50,8 +50,16 @@ npm install
 
 ```bash
 cp .env.local.example .env.local
-# Edit .env.local with your MongoDB URI and session secret
+# Edit .env.local — see below for required values
 ```
+
+Required variables:
+- `MONGODB_URI` / `MONGODB_DB` — your MongoDB connection
+- `AUTH_SECRET` — generate with `openssl rand -base64 32`
+
+Optional (enable extra sign-in methods):
+- `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — [Google Cloud Console](https://console.cloud.google.com/apis/credentials) OAuth 2.0 credentials (Authorized redirect URI: `http://localhost:3000/api/auth/callback/google`)
+- `RESEND_API_KEY` / `RESEND_FROM_EMAIL` — enables "Email me a sign-in link" magic-link flow
 
 ### 4. Initialize database indexes
 
@@ -98,9 +106,8 @@ Open [http://localhost:3000](http://localhost:3000).
 | POST | `/api/places/[id]/reviews` | Submit a review (auth required) |
 | POST | `/api/reports` | Submit an accessibility issue (auth required) |
 | POST | `/api/upload` | Upload photos (auth required) |
-| POST | `/api/auth/signup` | Create account |
-| POST | `/api/auth/login` | Sign in |
-| POST | `/api/auth/logout` | Sign out |
+| POST | `/api/auth/signup` | Create account (credentials) |
+| `*` | `/api/auth/[...nextauth]` | Auth.js sign-in / sign-out / callbacks |
 | GET | `/api/health` | Health check (DB ping) |
 
 ## Accessibility Score
@@ -136,4 +143,5 @@ Built in alignment with the **Accessible Canada Act** and the **BC Accessibility
 - [ ] Government compliance reporting dashboard
 - [ ] Native mobile app (iOS / Android)
 - [ ] S3/MinIO photo storage
-- [ ] OAuth (Google, Apple)
+- [x] OAuth (Google sign-in via Auth.js)
+- [ ] Apple sign-in

@@ -7,6 +7,7 @@ interface Review {
   comment: string;
   authorName: string;
   photoUrls?: string[];
+  videoUrls?: string[];
   createdAt: string;
 }
 
@@ -52,9 +53,9 @@ export function ReviewList({ reviews }: ReviewListProps) {
             </div>
           </div>
           <p className="mt-3 text-sm text-slate-700 leading-relaxed">{review.comment}</p>
-          {review.photoUrls && review.photoUrls.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-2" role="list" aria-label="Review photos">
-              {review.photoUrls.map((url, i) => (
+          {(review.photoUrls?.length || review.videoUrls?.length) ? (
+            <div className="mt-3 flex flex-wrap gap-2" role="list" aria-label="Review media">
+              {review.photoUrls?.map((url, i) => (
                 <div key={url} role="listitem" className="h-20 w-20 overflow-hidden rounded-lg border border-slate-200">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -64,8 +65,20 @@ export function ReviewList({ reviews }: ReviewListProps) {
                   />
                 </div>
               ))}
+              {review.videoUrls?.map((url, i) => (
+                <div key={url} role="listitem" className="h-36 w-48 max-w-full overflow-hidden rounded-lg border border-slate-200 bg-black">
+                  <video
+                    src={url}
+                    controls
+                    playsInline
+                    preload="metadata"
+                    className="h-full w-full object-contain"
+                    aria-label={`Video ${i + 1} from ${review.authorName}'s review`}
+                  />
+                </div>
+              ))}
             </div>
-          )}
+          ) : null}
         </li>
       ))}
     </ol>

@@ -30,6 +30,17 @@ async function initIndexes() {
     await reviews.createIndex({ userId: 1 });
     console.log('✓ reviews indexes');
 
+    // Favorites collection
+    const favorites = db.collection('favorites');
+    await favorites.createIndex({ userId: 1, placeId: 1 }, { unique: true });
+    await favorites.createIndex({ userId: 1, createdAt: -1 });
+    console.log('✓ favorites indexes');
+
+    // Activities collection
+    const activities = db.collection('activities');
+    await activities.createIndex({ userId: 1, createdAt: -1 });
+    console.log('✓ activities indexes');
+
     // Reports collection
     const reports = db.collection('reports');
     await reports.createIndex({ placeId: 1, status: 1 });

@@ -19,6 +19,7 @@ export function ReviewForm({ placeId }: ReviewFormProps) {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [photoUrls, setPhotoUrls] = useState<string[]>([]);
+  const [videoUrls, setVideoUrls] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -41,7 +42,12 @@ export function ReviewForm({ placeId }: ReviewFormProps) {
       const res = await fetch(`/api/places/${placeId}/reviews`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rating, comment, photoUrls }),
+        body: JSON.stringify({
+          rating,
+          comment,
+          ...(photoUrls.length ? { photoUrls } : {}),
+          ...(videoUrls.length ? { videoUrls } : {}),
+        }),
       });
 
       const data = await res.json();
@@ -54,6 +60,7 @@ export function ReviewForm({ placeId }: ReviewFormProps) {
       setRating(0);
       setComment('');
       setPhotoUrls([]);
+      setVideoUrls([]);
       router.refresh();
     } catch {
       setError('Failed to submit review. Please try again.');
@@ -116,16 +123,20 @@ export function ReviewForm({ placeId }: ReviewFormProps) {
       </div>
 
       <div>
-        <Label>Accessibility photos (optional)</Label>
+        <Label>Photos &amp; video (optional)</Label>
         <div className="mt-1.5">
           <PhotoUpload
-            onUpload={setPhotoUrls}
+            variant="media"
+            onUpload={({ photoUrls: p, videoUrls: v }) => {
+              setPhotoUrls(p);
+              setVideoUrls(v);
+            }}
             context="reviews"
             maxFiles={3}
           />
         </div>
         <p className="mt-1 text-xs text-slate-500">
-          Photos of entrances, ramps, washrooms, and barriers are most helpful.
+          Images or short clips of entrances, ramps, washrooms, and barriers are most helpful.
         </p>
       </div>
 

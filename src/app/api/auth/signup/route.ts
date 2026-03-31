@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCollection } from '@/lib/db/mongoClient';
 import { hashPassword } from '@/lib/auth/authHelpers';
-import { createSession } from '@/lib/auth/session';
 import { signupSchema } from '@/lib/validation/schemas';
 import { User } from '@/models/User';
 
@@ -30,7 +29,6 @@ export async function POST(request: NextRequest) {
     };
 
     const result = await usersCollection.insertOne(user as User);
-    await createSession(result.insertedId.toString(), user.email);
 
     return NextResponse.json(
       { user: { id: result.insertedId.toString(), email: user.email, name: user.name } },
