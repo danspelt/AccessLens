@@ -18,6 +18,15 @@ export default async function SettingsPage() {
     theme: fresh?.theme || 'system',
     accentColor: fresh?.accentColor || '#0284c7',
     fontScale: fresh?.fontScale || 'md',
+    highContrast: fresh?.highContrast ?? false,
+    reduceMotion: fresh?.reduceMotion ?? false,
+    dyslexiaFont: fresh?.dyslexiaFont ?? false,
+    contentDensity: fresh?.contentDensity ?? 'comfortable',
+    lineHeight: fresh?.lineHeight ?? 'normal',
+    units: fresh?.units ?? 'metric',
+    mapAutoLoad: fresh?.mapAutoLoad ?? true,
+    profileVisibility: fresh?.profileVisibility ?? 'public',
+    emailNotifications: fresh?.emailNotifications ?? false,
   };
 
   return <SettingsClient initial={prefs} />;

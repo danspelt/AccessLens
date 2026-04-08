@@ -89,6 +89,8 @@ export interface Place {
   // Location
   latitude?: number;
   longitude?: number;
+  /** GeoJSON point for geospatial queries: [lng, lat] */
+  location?: { type: 'Point'; coordinates: [number, number] };
   // Metadata
   createdByUserId: ObjectId;
   verifiedAt?: Date;

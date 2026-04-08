@@ -20,8 +20,8 @@ async function initIndexes() {
     await places.createIndex({ createdByUserId: 1 });
     await places.createIndex({ accessibilityScore: -1 });
     await places.createIndex({ name: 'text', address: 'text', description: 'text' });
-    // Geospatial index (for future location-based queries)
-    // await places.createIndex({ location: '2dsphere' });
+    // Geospatial index (location: GeoJSON Point)
+    await places.createIndex({ location: '2dsphere' });
     console.log('✓ places indexes');
 
     // Reviews collection
@@ -40,6 +40,12 @@ async function initIndexes() {
     const activities = db.collection('activities');
     await activities.createIndex({ userId: 1, createdAt: -1 });
     console.log('✓ activities indexes');
+
+    // Geocode cache collection (TTL)
+    const geocodeCache = db.collection('geocode_cache');
+    await geocodeCache.createIndex({ q: 1 }, { unique: true });
+    await geocodeCache.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+    console.log('✓ geocode_cache indexes (unique + TTL)');
 
     // Reports collection
     const reports = db.collection('reports');

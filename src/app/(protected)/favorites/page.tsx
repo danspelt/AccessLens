@@ -6,6 +6,7 @@ import { getCollection } from '@/lib/db/mongoClient';
 import { Favorite } from '@/models/Favorite';
 import { Place } from '@/models/Place';
 import { ObjectId } from 'mongodb';
+import { PlaceCard } from '@/components/places/PlaceCard';
 
 export const metadata: Metadata = { title: 'Favorites' };
 
@@ -27,7 +28,16 @@ export default async function FavoritesPage() {
     placeIds.length > 0
       ? await placesCollection
           .find({ _id: { $in: placeIds } })
-          .project({ _id: 1, name: 1, address: 1, city: 1, province: 1, accessibilityScore: 1 })
+          .project({
+            _id: 1,
+            name: 1,
+            category: 1,
+            address: 1,
+            city: 1,
+            province: 1,
+            accessibilityScore: 1,
+            photoUrls: 1,
+          })
           .toArray()
       : [];
 
@@ -43,10 +53,12 @@ export default async function FavoritesPage() {
         place: {
           id: place._id.toString(),
           name: (place as unknown as Place).name,
+          category: (place as unknown as Place).category,
           address: (place as unknown as Place).address,
           city: (place as unknown as Place).city,
           province: (place as unknown as Place).province,
           accessibilityScore: (place as unknown as Place).accessibilityScore,
+          photoUrls: (place as unknown as Place).photoUrls,
         },
       };
     })
@@ -69,30 +81,25 @@ export default async function FavoritesPage() {
             .
           </div>
         ) : (
-          <ol className="space-y-2" aria-label="Your favorite places">
+          <div
+            className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            aria-label="Your favorite places"
+          >
             {favorites.map((f) => (
-              <li key={f!.id}>
-                <Link
-                  href={`/places/${f!.placeId}`}
-                  className="group flex items-center justify-between gap-4 rounded-xl border border-slate-200 p-4 hover:bg-slate-50 transition-colors"
-                >
-                  <div className="min-w-0">
-                    <p className="font-semibold text-slate-900 group-hover:text-primary-700 truncate">
-                      {f!.place.name}
-                    </p>
-                    <p className="mt-0.5 text-xs text-slate-500 truncate">
-                      {f!.place.address} · {f!.place.city}, {f!.place.province}
-                    </p>
-                  </div>
-                  {f!.place.accessibilityScore !== undefined && (
-                    <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-bold text-slate-800">
-                      {f!.place.accessibilityScore}
-                    </span>
-                  )}
-                </Link>
-              </li>
+              <PlaceCard
+                key={f!.id}
+                place={{
+                  _id: f!.placeId,
+                  name: f!.place.name,
+                  category: f!.place.category,
+                  address: f!.place.address,
+                  city: f!.place.city,
+                  accessibilityScore: f!.place.accessibilityScore,
+                  photoUrls: f!.place.photoUrls,
+                }}
+              />
             ))}
-          </ol>
+          </div>
         )}
       </div>
     </div>

@@ -37,6 +37,15 @@ export interface User {
   theme?: 'system' | 'light' | 'dark';
   accentColor?: string;
   fontScale?: 'sm' | 'md' | 'lg';
+  highContrast?: boolean;
+  reduceMotion?: boolean;
+  dyslexiaFont?: boolean;
+  contentDensity?: 'comfortable' | 'compact';
+  lineHeight?: 'compact' | 'normal' | 'comfortable';
+  units?: 'metric' | 'imperial';
+  mapAutoLoad?: boolean;
+  profileVisibility?: 'public' | 'private';
+  emailNotifications?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

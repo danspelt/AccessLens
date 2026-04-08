@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
@@ -104,8 +104,9 @@ function ChecklistToggle({
   );
 }
 
-export default function AddPlacePage() {
+function AddPlaceForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [name, setName] = useState('');
   const [category, setCategory] = useState('');
@@ -117,6 +118,8 @@ export default function AddPlacePage() {
   const [phone, setPhone] = useState('');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
+  const [geocoding, setGeocoding] = useState(false);
+  const [geocodeHint, setGeocodeHint] = useState<string | null>(null);
   const [accessibilityNotes, setAccessibilityNotes] = useState('');
   const [photoUrls, setPhotoUrls] = useState<string[]>([]);
 
@@ -131,6 +134,19 @@ export default function AddPlacePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const latRaw = searchParams.get('lat');
+    const lngRaw = searchParams.get('lng');
+    if (latRaw === null || lngRaw === null || latRaw === '' || lngRaw === '') return;
+    const plat = Number(latRaw);
+    const plng = Number(lngRaw);
+    if (!Number.isFinite(plat) || !Number.isFinite(plng)) return;
+    if (plat < -90 || plat > 90 || plng < -180 || plng > 180) return;
+    setLatitude(String(plat));
+    setLongitude(String(plng));
+    setGeocodeHint('Coordinates loaded from the map.');
+  }, [searchParams]);
 
   function buildChecklistPayload() {
     const result: Record<string, boolean> = {};
@@ -206,6 +222,28 @@ export default function AddPlacePage() {
       setError('Failed to add place. Please try again.');
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function geocodeFromAddress() {
+    const q = [address, city, province, 'Canada'].filter(Boolean).join(', ').trim();
+    if (q.length < 3) return;
+    setGeocoding(true);
+    setGeocodeHint(null);
+    try {
+      const res = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      if (!res.ok) {
+        setGeocodeHint(data?.error || 'Could not find coordinates for this address.');
+        return;
+      }
+      setLatitude(String(data.lat));
+      setLongitude(String(data.lon));
+      if (data.displayName) setGeocodeHint(`Found: ${data.displayName}`);
+    } catch {
+      setGeocodeHint('Could not geocode right now. Please try again.');
+    } finally {
+      setGeocoding(false);
     }
   }
 
@@ -356,9 +394,21 @@ export default function AddPlacePage() {
                   <span className="text-sm font-normal text-slate-500">(optional)</span>
                 </h2>
                 <p className="mt-1 text-xs text-slate-500">
-                  Add coordinates to show this place on the map. Find them by right-clicking on Google Maps.
+                  Add coordinates to show this place on the map. You can auto-fill from the address below.
                 </p>
               </div>
+            </div>
+            <div className="mb-4 flex flex-wrap items-center gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={geocodeFromAddress}
+                disabled={geocoding || !address.trim()}
+              >
+                {geocoding ? 'Finding…' : 'Find coordinates from address'}
+              </Button>
+              {geocodeHint && <p className="text-xs text-slate-500">{geocodeHint}</p>}
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
@@ -458,5 +508,17 @@ export default function AddPlacePage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function AddPlacePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-slate-50" aria-busy="true" aria-label="Loading add place form" />
+      }
+    >
+      <AddPlaceForm />
+    </Suspense>
   );
 }

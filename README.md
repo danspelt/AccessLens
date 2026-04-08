@@ -33,6 +33,18 @@ Libraries · Restaurants · Movie Theatres · Parks · Government Buildings · T
 | Uploads | Local filesystem (`/public/uploads`) → swap for S3/MinIO |
 | Validation | Zod |
 
+## Geocoding (address → coordinates)
+
+AccessLens uses **Nominatim (OpenStreetMap)** via the server route `GET /api/geocode`.  
+To be a good citizen and avoid throttling, we:
+
+- **Cache results in MongoDB** (`geocode_cache`) with a TTL index
+- Apply a **best-effort per-IP rate limit** (and caching avoids most calls)
+- Send a valid **User-Agent** (configure via `NOMINATIM_USER_AGENT`)
+
+Optional env var:
+- `NOMINATIM_USER_AGENT` — e.g. `AccessLens (contact: you@example.com)`
+
 ## Getting Started
 
 ### 1. Prerequisites

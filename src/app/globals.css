@@ -6,8 +6,10 @@
   --background: #ffffff;
   --foreground: #0f172a;
   --font-inter: 'Inter', system-ui, sans-serif;
+  --font-dyslexia: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
   --accent: #0284c7;
   --base-font-size: 16px;
+  --line-height: 1.5;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -36,8 +38,54 @@ body {
   background: var(--background);
   font-family: var(--font-inter);
   font-size: var(--base-font-size);
+  line-height: var(--line-height);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* High contrast */
+[data-high-contrast="true"] {
+  --background: #ffffff;
+  --foreground: #0b1220;
+}
+
+[data-theme="dark"][data-high-contrast="true"] {
+  --background: #000000;
+  --foreground: #ffffff;
+}
+
+[data-high-contrast="true"] .text-slate-500,
+[data-high-contrast="true"] .text-slate-600,
+[data-high-contrast="true"] .text-slate-700 {
+  color: var(--foreground) !important;
+  opacity: 0.9;
+}
+
+[data-high-contrast="true"] .border-slate-200,
+[data-high-contrast="true"] .border-slate-300 {
+  border-color: color-mix(in srgb, var(--foreground) 35%, transparent) !important;
+}
+
+/* Dyslexia-friendly font */
+[data-dyslexia-font="true"] body {
+  font-family: var(--font-dyslexia);
+}
+
+/* Reduce motion */
+[data-reduce-motion="true"] * {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 @layer utilities {
@@ -69,7 +117,7 @@ body {
 
 /* Focus visible styles */
 :focus-visible {
-  outline: 2px solid #0284c7;
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 

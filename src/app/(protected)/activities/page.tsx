@@ -9,13 +9,22 @@ import { formatDistanceToNow } from 'date-fns';
 
 export const metadata: Metadata = { title: 'My Activity' };
 
+const FEED_TYPES = [
+  'review_created',
+  'review_updated',
+  'review_deleted',
+  'place_created',
+  'place_updated',
+  'photo_uploaded',
+] as const;
+
 export default async function ActivitiesPage() {
   const user = await requireUser();
   if (!user?.id) redirect('/login');
 
   const activitiesCollection = await getCollection<Activity>('activities');
   const activities = await activitiesCollection
-    .find({ userId: new ObjectId(user.id) })
+    .find({ userId: new ObjectId(user.id), type: { $in: [...FEED_TYPES] } })
     .sort({ createdAt: -1 })
     .limit(100)
     .toArray();
@@ -30,7 +39,7 @@ export default async function ActivitiesPage() {
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
         {activities.length === 0 ? (
           <div className="text-sm text-slate-600">
-            No activity yet. Try adding a place, leaving a review, or saving a favorite from{' '}
+            No map or review activity yet. Try adding a place, uploading photos, or leaving a review from{' '}
             <Link href="/explore" className="font-medium text-primary-600 hover:text-primary-700">
               Explore
             </Link>

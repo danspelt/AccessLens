@@ -86,6 +86,11 @@ export async function POST(request: NextRequest) {
       photoUrls: [],
       latitude: validated.latitude,
       longitude: validated.longitude,
+      location:
+        validated.location ||
+        (validated.latitude !== undefined && validated.longitude !== undefined
+          ? { type: 'Point', coordinates: [validated.longitude, validated.latitude] }
+          : undefined),
       createdByUserId: new ObjectId(session.user.id),
       createdAt: new Date(),
       updatedAt: new Date(),

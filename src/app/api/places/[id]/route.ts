@@ -68,11 +68,16 @@ export async function PATCH(
     const validated = placeSchema.partial().parse(body);
     const checklist = validated.checklist || {};
     const accessibilityScore = calculateAccessibilityScore(checklist);
+    const derivedLocation =
+      validated.location ||
+      (validated.latitude !== undefined && validated.longitude !== undefined
+        ? { type: 'Point' as const, coordinates: [validated.longitude, validated.latitude] as [number, number] }
+        : undefined);
 
     const placesCollection = await getCollection<Place>('places');
     const result = await placesCollection.updateOne(
       { _id: new ObjectId(id) },
-      { $set: { ...validated, accessibilityScore, updatedAt: new Date() } }
+      { $set: { ...validated, ...(derivedLocation ? { location: derivedLocation } : {}), accessibilityScore, updatedAt: new Date() } }
     );
 
     if (result.matchedCount === 0) {

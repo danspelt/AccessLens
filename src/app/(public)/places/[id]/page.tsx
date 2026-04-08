@@ -17,7 +17,8 @@ import { ReviewForm } from '@/components/reviews/ReviewForm';
 import { ReviewList } from '@/components/reviews/ReviewList';
 import { ChecklistItem } from '@/components/ui/ChecklistItem';
 import { PhotoGallery } from '@/components/photos/PhotoGallery';
-import { PlaceMap, NoMapPlaceholder } from '@/components/map/PlaceMap';
+import { NoMapPlaceholder } from '@/components/map/PlaceMap';
+import { PlaceMiniMap } from '@/components/map/PlaceMiniMap';
 import { Badge } from '@/components/ui/Badge';
 import { FavoriteButton } from '@/components/favorites/FavoriteButton';
 import {
@@ -322,13 +323,7 @@ export default async function PlaceDetailPage({ params }: Props) {
             <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-card">
               <h2 className="mb-3 text-sm font-semibold text-slate-900">Location</h2>
               {place.latitude && place.longitude ? (
-                <PlaceMap
-                  latitude={place.latitude}
-                  longitude={place.longitude}
-                  name={place.name}
-                  address={place.address}
-                  accessibilityScore={place.accessibilityScore}
-                />
+                <PlaceMiniMap lat={place.latitude} lng={place.longitude} name={place.name} address={place.address} />
               ) : (
                 <NoMapPlaceholder name={place.name} address={place.address} />
               )}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { MapPin } from 'lucide-react';
 
 interface PlaceMapProps {
@@ -9,10 +9,40 @@ interface PlaceMapProps {
   name: string;
   address: string;
   accessibilityScore?: number;
+  autoLoad?: boolean;
 }
 
-export function PlaceMap({ latitude, longitude, name, address, accessibilityScore }: PlaceMapProps) {
+type StoredPrefs = { mapAutoLoad?: boolean };
+
+function getStoredMapAutoLoad(): boolean | undefined {
+  try {
+    const raw = localStorage.getItem('accesslens:prefs');
+    if (!raw) return undefined;
+    const parsed = JSON.parse(raw) as StoredPrefs;
+    return typeof parsed.mapAutoLoad === 'boolean' ? parsed.mapAutoLoad : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export function PlaceMap({ latitude, longitude, name, address, accessibilityScore, autoLoad }: PlaceMapProps) {
+  const mapId = useMemo(
+    () => `place-map-${Math.abs(Math.floor(latitude * 1000000))}-${Math.abs(Math.floor(longitude * 1000000))}`,
+    [latitude, longitude]
+  );
+  const [enabled, setEnabled] = useState<boolean>(() => autoLoad ?? true);
+
   useEffect(() => {
+    if (autoLoad !== undefined) {
+      setEnabled(autoLoad);
+      return;
+    }
+    const stored = getStoredMapAutoLoad();
+    if (stored !== undefined) setEnabled(stored);
+  }, [autoLoad]);
+
+  useEffect(() => {
+    if (!enabled) return;
     // Dynamically load leaflet only on client
     let map: import('leaflet').Map | null = null;
 
@@ -26,7 +56,7 @@ export function PlaceMap({ latitude, longitude, name, address, accessibilityScor
         shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
       });
 
-      const container = document.getElementById('place-map');
+      const container = document.getElementById(mapId);
       if (!container) return;
 
       map = L.map(container, { zoomControl: true }).setView([latitude, longitude], 16);
@@ -69,11 +99,30 @@ export function PlaceMap({ latitude, longitude, name, address, accessibilityScor
         map = null;
       }
     };
-  }, [latitude, longitude, name, address, accessibilityScore]);
+  }, [enabled, latitude, longitude, name, address, accessibilityScore, mapId]);
+
+  if (!enabled) {
+    return (
+      <div className="flex h-64 w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center">
+        <MapPin className="h-8 w-8 text-slate-400" aria-hidden="true" />
+        <div>
+          <p className="text-sm font-semibold text-slate-700">Map is turned off</p>
+          <p className="mt-1 text-xs text-slate-500">Enable “Map auto-load” in Settings, or load it once.</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setEnabled(true)}
+          className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+        >
+          Load map
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div
-      id="place-map"
+      id={mapId}
       className="h-64 w-full rounded-xl overflow-hidden border border-slate-200"
       role="application"
       aria-label={`Map showing location of ${name} at ${address}`}
