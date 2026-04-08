@@ -19,6 +19,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # Allow Coolify-provided build args to be used during `next build`
 ARG MONGODB_URI
 ENV MONGODB_URI=$MONGODB_URI
+ARG MONGODB_DB
+ENV MONGODB_DB=$MONGODB_DB
 
 RUN npm run build
 
@@ -32,6 +34,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # Carry runtime env through as well (Coolify can also set it at runtime)
 ARG MONGODB_URI
 ENV MONGODB_URI=$MONGODB_URI
+ARG MONGODB_DB
+ENV MONGODB_DB=$MONGODB_DB
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
