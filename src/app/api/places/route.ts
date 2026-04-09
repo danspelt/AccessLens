@@ -21,8 +21,7 @@ export async function GET(request: NextRequest) {
 
     const placesCollection = await getCollection<Place>('places');
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const query: Record<string, any> = {};
+    const query: Record<string, unknown> = {};
 
     if (city) query.citySlug = city;
     if (category) query.category = category;

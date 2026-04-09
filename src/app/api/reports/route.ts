@@ -58,8 +58,7 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status');
 
     const reportsCollection = await getCollection<Report>('reports');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const query: Record<string, any> = {};
+    const query: Record<string, unknown> = {};
 
     if (placeId && ObjectId.isValid(placeId)) {
       query.placeId = new ObjectId(placeId);

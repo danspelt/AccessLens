@@ -79,6 +79,16 @@ Optional (enable extra sign-in methods):
 npx tsx scripts/initIndexes.ts
 ```
 
+This creates required indexes, including a **`location` 2dsphere** index used by **`GET /api/places/nearby`** and **`/qr/[locationSlug]`** (nearby listings).
+
+**Places missing GeoJSON `location`?** If older rows only have `latitude` / `longitude`, backfill without re-seeding:
+
+```bash
+npx tsx scripts/backfillPlaceLocations.ts
+```
+
+`scripts/seedVictoria.ts` now writes `location` on insert; run the backfill once if you seeded before that change.
+
 ### 5. Seed Victoria BC places (50 real locations)
 
 ```bash
@@ -102,6 +112,8 @@ Open [http://localhost:3000](http://localhost:3000).
 | `/places/[id]` | Place detail: checklist, score, photos, reviews, map |
 | `/cities/victoria-bc` | Victoria city page with category browsing |
 | `/cities/victoria-bc/[category]` | Category listing (e.g. libraries, parks) |
+| `/qr` | QR entry hub (pilot location anchors) |
+| `/qr/[locationSlug]` | Nearby places for a scanned QR anchor (e.g. `downtown-victoria`) |
 | `/add-place` | Add a new place (authenticated) |
 | `/places/[id]/report` | Report an accessibility issue |
 | `/dashboard` | User dashboard (authenticated) |
@@ -121,6 +133,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | POST | `/api/auth/signup` | Create account (credentials) |
 | `*` | `/api/auth/[...nextauth]` | Auth.js sign-in / sign-out / callbacks |
 | GET | `/api/health` | Health check (DB ping) |
+| GET | `/api/places/nearby` | Places near `lat` / `lon` (requires `location` + 2dsphere index) |
 
 ## Accessibility Score
 

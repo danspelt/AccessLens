@@ -61,8 +61,7 @@ async function getPlaces(searchParams: SearchParams) {
   const collection = await getCollection<Place>('places');
   const reviewsCollection = await getCollection<Review>('reviews');
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const query: Record<string, any> = {};
+  const query: Record<string, unknown> = {};
 
   if (searchParams.category) query.category = searchParams.category;
   if (searchParams.search) query.name = { $regex: searchParams.search, $options: 'i' };

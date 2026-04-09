@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { signOut } from 'next-auth/react';
-import { MapPin, Menu, X, Plus, LogOut, LogIn, UserPlus, LayoutDashboard } from 'lucide-react';
+import { MapPin, Menu, X, Plus, LogOut, LogIn, UserPlus } from 'lucide-react';
 import { clsx } from 'clsx';
 
 interface NavUser {
@@ -16,13 +16,90 @@ interface NavbarClientProps {
   user: NavUser | null;
 }
 
-export function NavbarClient({ user }: NavbarClientProps) {
-  const pathname = usePathname();
+function NavbarMobile({
+  user,
+  navLinks,
+  isActive,
+  onLogout,
+}: {
+  user: NavUser | null;
+  navLinks: { href: string; label: string }[];
+  isActive: (href: string) => boolean;
+  onLogout: () => Promise<void>;
+}) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setMobileOpen(!mobileOpen)}
+        className="inline-flex items-center justify-center rounded-md p-2 text-slate-600 hover:bg-slate-100 md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+        aria-expanded={mobileOpen}
+        aria-controls="mobile-menu"
+        aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+      >
+        {mobileOpen ? (
+          <X className="h-6 w-6" aria-hidden="true" />
+        ) : (
+          <Menu className="h-6 w-6" aria-hidden="true" />
+        )}
+      </button>
+      {mobileOpen && (
+        <div
+          id="mobile-menu"
+          className="fixed inset-x-0 top-16 z-30 max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-slate-200 bg-white shadow-lg md:hidden"
+          role="navigation"
+          aria-label="Mobile navigation"
+        >
+          <div className="space-y-1 px-4 py-3">
+            {navLinks.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className={clsx(
+                  'block rounded-md px-3 py-2 text-base font-medium transition-colors',
+                  isActive(href)
+                    ? 'bg-primary-50 text-primary-700'
+                    : 'text-slate-600 hover:bg-slate-100'
+                )}
+                aria-current={isActive(href) ? 'page' : undefined}
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
+          <div className="border-t border-slate-200 px-4 py-3">
+            {user ? (
+              <div className="space-y-2">
+                <p className="text-sm text-slate-500">Signed in as {user.name}</p>
+                <button
+                  onClick={onLogout}
+                  className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-base font-medium text-slate-700 hover:bg-slate-100"
+                >
+                  <LogOut className="h-4 w-4" aria-hidden="true" />
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <div className="flex gap-3">
+                <Link href="/login" className="flex-1 rounded-lg border border-slate-300 px-4 py-2 text-center text-sm font-medium text-slate-700 hover:bg-slate-50">
+                  Login
+                </Link>
+                <Link href="/signup" className="flex-1 rounded-lg bg-primary-600 px-4 py-2 text-center text-sm font-medium text-white hover:bg-primary-700">
+                  Sign Up
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+export function NavbarClient({ user }: NavbarClientProps) {
+  const pathname = usePathname();
 
   // The dashboard area has its own shell + sidebar navigation.
   // Hide the global navbar on those routes.
@@ -142,73 +219,15 @@ export function NavbarClient({ user }: NavbarClientProps) {
             )}
           </div>
 
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="inline-flex items-center justify-center rounded-md p-2 text-slate-600 hover:bg-slate-100 md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-            aria-expanded={mobileOpen}
-            aria-controls="mobile-menu"
-            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-          >
-            {mobileOpen ? (
-              <X className="h-6 w-6" aria-hidden="true" />
-            ) : (
-              <Menu className="h-6 w-6" aria-hidden="true" />
-            )}
-          </button>
+          <NavbarMobile
+            key={pathname}
+            user={user}
+            navLinks={navLinks}
+            isActive={isActive}
+            onLogout={handleLogout}
+          />
         </div>
       </div>
-
-      {/* Mobile menu */}
-      {mobileOpen && (
-        <div
-          id="mobile-menu"
-          className="border-t border-slate-200 bg-white md:hidden"
-          role="navigation"
-          aria-label="Mobile navigation"
-        >
-          <div className="space-y-1 px-4 py-3">
-            {navLinks.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                className={clsx(
-                  'block rounded-md px-3 py-2 text-base font-medium transition-colors',
-                  isActive(href)
-                    ? 'bg-primary-50 text-primary-700'
-                    : 'text-slate-600 hover:bg-slate-100'
-                )}
-                aria-current={isActive(href) ? 'page' : undefined}
-              >
-                {label}
-              </Link>
-            ))}
-          </div>
-          <div className="border-t border-slate-200 px-4 py-3">
-            {user ? (
-              <div className="space-y-2">
-                <p className="text-sm text-slate-500">Signed in as {user.name}</p>
-                <button
-                  onClick={handleLogout}
-                  className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-base font-medium text-slate-700 hover:bg-slate-100"
-                >
-                  <LogOut className="h-4 w-4" aria-hidden="true" />
-                  Logout
-                </button>
-              </div>
-            ) : (
-              <div className="flex gap-3">
-                <Link href="/login" className="flex-1 rounded-lg border border-slate-300 px-4 py-2 text-center text-sm font-medium text-slate-700 hover:bg-slate-50">
-                  Login
-                </Link>
-                <Link href="/signup" className="flex-1 rounded-lg bg-primary-600 px-4 py-2 text-center text-sm font-medium text-white hover:bg-primary-700">
-                  Sign Up
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </nav>
   );
 }

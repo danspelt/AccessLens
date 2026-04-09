@@ -1,6 +1,9 @@
 /**
  * Initialize MongoDB indexes for AccessLens.
  * Run: npx tsx scripts/initIndexes.ts
+ *
+ * If places were created without GeoJSON `location`, run after indexes:
+ *   npx tsx scripts/backfillPlaceLocations.ts
  */
 import { getDb } from '../src/lib/db/mongoClient';
 

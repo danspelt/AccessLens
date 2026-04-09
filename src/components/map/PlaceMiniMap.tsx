@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import maplibregl, { Map as MlMap } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { MapPin } from 'lucide-react';
@@ -16,6 +16,20 @@ function getStoredMapAutoLoad(): boolean | undefined {
   } catch {
     return undefined;
   }
+}
+
+function subscribeMapPrefs(callback: () => void) {
+  if (typeof window === 'undefined') return () => {};
+  window.addEventListener('storage', callback);
+  return () => window.removeEventListener('storage', callback);
+}
+
+function getMapAutoLoadSnapshot(): boolean | undefined {
+  return getStoredMapAutoLoad();
+}
+
+function getMapAutoLoadServerSnapshot(): boolean | undefined {
+  return undefined;
 }
 
 export function PlaceMiniMap({
@@ -37,16 +51,23 @@ export function PlaceMiniMap({
   );
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MlMap | null>(null);
-  const [enabled, setEnabled] = useState<boolean>(() => autoLoad ?? true);
 
-  useEffect(() => {
-    if (autoLoad !== undefined) {
-      setEnabled(autoLoad);
-      return;
-    }
-    const stored = getStoredMapAutoLoad();
-    if (stored !== undefined) setEnabled(stored);
-  }, [autoLoad]);
+  const storedPref = useSyncExternalStore(
+    subscribeMapPrefs,
+    getMapAutoLoadSnapshot,
+    getMapAutoLoadServerSnapshot
+  );
+
+  const [userOverride, setUserOverride] = useState<boolean | null>(null);
+
+  const enabled =
+    userOverride !== null
+      ? userOverride
+      : autoLoad !== undefined
+        ? autoLoad
+        : storedPref !== undefined
+          ? storedPref
+          : true;
 
   useEffect(() => {
     if (!enabled) return;
@@ -108,7 +129,7 @@ export function PlaceMiniMap({
         </div>
         <button
           type="button"
-          onClick={() => setEnabled(true)}
+          onClick={() => setUserOverride(true)}
           className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
         >
           Load map

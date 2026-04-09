@@ -475,11 +475,13 @@ async function seed() {
     const db = client.db(MONGODB_DB);
     const placesCollection = db.collection('places');
 
-    // Create indexes
+    // Create indexes (align with scripts/initIndexes.ts for geo queries)
     await placesCollection.createIndex({ citySlug: 1, category: 1 });
     await placesCollection.createIndex({ slug: 1 });
     await placesCollection.createIndex({ name: 'text', address: 'text' });
-    console.log('✓ Indexes created');
+    await placesCollection.createIndex({ accessibilityScore: -1 });
+    await placesCollection.createIndex({ location: '2dsphere' });
+    console.log('✓ Indexes created (including location 2dsphere)');
 
     let inserted = 0;
     let skipped = 0;
@@ -516,6 +518,10 @@ async function seed() {
         photoUrls: [],
         latitude: p.latitude,
         longitude: p.longitude,
+        location: {
+          type: 'Point',
+          coordinates: [p.longitude, p.latitude],
+        },
         createdByUserId: SYSTEM_USER_ID,
         createdAt: new Date(),
         updatedAt: new Date(),
