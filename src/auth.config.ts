@@ -5,6 +5,15 @@ import type { NextAuthConfig } from 'next-auth';
  * Used by middleware and extended by the full auth.ts config.
  */
 export const authConfig = {
+  /**
+   * Required behind reverse proxies (Coolify, Traefik, nginx): the incoming Host
+   * (e.g. sslip.io preview URL) must be accepted or Auth.js throws UntrustedHost.
+   * Disable with AUTH_TRUST_HOST=false only if you set a fixed AUTH_URL and trust nothing else.
+   */
+  trustHost:
+    process.env.AUTH_TRUST_HOST === 'false' || process.env.AUTH_TRUST_HOST === '0'
+      ? false
+      : true,
   providers: [],
   pages: {
     signIn: '/login',

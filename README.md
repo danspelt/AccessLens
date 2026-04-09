@@ -156,6 +156,10 @@ docker run -p 3000:3000 --env-file .env.local accesslens
 
 Deploy to [Coolify](https://coolify.io), Railway, Fly.io, or any Docker host.
 
+### Coolify / reverse proxy (Auth.js)
+
+If logs show **`UntrustedHost`**, the app trusts the proxy **`Host`** by default so Coolify preview URLs (e.g. `*.sslip.io`) work. Set **`AUTH_URL`** in Coolify to your **public** base URL (`https://…`) so redirects and OAuth callbacks match what browsers use, and add `…/api/auth/callback/google` in Google OAuth **Authorized redirect URIs**. Set **`AUTH_TRUST_HOST=false`** only if you rely on a single fixed `AUTH_URL` and want to disallow other hosts.
+
 ## Legal
 
 Built in alignment with the **Accessible Canada Act** and the **BC Accessibility Act**. This platform helps communities track, document, and improve real-world accessibility.
