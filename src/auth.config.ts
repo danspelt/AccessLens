@@ -14,6 +14,8 @@ export const authConfig = {
     process.env.AUTH_TRUST_HOST === 'false' || process.env.AUTH_TRUST_HOST === '0'
       ? false
       : true,
+  /** Edge middleware + Node auth: use AUTH_SECRET (or legacy NEXTAUTH_SECRET). */
+  secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
   providers: [],
   pages: {
     signIn: '/login',

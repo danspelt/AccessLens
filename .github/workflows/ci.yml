@@ -31,4 +31,5 @@ jobs:
         env:
           MONGODB_URI: mongodb://127.0.0.1:27017/ci
           MONGODB_DB: accesslens_ci
+          # Same min length as production; Docker/Coolify must pass at image build for middleware
           AUTH_SECRET: abcdefghijklmnopqrstuvwxyz123456

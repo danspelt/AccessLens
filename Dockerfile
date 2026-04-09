@@ -17,10 +17,14 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Allow Coolify-provided build args to be used during `next build`
+# AUTH_SECRET is required here (not only at runtime): Auth.js middleware runs on the
+# Edge runtime and Next.js inlines env into that bundle at build time.
 ARG MONGODB_URI
 ENV MONGODB_URI=$MONGODB_URI
 ARG MONGODB_DB
 ENV MONGODB_DB=$MONGODB_DB
+ARG AUTH_SECRET
+ENV AUTH_SECRET=$AUTH_SECRET
 
 RUN npm run build
 

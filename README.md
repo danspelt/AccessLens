@@ -160,6 +160,8 @@ Deploy to [Coolify](https://coolify.io), Railway, Fly.io, or any Docker host.
 
 If logs show **`UntrustedHost`**, the app trusts the proxy **`Host`** by default so Coolify preview URLs (e.g. `*.sslip.io`) work. Set **`AUTH_URL`** in Coolify to your **public** base URL (`https://…`) so redirects and OAuth callbacks match what browsers use, and add `…/api/auth/callback/google` in Google OAuth **Authorized redirect URIs**. Set **`AUTH_TRUST_HOST=false`** only if you rely on a single fixed `AUTH_URL` and want to disallow other hosts.
 
+If logs show **`MissingSecret`**, define **`AUTH_SECRET`** (32+ random characters) in Coolify. With the included **`Dockerfile`**, that variable must be available **during the Docker image build** (middleware is compiled on the Edge runtime and reads the secret at build time). In Coolify, enable the option to pass the variable at **build time** as well as at runtime (e.g. “Available at Buildtime” / build arguments), or set the same `AUTH_SECRET` in both build and runtime environment sections.
+
 ## Legal
 
 Built in alignment with the **Accessible Canada Act** and the **BC Accessibility Act**. This platform helps communities track, document, and improve real-world accessibility.
