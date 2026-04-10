@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
-  if (!user) redirect('/login');
+  if (!user) redirect('/signin');
 
   const placesCollection = await getCollection<Place>('places');
   const reviewsCollection = await getCollection<Review>('reviews');

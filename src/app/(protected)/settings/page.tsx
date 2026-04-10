@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: 'Settings' };
 
 export default async function SettingsPage() {
   const user = await getCurrentUser();
-  if (!user) redirect('/login');
+  if (!user) redirect('/signin');
 
   const usersCollection = await getCollection<User>('users');
   const fresh = await usersCollection.findOne({ _id: user._id });

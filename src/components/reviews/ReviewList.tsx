@@ -30,7 +30,7 @@ export function ReviewList({ reviews }: ReviewListProps) {
       {reviews.map((review) => (
         <li
           key={review._id}
-          className="rounded-xl border border-slate-200 bg-white p-5 shadow-card"
+          className="rounded-xl panel-surface p-5"
         >
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">

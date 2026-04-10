@@ -204,7 +204,7 @@ export default function HomePage() {
             <Link
               key={slug}
               href={`/explore?category=${slug}`}
-              className="group flex flex-col items-center gap-3 rounded-2xl border border-slate-200/80 bg-white/90 p-6 shadow-card backdrop-blur-sm transition-all duration-300 motion-safe:hover:-translate-y-1 motion-safe:hover:border-primary-200 motion-safe:hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+              className="group flex flex-col items-center gap-3 rounded-2xl border border-slate-200/80 bg-gradient-to-b from-white/95 to-slate-50/85 p-6 shadow-card ring-1 ring-slate-900/[0.04] backdrop-blur-md transition-all duration-300 motion-safe:hover:-translate-y-1 motion-safe:hover:border-primary-200 motion-safe:hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
             >
               <div
                 className={`flex h-14 w-14 items-center justify-center rounded-2xl transition-transform duration-300 motion-safe:group-hover:scale-105 ${color}`}
@@ -238,7 +238,7 @@ export default function HomePage() {
             {features.map(({ icon: Icon, title, description, color }) => (
               <div
                 key={title}
-                className="rounded-2xl border border-slate-100 bg-white p-6 shadow-card transition-all duration-300 motion-safe:hover:-translate-y-0.5 motion-safe:hover:border-primary-100 motion-safe:hover:shadow-md"
+                className="rounded-2xl panel-surface p-6 transition-all duration-300 motion-safe:hover:-translate-y-0.5 motion-safe:hover:border-primary-200/80 motion-safe:hover:shadow-card-hover"
               >
                 <div className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl ${color}`}>
                   <Icon className="h-6 w-6" aria-hidden="true" />
@@ -263,7 +263,7 @@ export default function HomePage() {
           {values.map(({ icon: Icon, title, description, color }) => (
             <div
               key={title}
-              className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-8 shadow-sm"
+              className="relative overflow-hidden rounded-2xl panel-surface p-8"
             >
               <div className={`mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl ${color}`}>
                 <Icon className="h-6 w-6" aria-hidden="true" />
@@ -402,14 +402,14 @@ export default function HomePage() {
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link
                 href="/signup"
-                className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-8 py-4 text-base font-semibold text-white shadow-lg transition-colors hover:bg-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+                className="link-cta-primary gap-2 px-8 py-4 text-base"
               >
                 Create free account
                 <ArrowRight className="h-5 w-5" aria-hidden="true" />
               </Link>
               <Link
                 href="/explore"
-                className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-8 py-4 text-base font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2"
+                className="link-cta-outline gap-2 px-8 py-4 text-base"
               >
                 Browse without signing up
               </Link>
@@ -424,7 +424,7 @@ export default function HomePage() {
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
             <div className="lg:col-span-1">
               <div className="flex items-center gap-2">
-                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-600 text-white">
+                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-b from-primary-500 to-primary-700 text-white shadow-btn-primary ring-1 ring-white/20">
                   <MapPin className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <h3 className="text-lg font-bold text-slate-900">AccessLens</h3>
@@ -470,7 +470,7 @@ export default function HomePage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/login" className="transition-colors hover:text-primary-600">
+                  <Link href="/signin" className="transition-colors hover:text-primary-600">
                     Sign in
                   </Link>
                 </li>

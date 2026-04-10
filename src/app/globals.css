@@ -88,9 +88,38 @@ body {
   }
 }
 
+@layer components {
+  /**
+   * Raised panel: matches Card / PlaceCard — use on pages that repeat
+   * `border bg-white shadow-card` for consistent 3D surfaces sitewide.
+   */
+  .panel-surface {
+    @apply border border-slate-200/90 bg-gradient-to-b from-white via-white to-slate-50/95 shadow-card ring-1 ring-slate-900/[0.035];
+  }
+
+  /** CTA links styled outside `<Button />` */
+  .link-cta-primary {
+    @apply inline-flex items-center justify-center rounded-lg bg-gradient-to-b from-primary-500 to-primary-700 font-semibold text-white shadow-btn-primary ring-1 ring-white/15 transition-[transform,box-shadow,background-image] hover:from-primary-500 hover:to-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 active:translate-y-px;
+  }
+
+  .link-cta-outline {
+    @apply inline-flex items-center justify-center rounded-lg border border-slate-300/90 bg-gradient-to-b from-white to-slate-50 font-semibold text-slate-700 shadow-btn-outline transition-[transform,box-shadow,background-image] hover:to-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 active:translate-y-px;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /** Subtle page backdrop depth (dashboard / app shells) */
+  .bg-app-canvas {
+    background: linear-gradient(
+      180deg,
+      rgb(241 245 249) 0%,
+      rgb(248 250 252) 45%,
+      rgb(226 232 240) 100%
+    );
   }
 }
 

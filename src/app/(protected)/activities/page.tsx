@@ -20,7 +20,7 @@ const FEED_TYPES = [
 
 export default async function ActivitiesPage() {
   const user = await requireUser();
-  if (!user?.id) redirect('/login');
+  if (!user?.id) redirect('/signin');
 
   const activitiesCollection = await getCollection<Activity>('activities');
   const activities = await activitiesCollection
@@ -36,7 +36,7 @@ export default async function ActivitiesPage() {
         <p className="mt-1 text-sm text-slate-600">A timeline of what you’ve done in AccessLens.</p>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
+      <div className="rounded-2xl panel-surface p-6">
         {activities.length === 0 ? (
           <div className="text-sm text-slate-600">
             No map or review activity yet. Try adding a place, uploading photos, or leaving a review from{' '}

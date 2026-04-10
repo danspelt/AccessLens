@@ -1,4 +1,5 @@
 import NextAuth from 'next-auth';
+import { NextResponse } from 'next/server';
 import { authConfig } from './auth.config';
 
 const { auth } = NextAuth(authConfig);
@@ -6,9 +7,15 @@ const { auth } = NextAuth(authConfig);
 export default auth((req) => {
   const { pathname } = req.nextUrl;
 
+  if (pathname === '/login' || pathname.startsWith('/login/')) {
+    const url = req.nextUrl.clone();
+    url.pathname = '/signin';
+    return NextResponse.redirect(url, 308);
+  }
+
   const isPublicRoute =
     pathname === '/' ||
-    pathname.startsWith('/login') ||
+    pathname.startsWith('/signin') ||
     pathname.startsWith('/signup') ||
     pathname.startsWith('/explore') ||
     pathname.startsWith('/places') ||
@@ -22,9 +29,9 @@ export default auth((req) => {
   if (isPublicRoute) return;
 
   if (!req.auth) {
-    const loginUrl = new URL('/login', req.url);
-    loginUrl.searchParams.set('callbackUrl', pathname);
-    return Response.redirect(loginUrl);
+    const signInUrl = new URL('/signin', req.url);
+    signInUrl.searchParams.set('callbackUrl', pathname);
+    return Response.redirect(signInUrl);
   }
 });
 

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ObjectId } from 'mongodb';
 import { getCollection } from '@/lib/db/mongoClient';
 import { getCurrentUser } from '@/lib/auth/getCurrentUser';
+import { canSubmitCommunityFeedback } from '@/lib/auth/accountType';
 import {
   Place,
   PLACE_CATEGORIES,
@@ -126,6 +127,9 @@ export default async function PlaceDetailPage({ params }: Props) {
 
   const { place, reviews, avgRating, reviewCount } = data;
   const currentUser = await getCurrentUser();
+  const canReviewAndReport = currentUser
+    ? canSubmitCommunityFeedback(currentUser.accountType)
+    : false;
   const favoritesCollection = await getCollection<Favorite>('favorites');
   const isFavorited =
     currentUser?._id && ObjectId.isValid(place._id)
@@ -176,7 +180,7 @@ export default async function PlaceDetailPage({ params }: Props) {
           {/* Main column */}
           <div className="lg:col-span-2 space-y-6">
             {/* Header */}
-            <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
+            <div className="rounded-xl panel-surface p-6">
               <div className="mb-2 flex items-center gap-2">
                 <span className="text-2xl" role="img" aria-label={categoryLabel}>{categoryIcon}</span>
                 <Badge variant="info">{categoryLabel}</Badge>
@@ -258,7 +262,7 @@ export default async function PlaceDetailPage({ params }: Props) {
 
             {/* Photos */}
             {place.photoUrls && place.photoUrls.length > 0 && (
-              <section aria-labelledby="photos-heading" className="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
+              <section aria-labelledby="photos-heading" className="rounded-xl panel-surface p-6">
                 <h2 id="photos-heading" className="mb-4 text-lg font-semibold text-slate-900">
                   Accessibility Photos ({place.photoUrls.length})
                 </h2>
@@ -267,7 +271,7 @@ export default async function PlaceDetailPage({ params }: Props) {
             )}
 
             {/* Accessibility checklist */}
-            <section aria-labelledby="checklist-heading" className="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
+            <section aria-labelledby="checklist-heading" className="rounded-xl panel-surface p-6">
               <h2 id="checklist-heading" className="mb-4 text-lg font-semibold text-slate-900">
                 Accessibility Checklist
               </h2>
@@ -289,19 +293,33 @@ export default async function PlaceDetailPage({ params }: Props) {
             </section>
 
             {/* Reviews section */}
-            <section aria-labelledby="reviews-heading" className="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
+            <section aria-labelledby="reviews-heading" className="rounded-xl panel-surface p-6">
               <h2 id="reviews-heading" className="mb-6 text-lg font-semibold text-slate-900">
                 Community Reviews ({reviewCount})
               </h2>
 
-              {currentUser ? (
+              {currentUser && canReviewAndReport ? (
                 <div className="mb-8 rounded-xl bg-slate-50 border border-slate-200 p-5">
                   <ReviewForm placeId={place._id} />
+                </div>
+              ) : currentUser && !canReviewAndReport ? (
+                <div className="mb-6 rounded-xl border border-slate-200 bg-slate-100 p-4 text-center">
+                  <p className="text-sm text-slate-700">
+                    Business accounts can list places but cannot submit community reviews. Switch to a
+                    community reviewer account to share accessibility experiences, or{' '}
+                    <Link href="/add-place" className="font-semibold text-primary-600 underline hover:text-primary-700">
+                      add or update your listing
+                    </Link>
+                    .
+                  </p>
                 </div>
               ) : (
                 <div className="mb-6 rounded-xl border border-primary-200 bg-primary-50 p-4 text-center">
                   <p className="text-sm text-primary-700">
-                    <Link href={`/login?redirectTo=/places/${place._id}`} className="font-semibold underline hover:text-primary-800">
+                    <Link
+                      href={`/signin?callbackUrl=${encodeURIComponent(`/places/${place._id}`)}`}
+                      className="font-semibold underline hover:text-primary-800"
+                    >
                       Sign in
                     </Link>{' '}
                     or{' '}
@@ -320,7 +338,7 @@ export default async function PlaceDetailPage({ params }: Props) {
           {/* Sidebar */}
           <aside className="space-y-5" aria-label="Place information sidebar">
             {/* Map */}
-            <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-card">
+            <div className="rounded-xl panel-surface p-5">
               <h2 className="mb-3 text-sm font-semibold text-slate-900">Location</h2>
               {place.latitude && place.longitude ? (
                 <PlaceMiniMap lat={place.latitude} lng={place.longitude} name={place.name} address={place.address} />
@@ -331,7 +349,7 @@ export default async function PlaceDetailPage({ params }: Props) {
             </div>
 
             {/* Quick stats */}
-            <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-card">
+            <div className="rounded-xl panel-surface p-5">
               <h2 className="mb-3 text-sm font-semibold text-slate-900">Quick Summary</h2>
               <dl className="space-y-2">
                 {[
@@ -361,7 +379,7 @@ export default async function PlaceDetailPage({ params }: Props) {
             </div>
 
             {/* Report issue */}
-            {currentUser && (
+            {currentUser && canReviewAndReport && (
               <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-5">
                 <div className="flex items-start gap-2">
                   <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-yellow-600" aria-hidden="true" />

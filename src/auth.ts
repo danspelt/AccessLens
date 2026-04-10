@@ -7,6 +7,29 @@ import { authConfig } from './auth.config';
 import getClientPromise from '@/lib/db/mongoClient';
 import { getCollection } from '@/lib/db/mongoClient';
 import { verifyPassword } from '@/lib/auth/authHelpers';
+import { ObjectId } from 'mongodb';
+import type { AccountType, BusinessSubscriptionStatus, User } from '@/models/User';
+
+async function loadAccountFlagsForToken(
+  sub: string | undefined
+): Promise<{ accountType: AccountType; businessSubscriptionStatus: BusinessSubscriptionStatus }> {
+  if (!sub) {
+    return { accountType: 'reviewer', businessSubscriptionStatus: 'none' };
+  }
+  try {
+    const users = await getCollection<User>('users');
+    const u = await users.findOne({ _id: new ObjectId(sub) });
+    if (!u) {
+      return { accountType: 'reviewer', businessSubscriptionStatus: 'none' };
+    }
+    const accountType = u.accountType ?? 'reviewer';
+    const businessSubscriptionStatus =
+      u.businessSubscriptionStatus ?? (accountType === 'business' ? 'pending' : 'none');
+    return { accountType, businessSubscriptionStatus };
+  } catch {
+    return { accountType: 'reviewer', businessSubscriptionStatus: 'none' };
+  }
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -56,6 +79,30 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       from: process.env.RESEND_FROM_EMAIL || 'AccessLens <noreply@example.com>',
     }),
   ],
+  callbacks: {
+    ...authConfig.callbacks,
+    async jwt({ token, user, ...rest }) {
+      const base = await authConfig.callbacks.jwt({ token, user, ...rest });
+      if (user?.id) {
+        base.id = user.id;
+      }
+      const sub = base.sub ?? (user?.id as string | undefined);
+      const flags = await loadAccountFlagsForToken(sub);
+      base.accountType = flags.accountType;
+      base.businessSubscriptionStatus = flags.businessSubscriptionStatus;
+      return base;
+    },
+    async session({ session, token, ...rest }) {
+      const s = await authConfig.callbacks.session({ session, token, ...rest });
+      if (token?.id) {
+        s.user.id = token.id as string;
+      }
+      s.user.accountType = (token.accountType as AccountType) ?? 'reviewer';
+      s.user.businessSubscriptionStatus =
+        (token.businessSubscriptionStatus as BusinessSubscriptionStatus) ?? 'none';
+      return s;
+    },
+  },
   events: {
     async createUser({ user }) {
       if (!user.id) return;

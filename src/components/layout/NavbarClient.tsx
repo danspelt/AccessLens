@@ -48,7 +48,7 @@ function NavbarMobile({
       {mobileOpen && (
         <div
           id="mobile-menu"
-          className="fixed inset-x-0 top-16 z-30 max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-slate-200 bg-white shadow-lg md:hidden"
+          className="fixed inset-x-0 top-16 z-30 max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-slate-200/90 bg-gradient-to-b from-white to-slate-50/95 shadow-sheet md:hidden"
           role="navigation"
           aria-label="Mobile navigation"
         >
@@ -83,10 +83,16 @@ function NavbarMobile({
               </div>
             ) : (
               <div className="flex gap-3">
-                <Link href="/login" className="flex-1 rounded-lg border border-slate-300 px-4 py-2 text-center text-sm font-medium text-slate-700 hover:bg-slate-50">
-                  Login
+                <Link
+                  href="/signin"
+                  className="flex-1 rounded-lg border border-slate-300/90 bg-gradient-to-b from-white to-slate-50 px-4 py-2 text-center text-sm font-medium text-slate-700 shadow-btn-outline transition-[transform,box-shadow] hover:to-slate-100 active:translate-y-px"
+                >
+                  Sign in
                 </Link>
-                <Link href="/signup" className="flex-1 rounded-lg bg-primary-600 px-4 py-2 text-center text-sm font-medium text-white hover:bg-primary-700">
+                <Link
+                  href="/signup"
+                  className="flex-1 rounded-lg bg-gradient-to-b from-primary-500 to-primary-700 px-4 py-2 text-center text-sm font-medium text-white shadow-btn-primary ring-1 ring-white/15 transition-[transform,box-shadow] hover:from-primary-500 hover:to-primary-600 active:translate-y-px"
+                >
                   Sign Up
                 </Link>
               </div>
@@ -140,7 +146,7 @@ export function NavbarClient({ user }: NavbarClientProps) {
 
   return (
     <nav
-      className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-md"
+      className="sticky top-0 z-40 border-b border-slate-200/90 bg-gradient-to-b from-white via-slate-50/80 to-slate-100/90 shadow-nav-bar backdrop-blur-md backdrop-saturate-150"
       aria-label="Main navigation"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -148,14 +154,14 @@ export function NavbarClient({ user }: NavbarClientProps) {
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center gap-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+            className="flex items-center gap-2.5 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
             aria-label="AccessLens home"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600">
-              <MapPin className="h-4 w-4 text-white" aria-hidden="true" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-b from-primary-500 to-primary-700 shadow-btn-primary ring-1 ring-white/25 transition-transform active:translate-y-px">
+              <MapPin className="h-4 w-4 text-white drop-shadow-sm" aria-hidden="true" />
             </div>
-            <span className="text-xl font-bold text-slate-900">
-              Access<span className="text-primary-600">Lens</span>
+            <span className="text-xl font-bold tracking-tight text-slate-900 drop-shadow-[0_1px_0_rgba(255,255,255,0.8)]">
+              Access<span className="bg-gradient-to-b from-primary-500 to-primary-700 bg-clip-text text-transparent">Lens</span>
             </span>
           </Link>
 
@@ -167,10 +173,10 @@ export function NavbarClient({ user }: NavbarClientProps) {
                 href={href}
                 role="listitem"
                 className={clsx(
-                  'rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
+                  'rounded-lg px-3 py-2 text-sm font-medium transition-[color,background-color,box-shadow,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
                   isActive(href)
-                    ? 'bg-primary-50 text-primary-700'
-                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                    ? 'bg-gradient-to-b from-primary-50 to-primary-100/90 text-primary-800 shadow-nav-pill-active ring-1 ring-primary-200/60'
+                    : 'text-slate-600 shadow-sm shadow-transparent hover:bg-gradient-to-b hover:from-white hover:to-slate-100/90 hover:text-slate-900 hover:shadow-nav-pill-hover hover:ring-1 hover:ring-slate-200/80 active:translate-y-px'
                 )}
                 aria-current={isActive(href) ? 'page' : undefined}
               >
@@ -186,14 +192,15 @@ export function NavbarClient({ user }: NavbarClientProps) {
                 <span className="text-sm text-slate-600">{user.name}</span>
                 <Link
                   href="/add-place"
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-b from-primary-500 to-primary-700 px-4 py-2 text-sm font-medium text-white shadow-btn-primary ring-1 ring-white/15 transition-[transform,box-shadow,filter] hover:from-primary-500 hover:to-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 active:translate-y-px"
                 >
-                  <Plus className="h-4 w-4" aria-hidden="true" />
+                  <Plus className="h-4 w-4 drop-shadow-sm" aria-hidden="true" />
                   Add Place
                 </Link>
                 <button
+                  type="button"
                   onClick={handleLogout}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300/90 bg-gradient-to-b from-white to-slate-50 px-4 py-2 text-sm font-medium text-slate-700 shadow-btn-outline transition-[transform,box-shadow] hover:to-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 active:translate-y-px"
                 >
                   <LogOut className="h-4 w-4" aria-hidden="true" />
                   Logout
@@ -202,17 +209,17 @@ export function NavbarClient({ user }: NavbarClientProps) {
             ) : (
               <>
                 <Link
-                  href="/login"
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2"
+                  href="/signin"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300/90 bg-gradient-to-b from-white to-slate-50 px-4 py-2 text-sm font-medium text-slate-700 shadow-btn-outline transition-[transform,box-shadow] hover:to-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 active:translate-y-px"
                 >
                   <LogIn className="h-4 w-4" aria-hidden="true" />
-                  Login
+                  Sign in
                 </Link>
                 <Link
                   href="/signup"
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-b from-primary-500 to-primary-700 px-4 py-2 text-sm font-medium text-white shadow-btn-primary ring-1 ring-white/15 transition-[transform,box-shadow] hover:from-primary-500 hover:to-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 active:translate-y-px"
                 >
-                  <UserPlus className="h-4 w-4" aria-hidden="true" />
+                  <UserPlus className="h-4 w-4 drop-shadow-sm" aria-hidden="true" />
                   Sign Up
                 </Link>
               </>

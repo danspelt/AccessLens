@@ -1,6 +1,7 @@
 'use client';
 
 import { Suspense, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
@@ -33,7 +34,7 @@ function GoogleIcon({ className }: { className?: string }) {
   );
 }
 
-function LoginForm() {
+function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
@@ -124,7 +125,10 @@ function LoginForm() {
           Click the link in the email to sign in.
         </p>
         <button
-          onClick={() => { setMagicSent(false); setMagicLinkMode(false); }}
+          onClick={() => {
+            setMagicSent(false);
+            setMagicLinkMode(false);
+          }}
           className="mt-4 text-sm font-medium text-primary-600 hover:text-primary-700"
         >
           Back to sign in
@@ -137,7 +141,6 @@ function LoginForm() {
     <div className="space-y-6">
       {error && <Alert variant="error">{error}</Alert>}
 
-      {/* Google sign-in */}
       <Button
         type="button"
         variant="outline"
@@ -156,7 +159,7 @@ function LoginForm() {
           <div className="w-full border-t border-slate-200" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="bg-white px-3 text-slate-500">or continue with email</span>
+          <span className="bg-white/95 px-3 text-slate-500 backdrop-blur-sm">or continue with email</span>
         </div>
       </div>
 
@@ -166,7 +169,9 @@ function LoginForm() {
             We&apos;ll email you a link to sign in — no password needed.
           </p>
           <div>
-            <Label htmlFor="magic-email" required>Email address</Label>
+            <Label htmlFor="magic-email" required>
+              Email address
+            </Label>
             <Input
               id="magic-email"
               type="email"
@@ -193,7 +198,9 @@ function LoginForm() {
       ) : (
         <form onSubmit={handleCredentials} noValidate className="space-y-5" aria-label="Sign in form">
           <div>
-            <Label htmlFor="email" required>Email address</Label>
+            <Label htmlFor="email" required>
+              Email address
+            </Label>
             <Input
               id="email"
               type="email"
@@ -208,7 +215,9 @@ function LoginForm() {
 
           <div>
             <div className="flex items-center justify-between">
-              <Label htmlFor="password" required>Password</Label>
+              <Label htmlFor="password" required>
+                Password
+              </Label>
               <button
                 type="button"
                 onClick={() => setMagicLinkMode(true)}
@@ -262,20 +271,32 @@ function LoginForm() {
   );
 }
 
-export default function LoginPage() {
+export default function SignInPage() {
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-slate-50 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md">
+    <div className="relative flex min-h-[calc(100vh-4rem)] w-full items-center justify-center overflow-hidden px-4 py-12 sm:px-6 lg:px-8">
+      <Image
+        src="/images/signin-bg.png"
+        alt=""
+        fill
+        priority
+        className="object-cover object-center"
+        sizes="100vw"
+      />
+      <div
+        className="absolute inset-0 z-[1] bg-gradient-to-b from-primary-950/55 via-primary-950/65 to-primary-950/75"
+        aria-hidden
+      />
+      <div className="relative z-10 w-full max-w-md">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-600">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-b from-primary-500 to-primary-700 shadow-btn-primary ring-1 ring-white/25">
             <MapPin className="h-6 w-6 text-white" aria-hidden="true" />
           </div>
-          <h1 className="text-3xl font-bold text-slate-900">Welcome back</h1>
-          <p className="mt-2 text-slate-600">Sign in to your AccessLens account</p>
+          <h1 className="text-3xl font-bold text-white drop-shadow-sm">Welcome back</h1>
+          <p className="mt-2 text-slate-100 drop-shadow-sm">Sign in to your AccessLens account</p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-card">
+        <div className="rounded-2xl border border-white/30 bg-white/95 p-8 shadow-card ring-1 ring-white/50 backdrop-blur-md">
           <Suspense fallback={<div className="h-48 animate-pulse rounded-lg bg-slate-100" />}>
-            <LoginForm />
+            <SignInForm />
           </Suspense>
         </div>
       </div>

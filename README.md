@@ -33,6 +33,10 @@ Libraries · Restaurants · Movie Theatres · Parks · Government Buildings · T
 | Uploads | Local filesystem (`/public/uploads`) → swap for S3/MinIO |
 | Validation | Zod |
 
+## Authentication & account types
+
+At signup, users pick **community reviewer** (free) or **business**. Reviewers can submit **reviews** and **accessibility issue reports**; **business** accounts are meant to **add and manage places** and cannot submit that community feedback (enforced in API routes and the UI). Business accounts use a placeholder subscription flag: **`businessSubscriptionStatus: pending`** until billing (e.g. Stripe) is wired to set **`active`**.
+
 ## Geocoding (address → coordinates)
 
 AccessLens uses **Nominatim (OpenStreetMap)** via the server route `GET /api/geocode`.  
@@ -130,7 +134,8 @@ Open [http://localhost:3000](http://localhost:3000).
 | POST | `/api/places/[id]/reviews` | Submit a review (auth required) |
 | POST | `/api/reports` | Submit an accessibility issue (auth required) |
 | POST | `/api/upload` | Upload photos (auth required) |
-| POST | `/api/auth/signup` | Create account (credentials) |
+| POST | `/api/auth/signup` | Create account (credentials; includes `accountType`) |
+| POST | `/api/auth/complete-signup-intent` | After Google OAuth, set reviewer vs business from signup intent |
 | `*` | `/api/auth/[...nextauth]` | Auth.js sign-in / sign-out / callbacks |
 | GET | `/api/health` | Health check (DB ping) |
 | GET | `/api/places/nearby` | Places near `lat` / `lon` (requires `location` + 2dsphere index) |

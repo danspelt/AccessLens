@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCollection } from '@/lib/db/mongoClient';
 import { auth } from '@/auth';
+import { communityFeedbackGuard } from '@/lib/auth/accountType';
 import { reportSchema } from '@/lib/validation/schemas';
 import { Report } from '@/models/Report';
 import { Place } from '@/models/Place';
@@ -8,9 +9,12 @@ import { ObjectId } from 'mongodb';
 
 export async function POST(request: NextRequest) {
   const session = await auth();
+  const blocked = communityFeedbackGuard(session);
+  if (blocked) return blocked;
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
   }
+  const userId = session.user.id;
 
   try {
     const body = await request.json();
@@ -27,7 +31,7 @@ export async function POST(request: NextRequest) {
 
     const report: Omit<Report, '_id'> = {
       placeId: new ObjectId(validated.placeId),
-      userId: new ObjectId(session.user.id),
+      userId: new ObjectId(userId),
       type: validated.type,
       description: validated.description,
       photoUrls: validated.photoUrls || [],

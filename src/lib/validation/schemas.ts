@@ -1,9 +1,16 @@
 import { z } from 'zod';
 
+export const accountTypeSchema = z.enum(['reviewer', 'business']);
+
+export const completeSignupIntentSchema = z.object({
+  accountType: accountTypeSchema,
+});
+
 export const signupSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
   name: z.string().min(1, 'Name is required').max(100),
+  accountType: accountTypeSchema,
 });
 
 export const loginSchema = z.object({

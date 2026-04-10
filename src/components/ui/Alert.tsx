@@ -17,10 +17,12 @@ const icons: Record<AlertVariant, React.ComponentType<{ className?: string }>> =
 };
 
 const styles: Record<AlertVariant, string> = {
-  info: 'bg-blue-50 border-blue-200 text-blue-800',
-  success: 'bg-green-50 border-green-200 text-green-800',
-  warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
-  error: 'bg-red-50 border-red-200 text-red-800',
+  info: 'border-blue-200/90 bg-gradient-to-b from-blue-50 to-blue-100/60 text-blue-800 shadow-sm ring-1 ring-blue-900/[0.06]',
+  success:
+    'border-green-200/90 bg-gradient-to-b from-green-50 to-green-100/60 text-green-800 shadow-sm ring-1 ring-green-900/[0.06]',
+  warning:
+    'border-yellow-200/90 bg-gradient-to-b from-yellow-50 to-yellow-100/60 text-yellow-800 shadow-sm ring-1 ring-yellow-900/[0.06]',
+  error: 'border-red-200/90 bg-gradient-to-b from-red-50 to-red-100/60 text-red-800 shadow-sm ring-1 ring-red-900/[0.06]',
 };
 
 const iconStyles: Record<AlertVariant, string> = {
@@ -37,11 +39,7 @@ export const Alert = forwardRef<HTMLDivElement, AlertProps>(
       <div
         ref={ref}
         role="alert"
-        className={clsx(
-          'flex gap-3 rounded-lg border p-4',
-          styles[variant],
-          className
-        )}
+        className={clsx('flex gap-3 rounded-lg border p-4', styles[variant], className)}
         {...props}
       >
         <Icon className={clsx('mt-0.5 h-5 w-5 shrink-0', iconStyles[variant])} aria-hidden="true" />

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCollection } from '@/lib/db/mongoClient';
 import { auth } from '@/auth';
+import { communityFeedbackGuard } from '@/lib/auth/accountType';
 import { reviewSchema } from '@/lib/validation/schemas';
 import { Review } from '@/models/Review';
 import { Place } from '@/models/Place';
@@ -57,9 +58,12 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();
+  const blocked = communityFeedbackGuard(session);
+  if (blocked) return blocked;
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
   }
+  const userId = session.user.id;
 
   try {
     const { id } = await params;
@@ -80,7 +84,7 @@ export async function POST(
 
     const review: Omit<Review, '_id'> = {
       placeId: new ObjectId(id),
-      userId: new ObjectId(session.user.id),
+      userId: new ObjectId(userId),
       rating: validated.rating,
       comment: validated.comment,
       photoUrls: validated.photoUrls?.length ? validated.photoUrls : undefined,
@@ -92,7 +96,7 @@ export async function POST(
     const result = await reviewsCollection.insertOne(review as Review);
 
     await logActivity({
-      userId: session.user.id,
+      userId,
       type: 'review_created',
       entityType: 'review',
       entityId: result.insertedId.toString(),

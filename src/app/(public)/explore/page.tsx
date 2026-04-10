@@ -195,7 +195,7 @@ export default async function ExplorePage({
             className="shrink-0 lg:w-72"
             aria-label="Search filters"
           >
-            <div className="sticky top-20 rounded-xl border border-slate-200 bg-white p-5 shadow-card">
+            <div className="sticky top-20 rounded-xl panel-surface p-5">
               <h2 className="mb-4 text-sm font-semibold text-slate-900">Filter Places</h2>
               <div className="mb-4 border-b border-slate-100 pb-4">
                 <NearAddressSearch />
@@ -209,7 +209,7 @@ export default async function ExplorePage({
           {/* Main content */}
           <div className="flex-1 min-w-0 space-y-6">
             <section aria-label="Map of Victoria and accessible places">
-              <div className="relative min-h-[260px] h-[min(48vh,480px)] w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-100 shadow-sm">
+              <div className="relative min-h-[260px] h-[min(48vh,480px)] w-full overflow-hidden rounded-xl border border-slate-200/90 bg-gradient-to-b from-slate-100 to-slate-200/90 shadow-inset-well ring-1 ring-slate-900/[0.06]">
                 <AccessLensMapClient
                   places={mapPlaces}
                   className="h-full w-full"

@@ -12,7 +12,7 @@ export const metadata: Metadata = { title: 'Favorites' };
 
 export default async function FavoritesPage() {
   const user = await requireUser();
-  if (!user?.id) redirect('/login');
+  if (!user?.id) redirect('/signin');
 
   const favoritesCollection = await getCollection<Favorite>('favorites');
   const placesCollection = await getCollection<Place>('places');
@@ -71,7 +71,7 @@ export default async function FavoritesPage() {
         <p className="mt-1 text-sm text-slate-600">Saved places you want to revisit.</p>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
+      <div className="rounded-2xl panel-surface p-6">
         {favorites.length === 0 ? (
           <div className="text-sm text-slate-600">
             You haven’t saved any places yet.{' '}

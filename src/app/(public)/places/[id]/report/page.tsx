@@ -1,7 +1,6 @@
 'use client';
 
-import { use, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Flag, ArrowLeft, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -12,9 +11,15 @@ import { Alert } from '@/components/ui/Alert';
 import { PhotoUpload } from '@/components/photos/PhotoUpload';
 import { REPORT_TYPES } from '@/models/Report';
 
+type SessionShape = {
+  user?: { id?: string; accountType?: string };
+} | null;
+
 export default function ReportPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const router = useRouter();
+
+  const [session, setSession] = useState<SessionShape>(null);
+  const [sessionLoading, setSessionLoading] = useState(true);
 
   const [type, setType] = useState('');
   const [description, setDescription] = useState('');
@@ -22,6 +27,24 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/auth/session', { credentials: 'same-origin' })
+      .then((r) => r.json())
+      .then((data) => {
+        if (!cancelled) setSession(data);
+      })
+      .catch(() => {
+        if (!cancelled) setSession(null);
+      })
+      .finally(() => {
+        if (!cancelled) setSessionLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -62,10 +85,39 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
     }
   }
 
+  if (sessionLoading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+        <p className="text-sm text-slate-600">Loading…</p>
+      </div>
+    );
+  }
+
+  if (session?.user?.accountType === 'business') {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+        <div className="max-w-md w-full rounded-2xl panel-surface p-8 text-center">
+          <h1 className="text-lg font-semibold text-slate-900">Reports are for community accounts</h1>
+          <p className="mt-2 text-sm text-slate-600">
+            Business accounts help by listing places. Community reviewers can file accessibility issue
+            reports.
+          </p>
+          <Link
+            href={`/places/${id}`}
+            className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-700"
+          >
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            Back to place
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   if (success) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
-        <div className="max-w-md w-full rounded-2xl border border-slate-200 bg-white p-8 shadow-card text-center">
+        <div className="max-w-md w-full rounded-2xl panel-surface p-8 text-center">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-green-100">
             <AlertTriangle className="h-7 w-7 text-green-600" aria-hidden="true" />
           </div>
@@ -75,7 +127,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
           </p>
           <Link
             href={`/places/${id}`}
-            className="mt-6 inline-flex items-center gap-2 rounded-lg bg-primary-600 px-6 py-3 text-sm font-medium text-white hover:bg-primary-700"
+            className="link-cta-primary mt-6 gap-2 px-6 py-3 text-sm font-medium"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             Back to place
@@ -109,7 +161,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
       </div>
 
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
+        <div className="rounded-xl panel-surface p-6">
           <form onSubmit={handleSubmit} noValidate className="space-y-5" aria-label="Report accessibility issue">
             {error && <Alert variant="error">{error}</Alert>}
 

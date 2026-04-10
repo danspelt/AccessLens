@@ -16,10 +16,10 @@ export function ChecklistItem({ label, value, description }: ChecklistItemProps)
     <div className="flex items-start gap-3 py-2">
       <span
         className={clsx(
-          'mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full',
-          isTrue && 'bg-green-100 text-green-600',
-          isFalse && 'bg-red-100 text-red-600',
-          isUnknown && 'bg-slate-100 text-slate-400'
+          'mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full shadow-chip-icon ring-1 ring-white/50',
+          isTrue && 'bg-gradient-to-b from-green-100 to-green-200/90 text-green-700',
+          isFalse && 'bg-gradient-to-b from-red-100 to-red-200/90 text-red-700',
+          isUnknown && 'bg-gradient-to-b from-slate-100 to-slate-200/80 text-slate-500'
         )}
         aria-hidden="true"
       >

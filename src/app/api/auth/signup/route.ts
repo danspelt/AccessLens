@@ -18,11 +18,17 @@ export async function POST(request: NextRequest) {
 
     const passwordHash = await hashPassword(validated.password);
 
+    const accountType = validated.accountType;
+    const businessSubscriptionStatus =
+      accountType === 'business' ? 'pending' : 'none';
+
     const user: Omit<User, '_id'> = {
       email: validated.email.toLowerCase(),
       passwordHash,
       name: validated.name,
       role: 'user',
+      accountType,
+      businessSubscriptionStatus,
       badges: [],
       createdAt: new Date(),
       updatedAt: new Date(),

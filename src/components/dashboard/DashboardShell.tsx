@@ -9,7 +9,7 @@ export function DashboardShell({
   userName: string;
 }) {
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-slate-50">
+    <div className="min-h-[calc(100vh-4rem)] bg-app-canvas">
       <div className="w-full px-3 sm:px-6 lg:px-10 py-6">
         <div className="flex gap-6">
           <aside className="hidden lg:block w-80 shrink-0">

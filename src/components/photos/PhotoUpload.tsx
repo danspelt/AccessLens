@@ -346,7 +346,7 @@ export function PhotoUpload(props: PhotoUploadProps) {
                 type="button"
                 onClick={handleUpload}
                 disabled={uploading}
-                className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                className="link-cta-primary gap-2 px-4 py-2 text-sm font-medium disabled:opacity-50"
               >
                 {uploading ? 'Uploading…' : `Upload${pendingCount > 1 ? ' all' : ''} (${pendingCount})`}
               </button>
@@ -568,7 +568,7 @@ export function PhotoUpload(props: PhotoUploadProps) {
               type="button"
               onClick={handleUpload}
               disabled={uploading}
-              className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+              className="link-cta-primary gap-2 px-4 py-2 text-sm font-medium disabled:opacity-50"
             >
               {uploading ? 'Uploading…' : 'Upload Photos'}
             </button>

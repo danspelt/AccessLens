@@ -28,7 +28,7 @@ export function Sidebar({ userName }: { userName: string }) {
   const isActive = (href: string) => (href === '/dashboard' ? pathname === href : pathname.startsWith(href));
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white shadow-card p-5">
+    <div className="rounded-2xl border border-slate-200/90 bg-gradient-to-b from-white via-white to-slate-50/95 p-5 shadow-card ring-1 ring-slate-900/[0.035]">
       <div className="mb-5">
         <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Signed in as</p>
         <p className="mt-1.5 truncate text-base font-semibold text-slate-900">{userName}</p>
@@ -44,11 +44,11 @@ export function Sidebar({ userName }: { userName: string }) {
                 <Link
                   href={item.href}
                   className={clsx(
-                    'flex min-h-[3.25rem] items-center gap-4 rounded-2xl px-5 py-4 text-lg font-semibold leading-snug transition-colors',
+                    'flex min-h-[3.25rem] items-center gap-4 rounded-2xl px-5 py-4 text-lg font-semibold leading-snug transition-[color,background-color,box-shadow,transform]',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
                     active
-                      ? 'bg-primary-50 text-primary-700'
-                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                      ? 'bg-gradient-to-b from-primary-50 to-primary-100/90 text-primary-800 shadow-btn-outline ring-1 ring-primary-200/70'
+                      : 'text-slate-600 hover:bg-gradient-to-b hover:from-white hover:to-slate-100/90 hover:text-slate-900 hover:shadow-btn-secondary hover:ring-1 hover:ring-slate-200/80 active:translate-y-px'
                   )}
                   aria-current={active ? 'page' : undefined}
                 >
@@ -67,8 +67,8 @@ export function Sidebar({ userName }: { userName: string }) {
         type="button"
         onClick={() => signOut({ callbackUrl: '/' })}
         className={clsx(
-          'w-full flex min-h-[3.25rem] items-center gap-4 rounded-2xl px-5 py-4 text-lg font-semibold leading-snug transition-colors',
-          'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
+          'flex min-h-[3.25rem] w-full items-center gap-4 rounded-2xl px-5 py-4 text-lg font-semibold leading-snug transition-[color,background-color,box-shadow,transform]',
+          'text-slate-600 hover:bg-gradient-to-b hover:from-white hover:to-slate-100/90 hover:text-slate-900 hover:shadow-btn-outline hover:ring-1 hover:ring-slate-200/70 active:translate-y-px',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500'
         )}
       >

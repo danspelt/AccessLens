@@ -2,6 +2,11 @@ import { ObjectId } from 'mongodb';
 
 export type UserRole = 'user' | 'admin' | 'moderator';
 
+/** Community reviewers vs business listings accounts */
+export type AccountType = 'reviewer' | 'business';
+
+export type BusinessSubscriptionStatus = 'none' | 'pending' | 'active';
+
 export type UserBadge =
   | 'explorer'
   | 'accessibility_hero'
@@ -28,9 +33,13 @@ export const BADGE_DESCRIPTIONS: Record<UserBadge, string> = {
 export interface User {
   _id: ObjectId;
   email: string;
-  passwordHash: string;
+  /** Absent for some OAuth-only rows until first password set */
+  passwordHash?: string;
   name: string;
   role: UserRole;
+  /** Defaults to reviewer when missing (legacy / OAuth before completion) */
+  accountType?: AccountType;
+  businessSubscriptionStatus?: BusinessSubscriptionStatus;
   badges: UserBadge[];
   bio?: string;
   avatarUrl?: string;

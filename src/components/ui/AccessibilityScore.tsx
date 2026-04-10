@@ -20,21 +20,18 @@ export function AccessibilityScore({
   const colorMap = {
     green: {
       text: 'text-green-700',
-      bg: 'bg-green-100',
-      border: 'border-green-200',
-      bar: 'bg-green-500',
+      panel: 'from-green-50 to-green-100/75 border-green-200/90',
+      bar: 'bg-gradient-to-b from-green-400 to-green-600 shadow-sm',
     },
     yellow: {
       text: 'text-yellow-700',
-      bg: 'bg-yellow-100',
-      border: 'border-yellow-200',
-      bar: 'bg-yellow-500',
+      panel: 'from-yellow-50 to-yellow-100/75 border-yellow-200/90',
+      bar: 'bg-gradient-to-b from-yellow-400 to-yellow-600 shadow-sm',
     },
     red: {
       text: 'text-red-700',
-      bg: 'bg-red-100',
-      border: 'border-red-200',
-      bar: 'bg-red-500',
+      panel: 'from-red-50 to-red-100/75 border-red-200/90',
+      bar: 'bg-gradient-to-b from-red-400 to-red-600 shadow-sm',
     },
   };
 
@@ -51,9 +48,8 @@ export function AccessibilityScore({
     <div className="flex flex-col gap-1">
       <div
         className={clsx(
-          'inline-flex items-center gap-2 rounded-lg border',
-          colors.bg,
-          colors.border,
+          'inline-flex items-center gap-2 rounded-lg border bg-gradient-to-b shadow-sm ring-1 ring-black/[0.04]',
+          colors.panel,
           sizes.padding
         )}
         role="img"
@@ -66,7 +62,10 @@ export function AccessibilityScore({
         )}
       </div>
       {showBar && (
-        <div className="w-full rounded-full bg-slate-200 h-2" aria-hidden="true">
+        <div
+          className="h-2 w-full rounded-full bg-gradient-to-b from-slate-200 to-slate-300 shadow-inset-well ring-1 ring-slate-900/[0.06]"
+          aria-hidden="true"
+        >
           <div
             className={clsx('h-2 rounded-full transition-all', colors.bar)}
             style={{ width: `${score}%` }}

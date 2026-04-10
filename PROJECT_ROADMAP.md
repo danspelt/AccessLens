@@ -82,7 +82,7 @@ Per-place boolean flags:
 - [x] `POST /api/auth/login` — verify password, create session
 - [x] `POST /api/auth/logout` — destroy session
 - [x] Beautiful login + signup pages
-- [x] Middleware: protected routes redirect to `/login`
+- [x] Middleware: protected routes redirect to `/signin`
 
 ---
 
@@ -129,7 +129,7 @@ Per-place boolean flags:
 | Add Place | `/add-place` | ✅ |
 | Report Issue | `/places/[id]/report` | ✅ |
 | Dashboard | `/dashboard` | ✅ |
-| Login | `/login` | ✅ |
+| Sign in | `/signin` | ✅ |
 | Signup | `/signup` | ✅ |
 
 ---

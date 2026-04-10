@@ -167,7 +167,7 @@ export default function DashboardClient({
         <div className="w-full px-3 py-8 sm:px-6 lg:px-10">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="flex items-start gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-sm">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-b from-primary-500 to-primary-700 text-white shadow-btn-primary ring-1 ring-white/20">
                 <LayoutDashboard className="h-6 w-6" aria-hidden="true" />
               </div>
               <div className="min-w-0">

@@ -268,7 +268,7 @@ function AddPlaceForm() {
           {error && <Alert variant="error" title="Error">{error}</Alert>}
 
           {/* Basic info */}
-          <section aria-labelledby="basic-info-heading" className="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
+          <section aria-labelledby="basic-info-heading" className="rounded-xl panel-surface p-6">
             <h2 id="basic-info-heading" className="mb-5 text-lg font-semibold text-slate-900">
               Basic Information
             </h2>
@@ -385,7 +385,7 @@ function AddPlaceForm() {
           </section>
 
           {/* Location coordinates */}
-          <section aria-labelledby="location-heading" className="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
+          <section aria-labelledby="location-heading" className="rounded-xl panel-surface p-6">
             <div className="mb-5 flex items-start gap-3">
               <div>
                 <h2 id="location-heading" className="text-lg font-semibold text-slate-900 flex items-center gap-2">
@@ -443,7 +443,7 @@ function AddPlaceForm() {
           </section>
 
           {/* Accessibility checklist */}
-          <section aria-labelledby="checklist-heading" className="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
+          <section aria-labelledby="checklist-heading" className="rounded-xl panel-surface p-6">
             <div className="mb-5">
               <h2 id="checklist-heading" className="text-lg font-semibold text-slate-900">Accessibility Checklist</h2>
               <p className="mt-1 text-sm text-slate-500">
@@ -484,7 +484,7 @@ function AddPlaceForm() {
           </section>
 
           {/* Photos */}
-          <section aria-labelledby="photos-heading" className="rounded-xl border border-slate-200 bg-white p-6 shadow-card">
+          <section aria-labelledby="photos-heading" className="rounded-xl panel-surface p-6">
             <div className="mb-4">
               <h2 id="photos-heading" className="text-lg font-semibold text-slate-900">Accessibility Photos</h2>
               <p className="mt-1 text-sm text-slate-500">

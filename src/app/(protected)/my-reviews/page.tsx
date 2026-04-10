@@ -6,13 +6,14 @@ import { getCollection } from '@/lib/db/mongoClient';
 import { Review } from '@/models/Review';
 import { Place } from '@/models/Place';
 import { ObjectId } from 'mongodb';
+import { canSubmitCommunityFeedback } from '@/lib/auth/accountType';
 import { MyReviewsToolbar } from './toolbar';
 
 export const metadata: Metadata = { title: 'My Reviews' };
 
 export default async function MyReviewsPage() {
   const user = await getCurrentUser();
-  if (!user) redirect('/login');
+  if (!user) redirect('/signin');
 
   const reviewsCollection = await getCollection<Review>('reviews');
   const placesCollection = await getCollection<Place>('places');
@@ -32,11 +33,13 @@ export default async function MyReviewsPage() {
     : [];
   const placeMap = new Map(places.map((p) => [p._id.toString(), (p as unknown as Place).name]));
 
+  const canAddReview = canSubmitCommunityFeedback(user.accountType);
+
   return (
     <div className="space-y-4">
-      <MyReviewsToolbar />
+      <MyReviewsToolbar canAddReview={canAddReview} />
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
+      <div className="rounded-2xl panel-surface p-6">
         {myReviews.length === 0 ? (
           <div className="text-sm text-slate-600">
             You haven’t written any reviews yet. <Link className="text-primary-600 hover:text-primary-700 font-medium" href="/explore">Explore places</Link>.

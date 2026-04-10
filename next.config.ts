@@ -3,6 +3,9 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   output: 'standalone',
   serverExternalPackages: ['mongodb', 'bcryptjs'],
+  async redirects() {
+    return [{ source: '/login', destination: '/signin', permanent: true }];
+  },
   images: {
     remotePatterns: [
       {

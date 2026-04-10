@@ -1,4 +1,5 @@
 import type { NextAuthConfig } from 'next-auth';
+import type { AccountType, BusinessSubscriptionStatus } from '@/models/User';
 
 /**
  * Edge-compatible Auth.js config (no Node.js-only imports).
@@ -18,8 +19,8 @@ export const authConfig = {
   secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
   providers: [],
   pages: {
-    signIn: '/login',
-    verifyRequest: '/login?verify=1',
+    signIn: '/signin',
+    verifyRequest: '/signin?verify=1',
   },
   session: { strategy: 'jwt' as const },
   callbacks: {
@@ -33,6 +34,9 @@ export const authConfig = {
       if (token?.id) {
         session.user.id = token.id as string;
       }
+      session.user.accountType = (token.accountType as AccountType | undefined) ?? 'reviewer';
+      session.user.businessSubscriptionStatus =
+        (token.businessSubscriptionStatus as BusinessSubscriptionStatus | undefined) ?? 'none';
       return session;
     },
   },

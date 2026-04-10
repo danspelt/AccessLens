@@ -95,7 +95,7 @@ export default async function CityPage({ params }: Props) {
                 <Link
                   key={cat}
                   href={`/cities/${citySlug}/${cat}`}
-                  className="group flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-card hover:shadow-card-hover transition-all hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                  className="group flex items-center gap-4 rounded-xl panel-surface p-5 hover:shadow-card-hover transition-all hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                 >
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-2xl">
                     {icon}
@@ -119,7 +119,7 @@ export default async function CityPage({ params }: Props) {
               <p className="text-slate-500">No places added yet. Be the first to contribute!</p>
               <Link
                 href="/add-place"
-                className="mt-4 inline-flex items-center gap-2 rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-700"
+                className="link-cta-primary mt-4 gap-2 px-5 py-2.5 text-sm font-medium"
               >
                 Add a Place
               </Link>
@@ -145,7 +145,7 @@ export default async function CityPage({ params }: Props) {
                   <Link
                     key={place._id.toString()}
                     href={`/places/${place._id}`}
-                    className="group flex gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-card hover:shadow-card-hover transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                    className="group flex gap-4 rounded-xl panel-surface p-5 hover:shadow-card-hover transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                   >
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-xl">
                       {icon}

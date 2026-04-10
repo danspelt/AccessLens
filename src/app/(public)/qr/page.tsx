@@ -43,7 +43,7 @@ export default function QrHubPage() {
             <li key={a.slug}>
               <Link
                 href={`/qr/${a.slug}`}
-                className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all hover:border-primary-200 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                className="flex items-start gap-3 rounded-xl panel-surface p-4 transition-all hover:border-primary-200 hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
               >
                 <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
                   <MapPin className="h-5 w-5" aria-hidden="true" />

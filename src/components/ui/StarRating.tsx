@@ -52,10 +52,12 @@ export function StarRating({
           <Star
             className={clsx(
               sizeMap[size],
+              'transition-[filter,transform]',
               display >= star
-                ? 'fill-amber-400 text-amber-400'
-                : 'fill-transparent text-slate-300',
-              !readonly && 'hover:text-amber-400'
+                ? 'fill-amber-400 text-amber-400 drop-shadow-[0_2px_3px_rgba(180,83,9,0.35)]'
+                : 'fill-transparent text-slate-300 drop-shadow-none',
+              !readonly && display >= star && 'hover:scale-110',
+              !readonly && display < star && 'hover:text-amber-300'
             )}
             aria-hidden="true"
           />

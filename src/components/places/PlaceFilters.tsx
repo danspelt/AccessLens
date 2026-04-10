@@ -127,7 +127,7 @@ export function PlaceFilters() {
       <div className="flex gap-2">
         <button
           onClick={applyFilters}
-          className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+          className="link-cta-primary flex flex-1 items-center justify-center gap-2 px-4 py-2 text-sm font-medium"
         >
           <Filter className="h-4 w-4" aria-hidden="true" />
           Apply Filters

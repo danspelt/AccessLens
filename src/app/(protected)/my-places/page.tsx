@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: 'My Places' };
 
 export default async function MyPlacesPage() {
   const user = await getCurrentUser();
-  if (!user) redirect('/login');
+  if (!user) redirect('/signin');
 
   const placesCollection = await getCollection<Place>('places');
   const myPlaces = await placesCollection
@@ -25,7 +25,7 @@ export default async function MyPlacesPage() {
         <p className="mt-1 text-sm text-slate-600">Places you’ve added to AccessLens.</p>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
+      <div className="rounded-2xl panel-surface p-6">
         {myPlaces.length === 0 ? (
           <div className="text-sm text-slate-600">
             You haven’t added any places yet.{' '}

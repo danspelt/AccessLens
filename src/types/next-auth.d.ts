@@ -1,3 +1,4 @@
+import type { AccountType, BusinessSubscriptionStatus } from '@/models/User';
 import 'next-auth';
 
 declare module 'next-auth' {
@@ -7,6 +8,16 @@ declare module 'next-auth' {
       name?: string | null;
       email?: string | null;
       image?: string | null;
+      accountType: AccountType;
+      businessSubscriptionStatus: BusinessSubscriptionStatus;
     };
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    id?: string;
+    accountType?: AccountType;
+    businessSubscriptionStatus?: BusinessSubscriptionStatus;
   }
 }

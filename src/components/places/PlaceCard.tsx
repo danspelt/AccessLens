@@ -44,7 +44,7 @@ export function PlaceCard({ place }: PlaceCardProps) {
   return (
     <Link
       href={`/places/${place._id}`}
-      className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card transition-all hover:shadow-card-hover hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+      className="group flex flex-col overflow-hidden rounded-xl panel-surface transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
       aria-label={`${place.name} — ${categoryLabel} in ${place.city}`}
     >
       {/* Photo or placeholder */}

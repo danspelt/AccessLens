@@ -130,7 +130,7 @@ export function PlaceMiniMap({
         <button
           type="button"
           onClick={() => setUserOverride(true)}
-          className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+          className="link-cta-primary px-4 py-2 text-sm font-medium"
         >
           Load map
         </button>
