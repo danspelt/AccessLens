@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getCollection } from '@/lib/db/mongoClient';
+import { getCityBySlug } from '@/lib/db/cities';
 import { Place, PLACE_CATEGORIES, CATEGORY_ICONS } from '@/models/Place';
 import { Review } from '@/models/Review';
 import { PlaceCard } from '@/components/places/PlaceCard';
@@ -11,13 +12,10 @@ interface Props {
   params: Promise<{ citySlug: string; category: string }>;
 }
 
-const CITY_NAMES: Record<string, string> = {
-  'victoria-bc': 'Victoria, BC',
-};
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { citySlug, category } = await params;
-  const cityName = CITY_NAMES[citySlug] || citySlug;
+  const city = await getCityBySlug(citySlug);
+  const cityName = city ? `${city.name}, ${city.province}` : citySlug;
   const catLabel = PLACE_CATEGORIES[category as keyof typeof PLACE_CATEGORIES];
   if (!catLabel) return {};
   return {
@@ -32,7 +30,9 @@ export default async function CategoryPage({ params }: Props) {
   const catLabel = PLACE_CATEGORIES[category as keyof typeof PLACE_CATEGORIES];
   if (!catLabel) notFound();
 
-  const cityName = CITY_NAMES[citySlug] || citySlug;
+  const city = await getCityBySlug(citySlug);
+  if (!city) notFound();
+  const cityName = `${city.name}, ${city.province}`;
   const catIcon = CATEGORY_ICONS[category as keyof typeof CATEGORY_ICONS] || '📍';
 
   const placesCollection = await getCollection<Place>('places');

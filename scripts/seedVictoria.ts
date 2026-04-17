@@ -475,12 +475,24 @@ async function seed() {
     const db = client.db(MONGODB_DB);
     const placesCollection = db.collection('places');
 
-    // Create indexes (align with scripts/initIndexes.ts for geo queries)
-    await placesCollection.createIndex({ citySlug: 1, category: 1 });
-    await placesCollection.createIndex({ slug: 1 });
-    await placesCollection.createIndex({ name: 'text', address: 'text' });
-    await placesCollection.createIndex({ accessibilityScore: -1 });
-    await placesCollection.createIndex({ location: '2dsphere' });
+    // Create indexes (align with scripts/initIndexes.ts for geo queries).
+    // Use a tolerant helper so a pre-existing equivalent text index with a
+    // different fieldset doesn't halt the seed.
+    const safeIdx = async (
+      spec: Parameters<typeof placesCollection.createIndex>[0],
+      options?: Parameters<typeof placesCollection.createIndex>[1]
+    ) => {
+      try {
+        await placesCollection.createIndex(spec, options);
+      } catch (e) {
+        console.warn(`  ! places index skipped: ${e instanceof Error ? e.message : String(e)}`);
+      }
+    };
+    await safeIdx({ citySlug: 1, category: 1 });
+    await safeIdx({ slug: 1 });
+    await safeIdx({ name: 'text', address: 'text' });
+    await safeIdx({ accessibilityScore: -1 });
+    await safeIdx({ location: '2dsphere' });
     console.log('✓ Indexes created (including location 2dsphere)');
 
     let inserted = 0;

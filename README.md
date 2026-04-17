@@ -93,11 +93,29 @@ npx tsx scripts/backfillPlaceLocations.ts
 
 `scripts/seedVictoria.ts` now writes `location` on insert; run the backfill once if you seeded before that change.
 
-### 5. Seed Victoria BC places (50 real locations)
+### 5. Seed data (run in this order)
 
 ```bash
+# Cities the app is live in (drives /cities/[citySlug] and city lookups)
+npx tsx scripts/seedCities.ts
+
+# Editable landing-page content blocks (hero, features, values, etc.)
+npx tsx scripts/seedContent.ts
+# Use --force to overwrite existing blocks with the defaults
+npx tsx scripts/seedContent.ts --force
+
+# Real accessibility data for Victoria, BC (~50 places)
 npx tsx scripts/seedVictoria.ts
 ```
+
+Seed scripts are **idempotent**: re-running only upserts missing documents. `seedContent.ts` never overwrites edits made through the admin API unless `--force` is passed.
+
+### 5a. Admin API (edit without re-seeding)
+
+Requires a user with `role: 'admin'` on the `users` collection.
+
+- `GET/PUT /api/admin/site-content/[key]` — edit any `home.*` content block
+- `GET/POST /api/admin/cities` — list / upsert cities
 
 ### 6. Run development server
 
