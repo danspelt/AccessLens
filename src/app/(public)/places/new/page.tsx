@@ -13,6 +13,8 @@ import {
   ChevronRight,
   Send,
   Info,
+  Sparkles,
+  ArrowRight,
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -84,53 +86,58 @@ type StepId = typeof STEPS[number]['id'];
 function StepIndicator({ currentStep }: { currentStep: number }) {
   return (
     <nav aria-label="Form progress" className="mb-8">
-      <ol className="flex items-center justify-between">
-        {STEPS.map((step, i) => {
-          const Icon = step.icon;
-          const isComplete = i < currentStep;
-          const isCurrent = i === currentStep;
-          return (
-            <li
-              key={step.id}
-              className="flex flex-1 items-center"
-              aria-current={isCurrent ? 'step' : undefined}
-            >
-              <div className="flex flex-col items-center gap-1.5">
-                <div
-                  className={`flex h-9 w-9 items-center justify-center rounded-full border-2 transition-colors ${
-                    isComplete
-                      ? 'border-green-500 bg-green-500 text-white'
-                      : isCurrent
-                        ? 'border-primary-600 bg-primary-50 text-primary-600'
-                        : 'border-slate-200 bg-white text-slate-400'
-                  }`}
-                >
-                  {isComplete ? (
-                    <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
-                  ) : (
-                    <Icon className="h-4 w-4" aria-hidden="true" />
-                  )}
+      <div className="rounded-2xl panel-surface p-4 sm:p-5 shadow-card">
+        <ol className="flex items-center">
+          {STEPS.map((step, i) => {
+            const Icon = step.icon;
+            const isComplete = i < currentStep;
+            const isCurrent = i === currentStep;
+            return (
+              <li
+                key={step.id}
+                className="flex flex-1 items-center"
+                aria-current={isCurrent ? 'step' : undefined}
+              >
+                <div className="flex flex-col items-center gap-2 w-full">
+                  <div
+                    className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300 ${
+                      isComplete
+                        ? 'border-green-500 bg-gradient-to-b from-green-400 to-green-600 text-white shadow-md ring-2 ring-green-200'
+                        : isCurrent
+                          ? 'border-primary-500 bg-gradient-to-b from-primary-50 to-primary-100 text-primary-600 shadow-md ring-2 ring-primary-200'
+                          : 'border-slate-200 bg-white text-slate-400'
+                    }`}
+                  >
+                    {isComplete ? (
+                      <CheckCircle2 className="h-5 w-5 drop-shadow-sm" aria-hidden="true" />
+                    ) : (
+                      <Icon className="h-4 w-4" aria-hidden="true" />
+                    )}
+                  </div>
+                  <span
+                    className={`text-[10px] font-semibold leading-none sm:text-xs text-center transition-colors duration-200 ${
+                      isCurrent ? 'text-primary-700' : isComplete ? 'text-green-700' : 'text-slate-400'
+                    }`}
+                  >
+                    {step.label}
+                  </span>
                 </div>
-                <span
-                  className={`text-[10px] font-medium leading-none sm:text-xs ${
-                    isCurrent ? 'text-primary-700' : isComplete ? 'text-green-700' : 'text-slate-400'
-                  }`}
-                >
-                  {step.label}
-                </span>
-              </div>
-              {i < STEPS.length - 1 && (
-                <div
-                  className={`mx-1 mt-[-1.25rem] h-0.5 flex-1 sm:mx-2 ${
-                    i < currentStep ? 'bg-green-400' : 'bg-slate-200'
-                  }`}
-                  aria-hidden="true"
-                />
-              )}
-            </li>
-          );
-        })}
-      </ol>
+                {i < STEPS.length - 1 && (
+                  <div className="mx-1 mt-[-1.25rem] flex-1 sm:mx-2" aria-hidden="true">
+                    <div className="h-1 w-full rounded-full bg-slate-100 overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-500 ease-out ${
+                          i < currentStep ? 'w-full bg-gradient-to-r from-green-400 to-green-500' : 'w-0 bg-primary-400'
+                        }`}
+                      />
+                    </div>
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+      </div>
     </nav>
   );
 }
@@ -147,26 +154,26 @@ function ChecklistToggle({
   onChange: (v: ChecklistValue) => void;
 }) {
   return (
-    <div className="flex items-start justify-between gap-4 py-3 border-b border-slate-100 last:border-0">
+    <div className="flex items-start justify-between gap-4 rounded-lg px-3 py-3 transition-colors hover:bg-slate-50/80 border-b border-slate-100 last:border-0">
       <div className="flex-1">
         <p className="text-sm font-medium text-slate-800">{label}</p>
-        <p className="text-xs text-slate-500">{description}</p>
+        <p className="text-xs text-slate-500 mt-0.5">{description}</p>
       </div>
-      <div className="flex gap-1" role="group" aria-label={label}>
+      <div className="flex gap-1.5" role="group" aria-label={label}>
         {(['yes', 'no', 'unknown'] as ChecklistValue[]).map((v) => (
           <button
             key={v}
             type="button"
             onClick={() => onChange(v)}
             aria-pressed={value === v}
-            className={`rounded px-2.5 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
+            className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 ${
               value === v
                 ? v === 'yes'
-                  ? 'bg-green-600 text-white'
+                  ? 'bg-gradient-to-b from-green-500 to-green-600 text-white shadow-sm ring-1 ring-green-400/30'
                   : v === 'no'
-                    ? 'bg-red-600 text-white'
-                    : 'bg-slate-600 text-white'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    ? 'bg-gradient-to-b from-red-500 to-red-600 text-white shadow-sm ring-1 ring-red-400/30'
+                    : 'bg-gradient-to-b from-slate-500 to-slate-600 text-white shadow-sm ring-1 ring-slate-400/30'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-700'
             }`}
           >
             {v === 'yes' ? '✓ Yes' : v === 'no' ? '✗ No' : '? Unknown'}
@@ -224,7 +231,6 @@ export default function NewPlacePage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
-  // Pre-fill from session
   useEffect(() => {
     fetch('/api/auth/session', { credentials: 'same-origin' })
       .then((r) => r.json())
@@ -388,19 +394,20 @@ export default function NewPlacePage() {
   if (submitted) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
-        <div className="max-w-md w-full rounded-2xl panel-surface p-8 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-            <CheckCircle2 className="h-8 w-8 text-green-600" aria-hidden="true" />
+        <div className="max-w-md w-full rounded-2xl panel-surface p-10 text-center shadow-card">
+          <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-b from-green-100 to-green-200 shadow-inner">
+            <CheckCircle2 className="h-10 w-10 text-green-600 drop-shadow-sm" aria-hidden="true" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">Place Submitted</h1>
-          <p className="mt-3 text-slate-600">
-            Thank you for contributing to AccessLens. Your submission for <strong>{name}</strong> has been received and will be reviewed before appearing publicly.
+          <h1 className="text-2xl font-bold text-slate-900">Place Submitted!</h1>
+          <p className="mt-3 text-slate-600 leading-relaxed">
+            Thank you for contributing to AccessLens. Your submission for <strong className="text-slate-900">{name}</strong> has been received and will be reviewed before appearing publicly.
           </p>
-          <div className="mt-6 flex flex-col gap-3">
+          <div className="mt-8 flex flex-col gap-3">
             <Link
               href="/explore"
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-700 transition-colors"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-primary-500 to-primary-700 px-5 py-3 text-sm font-semibold text-white shadow-btn-primary ring-1 ring-white/15 transition-[transform,box-shadow] hover:from-primary-500 hover:to-primary-600 active:translate-y-px"
             >
+              <MapPin className="h-4 w-4 drop-shadow-sm" aria-hidden="true" />
               Explore Places
             </Link>
             <button
@@ -415,7 +422,7 @@ export default function NewPlacePage() {
                 setGeneralNotes('');
                 setPhotoUrls([]);
               }}
-              className="text-sm text-primary-600 underline hover:text-primary-700"
+              className="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors"
             >
               Add another place
             </button>
@@ -431,8 +438,8 @@ export default function NewPlacePage() {
       <div className="bg-white border-b border-slate-200">
         <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-100">
-              <Building2 className="h-5 w-5 text-primary-600" aria-hidden="true" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-b from-primary-500 to-primary-700 shadow-btn-primary ring-1 ring-white/25">
+              <Building2 className="h-5 w-5 text-white drop-shadow-sm" aria-hidden="true" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-slate-900">Add a Place to AccessLens</h1>
@@ -451,18 +458,21 @@ export default function NewPlacePage() {
 
         {/* Step 0: Search before adding */}
         {currentStepId === 'search' && (
-          <div className="rounded-xl panel-surface p-6">
+          <div className="rounded-2xl panel-surface p-6 sm:p-8 shadow-card">
             <PlaceSearchBeforeAdd onProceedToAdd={() => setStep(1)} />
           </div>
         )}
 
         {/* Step 1: Basic Place Information */}
         {currentStepId === 'basic' && (
-          <section aria-labelledby="basic-heading" className="rounded-xl panel-surface p-6">
-            <h2 id="basic-heading" className="mb-5 text-lg font-semibold text-slate-900">
-              Basic Place Information
-            </h2>
-            <div className="space-y-4">
+          <section aria-labelledby="basic-heading" className="rounded-2xl panel-surface p-6 sm:p-8 shadow-card">
+            <div className="mb-6">
+              <h2 id="basic-heading" className="text-xl font-bold text-slate-900">
+                Basic Place Information
+              </h2>
+              <p className="mt-1 text-sm text-slate-500">Tell us about the place you want to add.</p>
+            </div>
+            <div className="space-y-5">
               <div>
                 <Label htmlFor="place-name" required>Place name</Label>
                 <Input
@@ -604,19 +614,19 @@ export default function NewPlacePage() {
 
         {/* Step 2: Location */}
         {currentStepId === 'location' && (
-          <section aria-labelledby="location-heading" className="rounded-xl panel-surface p-6">
-            <div className="mb-5">
-              <h2 id="location-heading" className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+          <section aria-labelledby="location-heading" className="rounded-2xl panel-surface p-6 sm:p-8 shadow-card">
+            <div className="mb-6">
+              <h2 id="location-heading" className="text-xl font-bold text-slate-900 flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-primary-600" aria-hidden="true" />
                 Map Coordinates
-                <span className="text-sm font-normal text-slate-500">(optional)</span>
+                <span className="text-sm font-normal text-slate-400">(optional)</span>
               </h2>
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-1 text-sm text-slate-500">
                 Add coordinates to show this place on the map. If possible, pin the accessible entrance location.
               </p>
             </div>
 
-            <div className="mb-4 flex flex-wrap items-center gap-3">
+            <div className="mb-5 flex flex-wrap items-center gap-3">
               <Button
                 type="button"
                 variant="outline"
@@ -626,7 +636,11 @@ export default function NewPlacePage() {
               >
                 {geocoding ? 'Finding...' : 'Find coordinates from address'}
               </Button>
-              {geocodeHint && <p className="text-xs text-slate-500">{geocodeHint}</p>}
+              {geocodeHint && (
+                <p className="text-xs text-slate-500 bg-slate-50 rounded-lg px-3 py-1.5 border border-slate-200">
+                  {geocodeHint}
+                </p>
+              )}
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -660,7 +674,7 @@ export default function NewPlacePage() {
               </div>
             </div>
 
-            <label className="mt-4 flex items-center gap-2 cursor-pointer">
+            <label className="mt-5 flex items-center gap-3 cursor-pointer rounded-xl border border-slate-200 bg-slate-50/50 px-4 py-3 transition-colors hover:bg-slate-50">
               <input
                 type="checkbox"
                 checked={entrancePinned}
@@ -674,9 +688,10 @@ export default function NewPlacePage() {
 
         {/* Step 3: Accessibility */}
         {currentStepId === 'accessibility' && (
-          <section aria-labelledby="checklist-heading" className="rounded-xl panel-surface p-6">
-            <div className="mb-5">
-              <h2 id="checklist-heading" className="text-lg font-semibold text-slate-900">
+          <section aria-labelledby="checklist-heading" className="rounded-2xl panel-surface p-6 sm:p-8 shadow-card">
+            <div className="mb-6">
+              <h2 id="checklist-heading" className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <Accessibility className="h-5 w-5 text-primary-600" aria-hidden="true" />
                 Accessibility Information
               </h2>
               <p className="mt-1 text-sm text-slate-500">
@@ -686,9 +701,11 @@ export default function NewPlacePage() {
 
             <div className="space-y-6">
               {CHECKLIST_GROUPS.map(({ title, items }) => (
-                <div key={title}>
-                  <h3 className="mb-1 text-sm font-semibold text-primary-700 uppercase tracking-wide">{title}</h3>
-                  <div>
+                <div key={title} className="rounded-xl border border-slate-100 bg-white/50 overflow-hidden">
+                  <h3 className="px-4 py-2.5 text-xs font-bold text-primary-700 uppercase tracking-wider bg-gradient-to-r from-primary-50/80 to-transparent border-b border-slate-100">
+                    {title}
+                  </h3>
+                  <div className="px-1">
                     {items.map(({ key, label, description: desc }) => (
                       <ChecklistToggle
                         key={key}
@@ -703,7 +720,7 @@ export default function NewPlacePage() {
               ))}
             </div>
 
-            <div className="mt-5 border-t border-slate-100 pt-5">
+            <div className="mt-6 border-t border-slate-100 pt-6">
               <Label htmlFor="general-notes">Additional accessibility notes</Label>
               <Textarea
                 id="general-notes"
@@ -716,9 +733,9 @@ export default function NewPlacePage() {
               />
             </div>
 
-            <div className="mt-5 border-t border-slate-100 pt-5">
+            <div className="mt-6 border-t border-slate-100 pt-6">
               <Label>Accessibility photos (optional)</Label>
-              <p className="mb-2 text-xs text-slate-500">
+              <p className="mb-3 text-xs text-slate-500">
                 Upload photos of the entrance, ramps, washrooms, and other accessibility features.
               </p>
               <PhotoUpload onUpload={setPhotoUrls} context="places" maxFiles={5} />
@@ -728,11 +745,15 @@ export default function NewPlacePage() {
 
         {/* Step 4: Submitter Info */}
         {currentStepId === 'submitter' && (
-          <section aria-labelledby="submitter-heading" className="rounded-xl panel-surface p-6">
-            <h2 id="submitter-heading" className="mb-5 text-lg font-semibold text-slate-900">
-              Your Information
-            </h2>
-            <div className="space-y-4">
+          <section aria-labelledby="submitter-heading" className="rounded-2xl panel-surface p-6 sm:p-8 shadow-card">
+            <div className="mb-6">
+              <h2 id="submitter-heading" className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <UserCircle className="h-5 w-5 text-primary-600" aria-hidden="true" />
+                Your Information
+              </h2>
+              <p className="mt-1 text-sm text-slate-500">Tell us a bit about yourself so we can follow up if needed.</p>
+            </div>
+            <div className="space-y-5">
               <div>
                 <Label htmlFor="submitter-name" required>Your name</Label>
                 <Input
@@ -780,18 +801,18 @@ export default function NewPlacePage() {
                 {errors.submitterRole && <p className="mt-1 text-xs text-red-600">{errors.submitterRole}</p>}
               </div>
 
-              <fieldset className="mt-4">
-                <legend className="text-sm font-medium text-slate-800">
+              <fieldset className="mt-5 rounded-xl border border-slate-200 p-4 bg-slate-50/50">
+                <legend className="text-sm font-semibold text-slate-800 px-1">
                   Are you the owner or manager of this place? <span className="text-red-500">*</span>
                 </legend>
-                <div className="mt-2 space-y-2">
+                <div className="mt-3 space-y-2.5">
                   {[
                     { value: 'yes', label: 'Yes' },
                     { value: 'no', label: 'No' },
                     { value: 'work_here', label: 'I work here' },
                     { value: 'visitor', label: 'I am a visitor / community member' },
                   ].map((opt) => (
-                    <label key={opt.value} className="flex items-center gap-2 cursor-pointer">
+                    <label key={opt.value} className="flex items-center gap-3 cursor-pointer rounded-lg px-3 py-2 transition-colors hover:bg-white">
                       <input
                         type="radio"
                         name="isOwnerOrManager"
@@ -804,11 +825,12 @@ export default function NewPlacePage() {
                     </label>
                   ))}
                 </div>
-                {errors.isOwnerOrManager && <p className="mt-1 text-xs text-red-600">{errors.isOwnerOrManager}</p>}
+                {errors.isOwnerOrManager && <p className="mt-2 text-xs text-red-600">{errors.isOwnerOrManager}</p>}
               </fieldset>
 
               {(isOwnerOrManager === 'yes' || isOwnerOrManager === 'work_here') && (
-                <div className="rounded-lg bg-blue-50 border border-blue-200 p-3">
+                <div className="rounded-xl bg-blue-50 border border-blue-200 p-4 flex items-start gap-3">
+                  <Info className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" aria-hidden="true" />
                   <p className="text-sm text-blue-700">
                     After your submission is approved, you can claim this listing to manage it as the owner or authorized representative.
                   </p>
@@ -821,51 +843,59 @@ export default function NewPlacePage() {
         {/* Step 5: Review & Submit */}
         {currentStepId === 'review' && (
           <div className="space-y-6">
-            <section className="rounded-xl panel-surface p-6">
-              <h2 className="mb-4 text-lg font-semibold text-slate-900">Review Your Submission</h2>
+            <section className="rounded-2xl panel-surface p-6 sm:p-8 shadow-card">
+              <div className="mb-6 flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-b from-primary-50 to-primary-100 ring-1 ring-primary-200/60">
+                  <Sparkles className="h-5 w-5 text-primary-600" aria-hidden="true" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900">Review Your Submission</h2>
+                  <p className="text-sm text-slate-500">Make sure everything looks right before submitting.</p>
+                </div>
+              </div>
 
               <div className="space-y-4">
-                <div className="rounded-lg bg-slate-50 p-4">
-                  <h3 className="text-sm font-semibold text-slate-700">Place Information</h3>
-                  <dl className="mt-2 space-y-1 text-sm">
-                    <div className="flex gap-2">
-                      <dt className="text-slate-500 w-24 shrink-0">Name:</dt>
-                      <dd className="text-slate-900 font-medium">{name}</dd>
+                <div className="rounded-xl border border-slate-200 bg-gradient-to-b from-white to-slate-50/50 p-5">
+                  <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide mb-3">Place Information</h3>
+                  <dl className="space-y-2 text-sm">
+                    <div className="flex gap-3">
+                      <dt className="text-slate-500 w-24 shrink-0 font-medium">Name</dt>
+                      <dd className="text-slate-900 font-semibold">{name}</dd>
                     </div>
-                    <div className="flex gap-2">
-                      <dt className="text-slate-500 w-24 shrink-0">Category:</dt>
+                    <div className="flex gap-3">
+                      <dt className="text-slate-500 w-24 shrink-0 font-medium">Category</dt>
                       <dd className="text-slate-900">
                         {CATEGORY_ICONS[category as PlaceCategory]} {PLACE_CATEGORIES[category as PlaceCategory]}
                       </dd>
                     </div>
-                    <div className="flex gap-2">
-                      <dt className="text-slate-500 w-24 shrink-0">Address:</dt>
+                    <div className="flex gap-3">
+                      <dt className="text-slate-500 w-24 shrink-0 font-medium">Address</dt>
                       <dd className="text-slate-900">{address}, {city}, {province} {postalCode}</dd>
                     </div>
                     {website && (
-                      <div className="flex gap-2">
-                        <dt className="text-slate-500 w-24 shrink-0">Website:</dt>
+                      <div className="flex gap-3">
+                        <dt className="text-slate-500 w-24 shrink-0 font-medium">Website</dt>
                         <dd className="text-slate-900 truncate">{website}</dd>
                       </div>
                     )}
                     {phone && (
-                      <div className="flex gap-2">
-                        <dt className="text-slate-500 w-24 shrink-0">Phone:</dt>
+                      <div className="flex gap-3">
+                        <dt className="text-slate-500 w-24 shrink-0 font-medium">Phone</dt>
                         <dd className="text-slate-900">{phone}</dd>
                       </div>
                     )}
                   </dl>
                 </div>
 
-                <div className="rounded-lg bg-slate-50 p-4">
-                  <h3 className="text-sm font-semibold text-slate-700">Accessibility</h3>
-                  <div className="mt-2 flex flex-wrap gap-2">
+                <div className="rounded-xl border border-slate-200 bg-gradient-to-b from-white to-slate-50/50 p-5">
+                  <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide mb-3">Accessibility</h3>
+                  <div className="flex flex-wrap gap-2">
                     {Object.entries(checklist)
                       .filter(([, val]) => val === 'yes')
                       .map(([key]) => {
                         const item = CHECKLIST_GROUPS.flatMap((g) => g.items).find((i) => i.key === key);
                         return (
-                          <span key={key} className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                          <span key={key} className="inline-flex items-center rounded-full bg-green-100 border border-green-200 px-3 py-1 text-xs font-semibold text-green-800">
                             ✓ {item?.label || key}
                           </span>
                         );
@@ -875,36 +905,38 @@ export default function NewPlacePage() {
                       .map(([key]) => {
                         const item = CHECKLIST_GROUPS.flatMap((g) => g.items).find((i) => i.key === key);
                         return (
-                          <span key={key} className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+                          <span key={key} className="inline-flex items-center rounded-full bg-red-100 border border-red-200 px-3 py-1 text-xs font-semibold text-red-800">
                             ✗ {item?.label || key}
                           </span>
                         );
                       })}
                     {Object.entries(checklist).every(([, val]) => val === 'unknown') && (
-                      <span className="text-xs text-slate-500">No accessibility information provided yet</span>
+                      <span className="text-sm text-slate-500 italic">No accessibility information provided yet</span>
                     )}
                   </div>
                   {generalNotes && (
-                    <p className="mt-2 text-xs text-slate-600">Notes: {generalNotes}</p>
+                    <p className="mt-3 text-sm text-slate-600 bg-slate-50 rounded-lg p-3 border border-slate-100">
+                      <span className="font-medium text-slate-700">Notes:</span> {generalNotes}
+                    </p>
                   )}
                   {photoUrls.length > 0 && (
-                    <p className="mt-2 text-xs text-slate-600">{photoUrls.length} photo{photoUrls.length !== 1 ? 's' : ''} attached</p>
+                    <p className="mt-2 text-sm text-slate-600">{photoUrls.length} photo{photoUrls.length !== 1 ? 's' : ''} attached</p>
                   )}
                 </div>
 
-                <div className="rounded-lg bg-slate-50 p-4">
-                  <h3 className="text-sm font-semibold text-slate-700">Submitted By</h3>
-                  <dl className="mt-2 space-y-1 text-sm">
-                    <div className="flex gap-2">
-                      <dt className="text-slate-500 w-24 shrink-0">Name:</dt>
+                <div className="rounded-xl border border-slate-200 bg-gradient-to-b from-white to-slate-50/50 p-5">
+                  <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide mb-3">Submitted By</h3>
+                  <dl className="space-y-2 text-sm">
+                    <div className="flex gap-3">
+                      <dt className="text-slate-500 w-24 shrink-0 font-medium">Name</dt>
                       <dd className="text-slate-900">{submitterName}</dd>
                     </div>
-                    <div className="flex gap-2">
-                      <dt className="text-slate-500 w-24 shrink-0">Email:</dt>
+                    <div className="flex gap-3">
+                      <dt className="text-slate-500 w-24 shrink-0 font-medium">Email</dt>
                       <dd className="text-slate-900">{submitterEmail}</dd>
                     </div>
-                    <div className="flex gap-2">
-                      <dt className="text-slate-500 w-24 shrink-0">Role:</dt>
+                    <div className="flex gap-3">
+                      <dt className="text-slate-500 w-24 shrink-0 font-medium">Role</dt>
                       <dd className="text-slate-900">{SUBMITTER_ROLES[submitterRole as SubmitterRole] || submitterRole}</dd>
                     </div>
                   </dl>
@@ -914,7 +946,7 @@ export default function NewPlacePage() {
 
             <div className="flex gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4">
               <Info className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" aria-hidden="true" />
-              <p className="text-sm text-blue-700">
+              <p className="text-sm text-blue-700 leading-relaxed">
                 Your submission will be reviewed by the AccessLens team before appearing publicly. This helps us maintain accurate and trustworthy accessibility data.
               </p>
             </div>
@@ -924,18 +956,28 @@ export default function NewPlacePage() {
         {/* Navigation buttons */}
         {step > 0 && (
           <div className="mt-8 flex justify-between gap-4">
-            <Button type="button" variant="outline" onClick={handleBack}>
+            <Button type="button" variant="outline" onClick={handleBack} className="shadow-btn-outline">
               <ChevronLeft className="h-4 w-4" aria-hidden="true" />
               Back
             </Button>
 
             {currentStepId === 'review' ? (
-              <Button type="button" onClick={handleSubmit} loading={loading} size="lg">
-                <Send className="h-4 w-4" aria-hidden="true" />
+              <Button
+                type="button"
+                onClick={handleSubmit}
+                loading={loading}
+                size="lg"
+                className="bg-gradient-to-b from-primary-500 to-primary-700 shadow-btn-primary ring-1 ring-white/15 hover:from-primary-500 hover:to-primary-600"
+              >
+                <Send className="h-4 w-4 drop-shadow-sm" aria-hidden="true" />
                 Submit Place for Review
               </Button>
             ) : (
-              <Button type="button" onClick={handleNext}>
+              <Button
+                type="button"
+                onClick={handleNext}
+                className="bg-gradient-to-b from-primary-500 to-primary-700 shadow-btn-primary ring-1 ring-white/15 hover:from-primary-500 hover:to-primary-600"
+              >
                 Next
                 <ChevronRight className="h-4 w-4" aria-hidden="true" />
               </Button>
