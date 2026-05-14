@@ -90,6 +90,8 @@ export async function POST(request: NextRequest) {
         (validated.latitude !== undefined && validated.longitude !== undefined
           ? { type: 'Point', coordinates: [validated.longitude, validated.latitude] }
           : undefined),
+      status: 'active',
+      isClaimed: false,
       createdByUserId: new ObjectId(session.user.id),
       createdAt: new Date(),
       updatedAt: new Date(),

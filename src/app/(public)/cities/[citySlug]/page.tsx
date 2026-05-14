@@ -111,7 +111,7 @@ export default async function CityPage({ params }: Props) {
             <div className="rounded-xl border border-dashed border-slate-300 bg-white py-12 text-center">
               <p className="text-slate-500">No places added yet. Be the first to contribute!</p>
               <Link
-                href="/add-place"
+                href="/places/new"
                 className="link-cta-primary mt-4 gap-2 px-5 py-2.5 text-sm font-medium"
               >
                 Add a Place

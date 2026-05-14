@@ -278,7 +278,7 @@ export function AccessLensMapClient({
         'Orange pin marking where you chose to review accessibility for a new location.',
       );
 
-      const addUrl = `/add-place?lat=${encodeURIComponent(String(lat))}&lng=${encodeURIComponent(String(lng))}`;
+      const addUrl = `/places/new?lat=${encodeURIComponent(String(lat))}&lng=${encodeURIComponent(String(lng))}`;
       const coordLine = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
       const addLabel = `Add a new accessible place at coordinates ${coordLine}`;
 

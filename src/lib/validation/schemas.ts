@@ -21,6 +21,7 @@ export const loginSchema = z.object({
 export const placeCategorySchema = z.enum([
   'library',
   'restaurant',
+  'cafe',
   'movie_theatre',
   'park',
   'government',
@@ -28,8 +29,11 @@ export const placeCategorySchema = z.enum([
   'sidewalk',
   'shopping',
   'hospital',
+  'medical_office',
   'school',
   'sports',
+  'hotel',
+  'community_centre',
   'other',
 ]);
 
@@ -96,6 +100,60 @@ export const reportSchema = z.object({
   photoUrls: z.array(z.string()).optional(),
 });
 
+export const submitterRoleSchema = z.enum([
+  'owner',
+  'manager',
+  'employee',
+  'customer',
+  'community_member',
+  'accessibility_advocate',
+  'city_staff',
+  'other',
+]);
+
+export const placeSubmissionSchema = z.object({
+  placeData: z.object({
+    name: z.string().min(1, 'Place name is required').max(200),
+    category: placeCategorySchema,
+    address: z.string().min(1, 'Address is required'),
+    city: z.string().min(1, 'City is required'),
+    province: z.string().min(1, 'Province is required'),
+    postalCode: z.string().optional(),
+    country: z.string().default('Canada'),
+    phone: z.string().optional(),
+    website: z.string().url().optional().or(z.literal('')),
+    email: z.string().email().optional().or(z.literal('')),
+    description: z.string().max(2000).optional(),
+  }),
+  latitude: z.number().min(-90).max(90).optional(),
+  longitude: z.number().min(-180).max(180).optional(),
+  entrancePinned: z.boolean().optional(),
+  accessibilityData: z.object({
+    checklist: accessibilityChecklistSchema.default({}),
+    generalNotes: z.string().max(1000).optional(),
+  }),
+  photoUrls: z.array(z.string()).default([]),
+  submitter: z.object({
+    name: z.string().min(1, 'Your name is required'),
+    email: z.string().email('Valid email is required'),
+    role: submitterRoleSchema,
+    isOwnerOrManager: z.boolean(),
+  }),
+});
+
+export const businessClaimSchema = z.object({
+  role: z.string().min(1, 'Role is required'),
+  businessEmail: z.string().email().optional().or(z.literal('')),
+  proofUrl: z.string().optional(),
+  notes: z.string().max(1000).optional(),
+});
+
+export const accessibilityUpdateSchema = z.object({
+  checklist: accessibilityChecklistSchema,
+  notes: z.string().max(1000).optional(),
+  photoUrls: z.array(z.string()).default([]),
+});
+
 export type SignupInput = z.infer<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type PlaceInput = z.infer<typeof placeSchema>;
@@ -103,3 +161,6 @@ export type ReviewInput = z.infer<typeof reviewSchema>;
 export type ReportInput = z.infer<typeof reportSchema>;
 export type PlaceCategory = z.infer<typeof placeCategorySchema>;
 export type AccessibilityChecklistInput = z.infer<typeof accessibilityChecklistSchema>;
+export type PlaceSubmissionInput = z.infer<typeof placeSubmissionSchema>;
+export type BusinessClaimInput = z.infer<typeof businessClaimSchema>;
+export type AccessibilityUpdateInput = z.infer<typeof accessibilityUpdateSchema>;

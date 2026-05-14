@@ -599,7 +599,7 @@ export default async function HomePage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/add-place" className="transition-colors hover:text-primary-600">
+                  <Link href="/places/new" className="transition-colors hover:text-primary-600">
                     Add a place
                   </Link>
                 </li>

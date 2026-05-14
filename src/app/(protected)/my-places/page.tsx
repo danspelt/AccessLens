@@ -29,7 +29,7 @@ export default async function MyPlacesPage() {
         {myPlaces.length === 0 ? (
           <div className="text-sm text-slate-600">
             You haven’t added any places yet.{' '}
-            <Link className="text-primary-600 hover:text-primary-700 font-medium" href="/add-place">
+            <Link className="text-primary-600 hover:text-primary-700 font-medium" href="/places/new">
               Add a place
             </Link>.
           </div>

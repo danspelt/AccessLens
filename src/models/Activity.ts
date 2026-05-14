@@ -9,13 +9,18 @@ export type ActivityType =
   | 'place_created'
   | 'place_updated'
   | 'photo_uploaded'
-  | 'settings_updated';
+  | 'settings_updated'
+  | 'place_submitted'
+  | 'place_submission_approved'
+  | 'place_submission_rejected'
+  | 'accessibility_update_submitted'
+  | 'business_claim_submitted';
 
 export interface Activity {
   _id: ObjectId;
   userId: ObjectId;
   type: ActivityType;
-  entityType: 'place' | 'review' | 'photo' | 'user' | 'favorite';
+  entityType: 'place' | 'review' | 'photo' | 'user' | 'favorite' | 'submission' | 'claim';
   entityId: ObjectId;
   message: string;
   metadata?: Record<string, unknown>;

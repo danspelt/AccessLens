@@ -128,11 +128,11 @@ export function NavbarClient({ user }: NavbarClientProps) {
   }
 
   const navLinks = [
-    { href: '/explore', label: 'Explore' },
+    { href: '/explore', label: 'Find Places' },
+    { href: '/places/new', label: 'Add a Place' },
     ...(user
       ? [
           { href: '/dashboard', label: 'Dashboard' },
-          { href: '/add-place', label: 'Add Place' },
         ]
       : []),
   ];
@@ -191,7 +191,7 @@ export function NavbarClient({ user }: NavbarClientProps) {
               <>
                 <span className="text-sm text-slate-600">{user.name}</span>
                 <Link
-                  href="/add-place"
+                  href="/places/new"
                   className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-b from-primary-500 to-primary-700 px-4 py-2 text-sm font-medium text-white shadow-btn-primary ring-1 ring-white/15 transition-[transform,box-shadow,filter] hover:from-primary-500 hover:to-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 active:translate-y-px"
                 >
                   <Plus className="h-4 w-4 drop-shadow-sm" aria-hidden="true" />

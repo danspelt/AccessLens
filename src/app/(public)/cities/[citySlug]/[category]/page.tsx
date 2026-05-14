@@ -114,7 +114,7 @@ export default async function CategoryPage({ params }: Props) {
               </p>
             </div>
             <Link
-              href="/add-place"
+              href="/places/new"
               className="link-cta-primary gap-2 px-6 py-3 text-sm font-medium"
             >
               Add a {catLabel}

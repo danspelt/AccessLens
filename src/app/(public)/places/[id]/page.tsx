@@ -307,7 +307,7 @@ export default async function PlaceDetailPage({ params }: Props) {
                   <p className="text-sm text-slate-700">
                     Business accounts can list places but cannot submit community reviews. Switch to a
                     community reviewer account to share accessibility experiences, or{' '}
-                    <Link href="/add-place" className="font-semibold text-primary-600 underline hover:text-primary-700">
+                    <Link href="/places/new" className="font-semibold text-primary-600 underline hover:text-primary-700">
                       add or update your listing
                     </Link>
                     .
@@ -376,6 +376,27 @@ export default async function PlaceDetailPage({ params }: Props) {
                   </div>
                 ))}
               </dl>
+            </div>
+
+            {/* Actions */}
+            <div className="rounded-xl panel-surface p-5 space-y-3">
+              <h2 className="text-sm font-semibold text-slate-900">Actions</h2>
+              <Link
+                href={`/places/${place._id}/update-accessibility`}
+                className="flex items-center gap-2 rounded-lg border border-primary-200 bg-primary-50 px-3 py-2.5 text-sm font-medium text-primary-700 hover:bg-primary-100 transition-colors"
+              >
+                <Flag className="h-4 w-4" aria-hidden="true" />
+                Suggest an Accessibility Update
+              </Link>
+              {!place.isClaimed && (
+                <Link
+                  href={`/places/${place._id}/claim`}
+                  className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                >
+                  <Star className="h-4 w-4" aria-hidden="true" />
+                  Claim This Listing
+                </Link>
+              )}
             </div>
 
             {/* Report issue */}

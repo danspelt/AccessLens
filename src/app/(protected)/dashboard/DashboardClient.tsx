@@ -193,7 +193,7 @@ export default function DashboardClient({
             </div>
 
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-              <Link href="/add-place" className="w-full sm:w-auto">
+              <Link href="/places/new" className="w-full sm:w-auto">
                 <Button size="lg" className="w-full sm:w-auto">
                   <Plus className="h-4 w-4" aria-hidden="true" />
                   Add Place
@@ -262,7 +262,7 @@ export default function DashboardClient({
                     </p>
                   </div>
                   <div className="flex w-full flex-col gap-2 sm:flex-row">
-                    <Link href="/add-place" className="flex-1">
+                    <Link href="/places/new" className="flex-1">
                       <Button className="w-full">
                         <Plus className="h-4 w-4" aria-hidden="true" />
                         Add place
@@ -357,7 +357,7 @@ export default function DashboardClient({
                       </p>
                     </div>
                     <div className="flex w-full flex-col gap-2 sm:flex-row">
-                      <Link href="/add-place" className="flex-1">
+                      <Link href="/places/new" className="flex-1">
                         <Button className="w-full">
                           <Plus className="h-4 w-4" aria-hidden="true" />
                           Add place

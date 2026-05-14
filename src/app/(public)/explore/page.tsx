@@ -228,7 +228,7 @@ export default async function ExplorePage({
                   <div className="pointer-events-none absolute bottom-3 left-3 right-3 z-10 sm:right-auto sm:max-w-sm">
                     <p className="pointer-events-auto rounded-lg border border-slate-200/90 bg-white/95 px-3 py-2 text-xs text-slate-700 shadow-sm backdrop-blur-sm">
                       No listings yet.{' '}
-                      <Link href="/add-place" className="font-semibold text-primary-600 hover:text-primary-700">
+                      <Link href="/places/new" className="font-semibold text-primary-600 hover:text-primary-700">
                         Add a place
                       </Link>{' '}
                       to see it on the map.
@@ -256,7 +256,7 @@ export default async function ExplorePage({
                       : (
                           <>
                             Be the first to add a place in Victoria —{' '}
-                            <Link href="/add-place" className="font-semibold text-primary-600 hover:text-primary-700">
+                            <Link href="/places/new" className="font-semibold text-primary-600 hover:text-primary-700">
                               add a place
                             </Link>
                             .
