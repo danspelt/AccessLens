@@ -322,6 +322,11 @@ export default function NewPlacePage() {
     setGeocodeHint(null);
     try {
       const res = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`);
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        setGeocodeHint('Unexpected response from the server. Please try again.');
+        return;
+      }
       const data = await res.json();
       if (!res.ok) {
         setGeocodeHint(data?.error || 'Could not find coordinates for this address.');
