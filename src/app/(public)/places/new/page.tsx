@@ -321,14 +321,24 @@ export default function NewPlacePage() {
     setGeocoding(true);
     setGeocodeHint(null);
     try {
-      const res = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`);
+      const params = new URLSearchParams();
+      params.set('q', q);
+      if (address.trim()) params.set('street', address.trim());
+      if (city.trim()) params.set('city', city.trim());
+      if (province.trim()) params.set('state', province.trim());
+      if (postalCode.trim()) params.set('postalcode', postalCode.trim());
+      params.set('country', 'Canada');
+
+      const res = await fetch(`/api/geocode?${params.toString()}`);
       const contentType = res.headers.get('content-type') || '';
       if (!contentType.includes('application/json')) {
         setGeocodeHint('Unexpected response from the server. Please try again.');
         return;
       }
       const data = await res.json();
-      if (!res.ok) {
+      const latOk = typeof data.lat === 'number' && Number.isFinite(data.lat);
+      const lonOk = typeof data.lon === 'number' && Number.isFinite(data.lon);
+      if (!res.ok || data.found === false || !latOk || !lonOk) {
         setGeocodeHint(data?.error || 'Could not find coordinates for this address.');
         return;
       }

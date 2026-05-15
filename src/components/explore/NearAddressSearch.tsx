@@ -25,7 +25,9 @@ export function NearAddressSearch() {
     try {
       const res = await fetch(`/api/geocode?q=${encodeURIComponent(q)}`);
       const data = await res.json();
-      if (!res.ok) {
+      const latOk = typeof data.lat === 'number' && Number.isFinite(data.lat);
+      const lonOk = typeof data.lon === 'number' && Number.isFinite(data.lon);
+      if (!res.ok || data.found === false || !latOk || !lonOk) {
         setError(data?.error || 'Could not geocode that address.');
         return;
       }

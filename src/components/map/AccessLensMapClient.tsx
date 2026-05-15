@@ -304,10 +304,16 @@ export function AccessLensMapClient({
       )
         .then(async (res) => {
           const data = (await res.json()) as {
+            lat?: unknown;
             displayName?: string;
             error?: string;
+            found?: boolean;
           };
           if (!res.ok) throw new Error(data.error || 'Reverse geocode failed');
+          const latOk = typeof data.lat === 'number' && Number.isFinite(data.lat);
+          if (data.found === false || !latOk) {
+            throw new Error(data.error || 'Reverse geocode failed');
+          }
           return data;
         })
         .then((data) => {

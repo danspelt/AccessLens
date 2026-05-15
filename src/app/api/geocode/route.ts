@@ -6,10 +6,7 @@ import { getCachedGeocode, setCachedGeocode } from '@/lib/db/geocode';
 const lastByIp = new Map<string, number>();
 const MIN_INTERVAL_MS = 1100; // ~1 req/sec
 
-const forwardSchema = z.object({
-  q: z.string().min(3).max(200),
-  limit: z.coerce.number().int().min(1).max(3).default(1),
-});
+const forwardLimitSchema = z.coerce.number().int().min(1).max(3);
 
 const reverseSchema = z.object({
   lat: z.coerce.number().finite().gte(-90).lte(90),
@@ -70,6 +67,97 @@ async function applyRateLimit(req: NextRequest): Promise<NextResponse | null> {
   return null;
 }
 
+function sleep(ms: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+function structuredCacheKey(
+  street: string,
+  city: string,
+  state: string,
+  postalcode: string,
+  country: string,
+): string {
+  return `struct:${street}|${city}|${state}|${postalcode}|${country}`;
+}
+
+function buildStructuredSearchUrl(
+  street: string,
+  city: string,
+  state: string,
+  postalcode: string,
+  country: string,
+  limit: number,
+): URL {
+  const url = new URL('https://nominatim.openstreetmap.org/search');
+  url.searchParams.set('format', 'jsonv2');
+  url.searchParams.set('addressdetails', '1');
+  url.searchParams.set('limit', String(limit));
+  url.searchParams.set('street', street);
+  url.searchParams.set('city', city);
+  if (state) url.searchParams.set('state', state);
+  if (postalcode) url.searchParams.set('postalcode', postalcode);
+  url.searchParams.set('country', country);
+  const lc = country.toLowerCase();
+  if (lc === 'canada' || lc === 'ca') url.searchParams.set('countrycodes', 'ca');
+  return url;
+}
+
+function buildForwardQueryUrl(q: string, limit: number): URL {
+  const url = new URL('https://nominatim.openstreetmap.org/search');
+  url.searchParams.set('format', 'jsonv2');
+  url.searchParams.set('q', q);
+  url.searchParams.set('addressdetails', '1');
+  url.searchParams.set('limit', String(limit));
+  return url;
+}
+
+async function nominatimForwardHits(url: URL): Promise<NominatimSearchHit[]> {
+  const res = await fetch(url.toString(), {
+    headers: {
+      'User-Agent': userAgent(),
+      Accept: 'application/json',
+      'Accept-Language': 'en',
+    },
+    cache: 'no-store',
+  });
+  const bodyText = await res.text();
+  if (!res.ok) {
+    console.error('[geocode] Nominatim search failed', res.status, bodyText.slice(0, 400));
+    throw new Error('nominatim_forward_http');
+  }
+  let data: unknown;
+  try {
+    data = JSON.parse(bodyText);
+  } catch {
+    throw new Error('nominatim_forward_json');
+  }
+  if (!Array.isArray(data)) {
+    console.warn('[geocode] Nominatim forward returned non-array', bodyText.slice(0, 200));
+    return [];
+  }
+  return data as NominatimSearchHit[];
+}
+
+function hitToForwardResult(top: NominatimSearchHit) {
+  const lat = Number(top.lat);
+  const lon = Number(top.lon);
+  if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+    return null;
+  }
+  return {
+    lat,
+    lon,
+    displayName: top.display_name || `${lat}, ${lon}`,
+    placeId: top.place_id != null ? String(top.place_id) : undefined,
+    osmType: top.osm_type,
+    category: top.category,
+    type: top.type,
+  };
+}
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -89,7 +177,12 @@ export async function GET(req: NextRequest) {
       try {
         const cached = await getCachedGeocode(cacheKey);
         if (cached) {
-          return NextResponse.json({ fromCache: true, reverse: true, ...cached.result });
+          return NextResponse.json({
+            found: true,
+            fromCache: true,
+            reverse: true,
+            ...cached.result,
+          });
         }
       } catch (cacheErr) {
         console.warn('[geocode] reverse cache read failed:', cacheErr);
@@ -131,7 +224,22 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: 'Invalid reverse geocode response' }, { status: 502 });
       }
       if (!top || typeof top.display_name !== 'string') {
-        return NextResponse.json({ error: 'No result for this location' }, { status: 404 });
+        const fallback = {
+          lat,
+          lon,
+          displayName: `${lat.toFixed(5)}, ${lon.toFixed(5)}`,
+        };
+        try {
+          await setCachedGeocode(cacheKey, fallback, 30);
+        } catch (cacheErr) {
+          console.warn('[geocode] reverse cache write failed:', cacheErr);
+        }
+        return NextResponse.json({
+          found: true,
+          fromCache: false,
+          reverse: true,
+          ...fallback,
+        });
       }
 
       const rLat = Number(top.lat);
@@ -157,22 +265,54 @@ export async function GET(req: NextRequest) {
         console.warn('[geocode] reverse cache write failed:', cacheErr);
       }
 
-      return NextResponse.json({ fromCache: false, reverse: true, ...result });
+      return NextResponse.json({ found: true, fromCache: false, reverse: true, ...result });
     }
 
-    const parsed = forwardSchema.safeParse({
-      q: searchParams.get('q') || '',
-      limit: searchParams.get('limit') || '1',
-    });
-    if (!parsed.success) {
+    const street = (searchParams.get('street') || '').trim();
+    const city = (searchParams.get('city') || '').trim();
+    const state = (searchParams.get('state') || '').trim();
+    const postalcode = (searchParams.get('postalcode') || '').trim();
+    const country = (searchParams.get('country') || 'Canada').trim() || 'Canada';
+    const q = (searchParams.get('q') || '').trim();
+    const hasStructuredFwd = Boolean(street && city);
+
+    const limitParsed = forwardLimitSchema.safeParse(searchParams.get('limit') || '1');
+    if (!limitParsed.success) {
+      return NextResponse.json({ error: 'Invalid limit' }, { status: 400 });
+    }
+    const limit = limitParsed.data;
+
+    if (q.length > 200) {
       return NextResponse.json({ error: 'Invalid query' }, { status: 400 });
     }
-    const { q, limit } = parsed.data;
+    if (!hasStructuredFwd && q.length < 3) {
+      return NextResponse.json({ error: 'Invalid query' }, { status: 400 });
+    }
+
+    const sKey = hasStructuredFwd ? structuredCacheKey(street, city, state, postalcode, country) : null;
 
     try {
-      const cached = await getCachedGeocode(q);
-      if (cached) {
-        return NextResponse.json({ fromCache: true, reverse: false, ...cached.result });
+      if (sKey) {
+        const cached = await getCachedGeocode(sKey);
+        if (cached) {
+          return NextResponse.json({
+            found: true,
+            fromCache: true,
+            reverse: false,
+            ...cached.result,
+          });
+        }
+      }
+      if (q.length >= 3) {
+        const cachedQ = await getCachedGeocode(q);
+        if (cachedQ) {
+          return NextResponse.json({
+            found: true,
+            fromCache: true,
+            reverse: false,
+            ...cachedQ.result,
+          });
+        }
       }
     } catch (cacheErr) {
       console.warn('[geocode] cache read failed, continuing without cache:', cacheErr);
@@ -181,61 +321,58 @@ export async function GET(req: NextRequest) {
     const limited = await applyRateLimit(req);
     if (limited) return limited;
 
-    const url = new URL('https://nominatim.openstreetmap.org/search');
-    url.searchParams.set('format', 'jsonv2');
-    url.searchParams.set('q', q);
-    url.searchParams.set('addressdetails', '1');
-    url.searchParams.set('limit', String(limit));
+    let hits: NominatimSearchHit[] = [];
+    let cacheWriteKey: string | null = null;
 
-    const res = await fetch(url.toString(), {
-      headers: {
-        'User-Agent': userAgent(),
-        Accept: 'application/json',
-        'Accept-Language': 'en',
-      },
-      cache: 'no-store',
-    });
-
-    const bodyText = await res.text();
-    if (!res.ok) {
-      console.error('[geocode] Nominatim search failed', res.status, bodyText.slice(0, 400));
-      return NextResponse.json({ error: 'Geocoding failed' }, { status: 502 });
-    }
-
-    let data: NominatimSearchHit[];
     try {
-      data = JSON.parse(bodyText) as NominatimSearchHit[];
-    } catch {
-      return NextResponse.json({ error: 'Invalid geocode response' }, { status: 502 });
-    }
-    if (!Array.isArray(data) || data.length === 0) {
-      return NextResponse.json({ error: 'No results found' }, { status: 404 });
+      if (hasStructuredFwd) {
+        const sUrl = buildStructuredSearchUrl(street, city, state, postalcode, country, limit);
+        hits = await nominatimForwardHits(sUrl);
+        cacheWriteKey = sKey!;
+        if (hits.length === 0 && q.length >= 3) {
+          await sleep(MIN_INTERVAL_MS);
+          hits = await nominatimForwardHits(buildForwardQueryUrl(q, limit));
+          cacheWriteKey = q;
+        }
+      } else {
+        hits = await nominatimForwardHits(buildForwardQueryUrl(q, limit));
+        cacheWriteKey = q;
+      }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : '';
+      if (msg === 'nominatim_forward_http' || msg === 'nominatim_forward_json') {
+        return NextResponse.json({ error: 'Geocoding failed' }, { status: 502 });
+      }
+      throw e;
     }
 
-    const top = data[0];
-    const lat = Number(top.lat);
-    const lon = Number(top.lon);
-    if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+    if (hits.length === 0) {
+      return NextResponse.json(
+        {
+          found: false,
+          reverse: false,
+          fromCache: false,
+          error: 'No results found',
+        },
+        { status: 200 },
+      );
+    }
+
+    const fwdTop = hits[0];
+    const result = hitToForwardResult(fwdTop);
+    if (!result) {
       return NextResponse.json({ error: 'Invalid geocode result' }, { status: 502 });
     }
 
-    const result = {
-      lat,
-      lon,
-      displayName: top.display_name,
-      placeId: top.place_id != null ? String(top.place_id) : undefined,
-      osmType: top.osm_type,
-      category: top.category,
-      type: top.type,
-    };
-
-    try {
-      await setCachedGeocode(q, result, 30);
-    } catch (cacheErr) {
-      console.warn('[geocode] cache write failed:', cacheErr);
+    if (cacheWriteKey) {
+      try {
+        await setCachedGeocode(cacheWriteKey, result, 30);
+      } catch (cacheErr) {
+        console.warn('[geocode] cache write failed:', cacheErr);
+      }
     }
 
-    return NextResponse.json({ fromCache: false, reverse: false, ...result });
+    return NextResponse.json({ found: true, fromCache: false, reverse: false, ...result });
   } catch (error) {
     console.error('GET /api/geocode error:', error);
     return NextResponse.json({ error: 'Geocoding failed' }, { status: 500 });
