@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
       _id: s._id.toString(),
       submittedBy: {
         ...s.submittedBy,
-        userId: s.submittedBy.userId.toString(),
+        userId: s.submittedBy.userId?.toString() ?? null,
       },
       adminReview: {
         ...s.adminReview,

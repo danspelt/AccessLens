@@ -8,9 +8,6 @@ import { logActivity } from '@/lib/db/activity';
 
 export async function POST(request: NextRequest) {
   const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
-  }
 
   try {
     const body = await request.json();
@@ -52,7 +49,7 @@ export async function POST(request: NextRequest) {
       },
       photoUrls: validated.photoUrls || [],
       submittedBy: {
-        userId: new ObjectId(session.user.id),
+        ...(session?.user?.id ? { userId: new ObjectId(session.user.id) } : {}),
         name: validated.submitter.name,
         email: validated.submitter.email,
         role: validated.submitter.role,
@@ -71,14 +68,16 @@ export async function POST(request: NextRequest) {
     const collection = await getCollection<PlaceSubmission>('placeSubmissions');
     const result = await collection.insertOne(submission as PlaceSubmission);
 
-    await logActivity({
-      userId: session.user.id,
-      type: 'place_submitted',
-      entityType: 'submission',
-      entityId: result.insertedId.toString(),
-      message: `Submitted "${validated.placeData.name}" for review`,
-      metadata: { placeName: validated.placeData.name },
-    });
+    if (session?.user?.id) {
+      await logActivity({
+        userId: session.user.id,
+        type: 'place_submitted',
+        entityType: 'submission',
+        entityId: result.insertedId.toString(),
+        message: `Submitted "${validated.placeData.name}" for review`,
+        metadata: { placeName: validated.placeData.name },
+      });
+    }
 
     return NextResponse.json(
       { submission: { id: result.insertedId.toString() } },

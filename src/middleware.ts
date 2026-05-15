@@ -29,6 +29,8 @@ export default auth((req) => {
     pathname.startsWith('/api/auth') ||
     pathname.startsWith('/api/places') ||
     pathname.startsWith('/api/geocode') ||
+    pathname.startsWith('/api/place-submissions') ||
+    pathname.startsWith('/api/upload') ||
     pathname.startsWith('/api/reports') ||
     pathname.startsWith('/uploads');
 

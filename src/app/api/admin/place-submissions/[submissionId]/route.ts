@@ -74,15 +74,18 @@ export async function POST(request: NextRequest, context: RouteContext) {
         status: 'active',
         source: {
           type: submission.submittedBy.isOwnerOrManager ? 'business_submission' : 'community_submission',
-          submittedByUserId: submission.submittedBy.userId,
+          ...(submission.submittedBy.userId
+            ? { submittedByUserId: submission.submittedBy.userId }
+            : {}),
           submittedByRole: submission.submittedBy.role,
           submissionId: submission._id,
         },
-        isClaimed: submission.submittedBy.isOwnerOrManager,
-        claimedByUserId: submission.submittedBy.isOwnerOrManager
-          ? submission.submittedBy.userId
-          : undefined,
-        createdByUserId: submission.submittedBy.userId,
+        isClaimed: submission.submittedBy.isOwnerOrManager && !!submission.submittedBy.userId,
+        claimedByUserId:
+          submission.submittedBy.isOwnerOrManager && submission.submittedBy.userId
+            ? submission.submittedBy.userId
+            : undefined,
+        createdByUserId: submission.submittedBy.userId ?? new ObjectId(session.user.id),
         createdAt: new Date(),
         updatedAt: new Date(),
       };

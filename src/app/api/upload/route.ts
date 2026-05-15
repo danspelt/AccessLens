@@ -45,16 +45,29 @@ function classifyFile(file: File): { kind: 'image' | 'video'; maxSize: number } 
   return null;
 }
 
+const PUBLIC_UPLOAD_CONTEXTS = new Set(['places', 'submissions']);
+
 export async function POST(request: NextRequest) {
   const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
-  }
 
   try {
     const formData = await request.formData();
     const files = formData.getAll('files') as File[];
     const context = (formData.get('context') as string) || 'general';
+
+    if (!session?.user?.id && !PUBLIC_UPLOAD_CONTEXTS.has(context)) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
+    if (!session?.user?.id && PUBLIC_UPLOAD_CONTEXTS.has(context)) {
+      const hasVideo = files.some((file) => VIDEO_TYPES.has(file.type));
+      if (hasVideo) {
+        return NextResponse.json(
+          { error: 'Sign in to upload videos, or upload photos only.' },
+          { status: 401 }
+        );
+      }
+    }
 
     if (!files || files.length === 0) {
       return NextResponse.json({ error: 'No files provided' }, { status: 400 });
@@ -112,14 +125,16 @@ export async function POST(request: NextRequest) {
       message = `Uploaded ${photoCount} photo${photoCount === 1 ? '' : 's'}`;
     }
 
-    await logActivity({
-      userId: session.user.id,
-      type: 'photo_uploaded',
-      entityType: 'photo',
-      entityId: session.user.id,
-      message,
-      metadata: { context, count: uploadedUrls.length, urls: uploadedUrls, kinds },
-    });
+    if (session?.user?.id) {
+      await logActivity({
+        userId: session.user.id,
+        type: 'photo_uploaded',
+        entityType: 'photo',
+        entityId: session.user.id,
+        message,
+        metadata: { context, count: uploadedUrls.length, urls: uploadedUrls, kinds },
+      });
+    }
 
     return NextResponse.json({ urls: uploadedUrls, kinds }, { status: 201 });
   } catch (error) {

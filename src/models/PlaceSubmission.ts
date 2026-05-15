@@ -72,7 +72,7 @@ export interface PlaceSubmission {
   photoUrls: string[];
 
   submittedBy: {
-    userId: ObjectId;
+    userId?: ObjectId;
     name: string;
     email: string;
     role: SubmitterRole;
