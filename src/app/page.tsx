@@ -333,7 +333,7 @@ export default async function HomePage() {
   return (
     <div className="relative">
       {/* Hero */}
-      <section className="relative overflow-hidden text-white">
+      <section className="relative overflow-hidden">
         <div
           className="absolute inset-0 bg-[url('/hero-map-bg.png')] bg-cover bg-center bg-no-repeat"
           aria-hidden="true"
@@ -347,32 +347,32 @@ export default async function HomePage() {
           <div className="absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-white/20 blur-3xl" />
         </div>
         <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
-          <div className="motion-safe:animate-fade-up mx-auto max-w-3xl rounded-3xl border border-white/20 bg-gradient-to-br from-primary-950/55 via-primary-900/55 to-primary-800/45 px-6 py-10 text-center shadow-[0_25px_80px_-12px_rgba(8,47,73,0.5)] ring-1 ring-white/10 backdrop-blur-md sm:px-10 sm:py-12">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/12 px-4 py-1.5 text-sm font-medium text-white/95 backdrop-blur-sm ring-1 ring-white/10">
-              <MapPin className="h-4 w-4" aria-hidden="true" />
+          <div className="motion-safe:animate-fade-up mx-auto max-w-3xl rounded-3xl border border-white/50 bg-white/[0.93] px-6 py-10 text-center shadow-[0_25px_80px_-12px_rgba(8,47,73,0.35)] ring-1 ring-slate-900/[0.06] backdrop-blur-xl sm:px-10 sm:py-12">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary-200/90 bg-primary-50 px-4 py-1.5 text-sm font-semibold text-primary-900 backdrop-blur-sm">
+              <MapPin className="h-4 w-4 text-primary-700" aria-hidden="true" />
               {liveCityLabel}
             </div>
-            <h1 className="font-display text-5xl font-bold tracking-tight text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.35)] sm:text-6xl lg:text-7xl">
+            <h1 className="font-display text-5xl font-bold tracking-tight text-slate-900 sm:text-6xl lg:text-7xl">
               {hero.titleLine1}
-              <span className="block text-primary-200"> {hero.titleLine2}</span>
+              <span className="block text-primary-800"> {hero.titleLine2}</span>
             </h1>
-            <p className="mt-6 text-xl leading-relaxed text-white/95 [text-shadow:0_1px_16px_rgba(0,0,0,0.35)]">
+            <p className="mt-6 text-xl font-medium leading-relaxed text-slate-700">
               {hero.description}
             </p>
 
             {stats.totalPlaces > 0 && (
-              <dl className="mt-8 grid grid-cols-3 gap-4 rounded-2xl bg-white/10 px-4 py-4 backdrop-blur-sm ring-1 ring-white/15">
+              <dl className="mt-8 grid grid-cols-3 gap-4 rounded-2xl border border-slate-200/90 bg-slate-50/95 px-4 py-4 backdrop-blur-sm">
                 <div>
-                  <dt className="text-xs uppercase tracking-wider text-primary-200">Places</dt>
-                  <dd className="mt-1 text-2xl font-bold">{stats.totalPlaces}</dd>
+                  <dt className="text-xs font-semibold uppercase tracking-wider text-slate-500">Places</dt>
+                  <dd className="mt-1 text-2xl font-bold tabular-nums text-slate-900">{stats.totalPlaces}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs uppercase tracking-wider text-primary-200">Categories</dt>
-                  <dd className="mt-1 text-2xl font-bold">{stats.totalCategories}</dd>
+                  <dt className="text-xs font-semibold uppercase tracking-wider text-slate-500">Categories</dt>
+                  <dd className="mt-1 text-2xl font-bold tabular-nums text-slate-900">{stats.totalCategories}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs uppercase tracking-wider text-primary-200">Avg score</dt>
-                  <dd className="mt-1 text-2xl font-bold">
+                  <dt className="text-xs font-semibold uppercase tracking-wider text-slate-500">Avg score</dt>
+                  <dd className="mt-1 text-2xl font-bold tabular-nums text-slate-900">
                     {stats.avgScore !== null ? `${stats.avgScore}/100` : '—'}
                   </dd>
                 </div>
@@ -382,14 +382,14 @@ export default async function HomePage() {
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link
                 href={hero.primaryCtaHref}
-                className="inline-flex items-center gap-2 rounded-lg bg-white px-8 py-4 text-base font-semibold text-primary-900 shadow-lg hover:bg-primary-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary-700"
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-b from-primary-500 to-primary-700 px-8 py-4 text-base font-semibold text-white shadow-btn-primary ring-1 ring-white/15 transition-colors hover:from-primary-500 hover:to-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
               >
                 {hero.primaryCtaLabel}
                 <ArrowRight className="h-5 w-5" aria-hidden="true" />
               </Link>
               <Link
                 href={hero.secondaryCtaHref}
-                className="inline-flex items-center gap-2 rounded-lg border border-white/30 bg-white/10 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm hover:bg-white/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary-700"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-300/95 bg-white px-8 py-4 text-base font-semibold text-slate-800 shadow-btn-outline transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
               >
                 {hero.secondaryCtaLabel}
               </Link>
