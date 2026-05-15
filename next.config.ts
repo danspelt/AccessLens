@@ -4,7 +4,10 @@ const nextConfig: NextConfig = {
   output: 'standalone',
   serverExternalPackages: ['mongodb', 'bcryptjs'],
   async redirects() {
-    return [{ source: '/login', destination: '/signin', permanent: true }];
+    return [
+      { source: '/login', destination: '/signin', permanent: true },
+      { source: '/places', destination: '/explore', permanent: false },
+    ];
   },
   images: {
     remotePatterns: [

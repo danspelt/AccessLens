@@ -1,4 +1,6 @@
 import { ObjectId } from 'mongodb';
+import type { AccessibilityProfile } from '@/models/AccessibilityProfile';
+import type { VerificationLevel } from '@/lib/accessibility/tags';
 
 export type PlaceCategory =
   | 'library'
@@ -81,7 +83,16 @@ export interface AccessibilityChecklist {
 
 export type PlaceStatus = 'active' | 'pending_review' | 'rejected' | 'archived';
 
+/** Outreach program lifecycle for business-driven listings */
+export type OutreachStatus = 'unclaimed' | 'claimed' | 'pending_review' | 'published';
+
 export type PlaceSourceType = 'community_submission' | 'business_submission' | 'admin_created' | 'imported';
+
+export type PartnerLabel =
+  | 'accessibility_partner'
+  | 'inclusive_access'
+  | 'community_verified'
+  | 'local_access_partner';
 
 export interface Place {
   _id: ObjectId;
@@ -119,12 +130,40 @@ export interface Place {
   };
   claimedByUserId?: ObjectId;
   isClaimed: boolean;
+  // Outreach / business portal
+  accessCode?: string;
+  accessCodeExpiresAt?: Date;
+  outreachStatus?: OutreachStatus;
+  verificationLevel?: VerificationLevel;
+  partnerLabel?: PartnerLabel;
+  businessContact?: {
+    name: string;
+    email: string;
+    phone?: string;
+    role: string;
+  };
+  accessibilityProfile?: AccessibilityProfile;
+  lastUpdatedByBusinessAt?: Date;
   // Metadata
   createdByUserId: ObjectId;
   verifiedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
+
+export const OUTREACH_STATUS_LABELS: Record<OutreachStatus, string> = {
+  unclaimed: 'Unclaimed',
+  claimed: 'Claimed',
+  pending_review: 'Pending review',
+  published: 'Published',
+};
+
+export const PARTNER_LABEL_DISPLAY: Record<PartnerLabel, string> = {
+  accessibility_partner: 'AccessLens Accessibility Partner',
+  inclusive_access: 'Inclusive Access Participant',
+  community_verified: 'Community Accessibility Verified',
+  local_access_partner: 'Local Access Partner',
+};
 
 export function calculateAccessibilityScore(checklist: Partial<AccessibilityChecklist>): number {
   const fields: (keyof AccessibilityChecklist)[] = [

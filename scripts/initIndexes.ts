@@ -43,7 +43,19 @@ async function initIndexes() {
     await safeIndex(places, { name: 'text', address: 'text', description: 'text' });
     // Geospatial index (location: GeoJSON Point)
     await safeIndex(places, { location: '2dsphere' });
+    await safeIndex(places, { accessCode: 1 }, { unique: true, sparse: true });
+    await safeIndex(places, { outreachStatus: 1, citySlug: 1 });
     console.log('✓ places indexes');
+
+    const businessVisits = db.collection('businessVisits');
+    await safeIndex(businessVisits, { placeId: 1, visitDate: -1 });
+    await safeIndex(businessVisits, { studentUserId: 1, visitDate: -1 });
+    console.log('✓ businessVisits indexes');
+
+    const placePhotos = db.collection('placePhotos');
+    await safeIndex(placePhotos, { placeId: 1, status: 1, createdAt: -1 });
+    await safeIndex(placePhotos, { status: 1, createdAt: -1 });
+    console.log('✓ placePhotos indexes');
 
     // Reviews collection
     const reviews = db.collection('reviews');

@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 
-export type UserRole = 'user' | 'admin' | 'moderator';
+export type UserRole = 'user' | 'admin' | 'moderator' | 'student';
 
 /** Community reviewers vs business listings accounts */
 export type AccountType = 'reviewer' | 'business';

@@ -121,7 +121,10 @@ export function NavbarClient({ user }: NavbarClientProps) {
     pathname === '/my-places' ||
     pathname.startsWith('/my-places/') ||
     pathname === '/settings' ||
-    pathname.startsWith('/settings/');
+    pathname.startsWith('/settings/') ||
+    pathname === '/student' ||
+    pathname.startsWith('/student/') ||
+    pathname.startsWith('/admin/');
 
   if (hideOnDashboardRoutes) {
     return null;
@@ -129,6 +132,8 @@ export function NavbarClient({ user }: NavbarClientProps) {
 
   const navLinks = [
     { href: '/explore', label: 'Find Places' },
+    { href: '/about', label: 'About' },
+    { href: '/for-businesses', label: 'For Businesses' },
     { href: '/places/new', label: 'Add a Place' },
     ...(user
       ? [

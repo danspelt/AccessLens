@@ -19,7 +19,12 @@ export default auth((req) => {
     pathname.startsWith('/signup') ||
     pathname.startsWith('/explore') ||
     pathname.startsWith('/places') ||
+    pathname.startsWith('/update-accessibility') ||
+    pathname.startsWith('/for-businesses') ||
     pathname.startsWith('/cities') ||
+    pathname.startsWith('/qr') ||
+    pathname.startsWith('/api/business') ||
+    pathname.startsWith('/about') ||
     pathname.startsWith('/api/health') ||
     pathname.startsWith('/api/auth') ||
     pathname.startsWith('/api/places') ||

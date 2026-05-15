@@ -7,6 +7,8 @@ import { clsx } from 'clsx';
 type BaseProps = {
   context?: string;
   maxFiles?: number;
+  /** Override default `/api/upload` (e.g. business portal). */
+  uploadEndpoint?: string;
 };
 
 type ImagesVariantProps = BaseProps & {
@@ -31,6 +33,7 @@ export function PhotoUpload(props: PhotoUploadProps) {
   const isMedia = props.variant === 'media';
   const context = props.context ?? 'general';
   const maxFiles = props.maxFiles ?? 5;
+  const uploadEndpoint = props.uploadEndpoint ?? '/api/upload';
 
   const [previews, setPreviews] = useState<{ file: File; preview: string }[]>([]);
   const [pendingPhotos, setPendingPhotos] = useState<PendingPhoto[]>([]);
@@ -192,7 +195,7 @@ export function PhotoUpload(props: PhotoUploadProps) {
     formData.append('context', context);
 
     try {
-      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      const res = await fetch(uploadEndpoint, { method: 'POST', body: formData });
       const data = await res.json();
 
       if (!res.ok) {

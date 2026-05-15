@@ -11,7 +11,9 @@ import {
   CATEGORY_ICONS,
   getScoreColor,
   getScoreLabel,
+  PARTNER_LABEL_DISPLAY,
 } from '@/models/Place';
+import { profileToPublicTags, VERIFICATION_LABELS } from '@/lib/accessibility/tags';
 import { Review } from '@/models/Review';
 import { User } from '@/models/User';
 import { ReviewForm } from '@/components/reviews/ReviewForm';
@@ -32,6 +34,7 @@ import {
   Flag,
 } from 'lucide-react';
 import { Favorite } from '@/models/Favorite';
+import { getApprovedPhotoUrls } from '@/lib/db/placePhotos';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -81,9 +84,12 @@ async function getPlaceData(id: string) {
       ? Math.round((reviews.reduce((s, r) => s + r.rating, 0) / reviews.length) * 10) / 10
       : null;
 
+  const displayPhotoUrls = await getApprovedPhotoUrls(place._id);
+
   return {
     place: {
       ...place,
+      displayPhotoUrls,
       _id: place._id.toString(),
       createdByUserId: place.createdByUserId.toString(),
       createdAt: place.createdAt.toISOString(),
@@ -151,6 +157,13 @@ export default async function PlaceDetailPage({ params }: Props) {
 
   const categoryLabel = PLACE_CATEGORIES[place.category as keyof typeof PLACE_CATEGORIES] || place.category;
   const categoryIcon = CATEGORY_ICONS[place.category as keyof typeof CATEGORY_ICONS] || '📍';
+  const publicTags = profileToPublicTags(place.accessibilityProfile);
+  const verificationLabel = place.verificationLevel
+    ? VERIFICATION_LABELS[place.verificationLevel]
+    : null;
+  const partnerLabel = place.partnerLabel
+    ? PARTNER_LABEL_DISPLAY[place.partnerLabel]
+    : null;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -185,6 +198,10 @@ export default async function PlaceDetailPage({ params }: Props) {
                 <span className="text-2xl" role="img" aria-label={categoryLabel}>{categoryIcon}</span>
                 <Badge variant="info">{categoryLabel}</Badge>
                 <Badge variant="default">{place.city}, {place.province}</Badge>
+                {verificationLabel ? (
+                  <Badge variant="success">{verificationLabel}</Badge>
+                ) : null}
+                {partnerLabel ? <Badge variant="info">{partnerLabel}</Badge> : null}
               </div>
               <h1 className="text-3xl font-bold text-slate-900">{place.name}</h1>
               <p className="mt-2 flex items-center gap-1.5 text-sm text-slate-600">
@@ -261,12 +278,41 @@ export default async function PlaceDetailPage({ params }: Props) {
             </div>
 
             {/* Photos */}
-            {place.photoUrls && place.photoUrls.length > 0 && (
+            {(place as { displayPhotoUrls?: string[] }).displayPhotoUrls &&
+              (place as { displayPhotoUrls: string[] }).displayPhotoUrls.length > 0 && (
               <section aria-labelledby="photos-heading" className="rounded-xl panel-surface p-6">
                 <h2 id="photos-heading" className="mb-4 text-lg font-semibold text-slate-900">
-                  Accessibility Photos ({place.photoUrls.length})
+                  Accessibility Photos ({(place as { displayPhotoUrls: string[] }).displayPhotoUrls.length})
                 </h2>
-                <PhotoGallery urls={place.photoUrls} placeName={place.name} />
+                <PhotoGallery
+                  urls={(place as { displayPhotoUrls: string[] }).displayPhotoUrls}
+                  placeName={place.name}
+                />
+              </section>
+            )}
+
+            {publicTags.length > 0 && (
+              <section aria-labelledby="tags-heading" className="rounded-xl panel-surface p-6">
+                <h2 id="tags-heading" className="mb-4 text-lg font-semibold text-slate-900">
+                  Accessibility highlights
+                </h2>
+                <ul className="flex flex-wrap gap-2" role="list">
+                  {publicTags.map((t) => (
+                    <li key={t.id}>
+                      <span
+                        className={`inline-flex rounded-full px-3 py-1 text-sm font-medium ${
+                          t.status === 'positive'
+                            ? 'bg-green-100 text-green-800'
+                            : t.status === 'partial'
+                              ? 'bg-amber-100 text-amber-900'
+                              : 'bg-slate-100 text-slate-700'
+                        }`}
+                      >
+                        {t.label}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               </section>
             )}
 

@@ -12,7 +12,14 @@ import {
   MapPin,
   Settings,
   LogOut,
+  KeyRound,
+  ClipboardCheck,
+  BarChart3,
+  Users,
+  Camera,
 } from 'lucide-react';
+import type { UserRole } from '@/models/User';
+import { canAccessAdminOutreach, canAccessStudentOutreach } from '@/lib/auth/outreachRoles';
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -23,9 +30,21 @@ const navItems = [
   { label: 'Settings', href: '/settings', icon: Settings },
 ];
 
-export function Sidebar({ userName }: { userName: string }) {
+const adminItems = [
+  { label: 'Access codes', href: '/admin/access-codes', icon: KeyRound },
+  { label: 'Outreach review', href: '/admin/outreach', icon: ClipboardCheck },
+  { label: 'Photo review', href: '/admin/photos', icon: Camera },
+  { label: 'Impact report', href: '/admin/reports', icon: BarChart3 },
+];
+
+const studentItems = [{ label: 'Student outreach', href: '/student', icon: Users }];
+
+export function Sidebar({ userName, userRole = 'user' }: { userName: string; userRole?: UserRole }) {
   const pathname = usePathname();
   const isActive = (href: string) => (href === '/dashboard' ? pathname === href : pathname.startsWith(href));
+
+  const showAdmin = canAccessAdminOutreach(userRole);
+  const showStudent = canAccessStudentOutreach(userRole);
 
   return (
     <div className="rounded-2xl border border-slate-200/90 bg-gradient-to-b from-white via-white to-slate-50/95 p-5 shadow-card ring-1 ring-slate-900/[0.035]">
@@ -60,6 +79,64 @@ export function Sidebar({ userName }: { userName: string }) {
           })}
         </ul>
       </nav>
+
+      {showStudent ? (
+        <>
+          <div className="my-5 border-t border-slate-200" />
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Outreach</p>
+          <ul className="space-y-3">
+            {studentItems.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.href);
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={clsx(
+                      'flex min-h-[3rem] items-center gap-3 rounded-2xl px-4 py-3 text-base font-semibold transition-colors',
+                      active
+                        ? 'bg-primary-50 text-primary-800 ring-1 ring-primary-200/70'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                    )}
+                  >
+                    <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      ) : null}
+
+      {showAdmin ? (
+        <>
+          <div className="my-5 border-t border-slate-200" />
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Admin</p>
+          <ul className="space-y-3">
+            {adminItems.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.href);
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={clsx(
+                      'flex min-h-[3rem] items-center gap-3 rounded-2xl px-4 py-3 text-base font-semibold transition-colors',
+                      active
+                        ? 'bg-primary-50 text-primary-800 ring-1 ring-primary-200/70'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                    )}
+                  >
+                    <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      ) : null}
 
       <div className="my-5 border-t border-slate-200" />
 

@@ -154,6 +154,107 @@ export const accessibilityUpdateSchema = z.object({
   photoUrls: z.array(z.string()).default([]),
 });
 
+const granularAnswer = z.enum(['yes', 'partial', 'no', 'unsure', 'planned']);
+
+export const accessibilityProfileSchema = z.object({
+  entrance: z
+    .object({
+      stepFree: granularAnswer.optional(),
+      ramp: granularAnswer.optional(),
+      wideDoor: z.enum(['yes', 'partial', 'no', 'unsure']).optional(),
+      automaticDoor: z.enum(['yes', 'assisted', 'no', 'unsure']).optional(),
+      smoothPath: granularAnswer.optional(),
+      seatingNearEntrance: z.enum(['yes', 'no', 'unsure']).optional(),
+    })
+    .optional(),
+  interior: z
+    .object({
+      wheelchairMovement: granularAnswer.optional(),
+      wideAisles: granularAnswer.optional(),
+      seatingInside: z.enum(['yes', 'no', 'unsure']).optional(),
+      elevatorOrLift: z.enum(['yes', 'limited', 'no', 'single_floor']).optional(),
+    })
+    .optional(),
+  washroom: z
+    .object({
+      customerWashroom: z.enum(['yes', 'no']).optional(),
+      wheelchairAccessible: granularAnswer.optional(),
+      grabBars: z.enum(['yes', 'no', 'unsure']).optional(),
+      turningSpace: z.enum(['yes', 'limited', 'no', 'unsure']).optional(),
+    })
+    .optional(),
+  communication: z
+    .object({
+      textEmailOnlineContact: z.enum(['yes', 'limited', 'no']).optional(),
+      largePrintDigitalForms: z.enum(['yes', 'by_request', 'no']).optional(),
+      reasonableNoise: z.enum(['yes', 'sometimes_loud', 'no', 'unsure']).optional(),
+      staffAssistance: z.enum(['yes', 'some_staff', 'no', 'unsure']).optional(),
+    })
+    .optional(),
+  sensory: z
+    .object({
+      comfortableLighting: granularAnswer.optional(),
+      easyToNavigate: z.enum(['yes', 'busy_at_times', 'no', 'unsure']).optional(),
+      extraTimeSupport: z.enum(['yes', 'sometimes', 'no', 'unsure']).optional(),
+      serviceAnimalsWelcome: z.enum(['yes', 'no', 'unsure']).optional(),
+    })
+    .optional(),
+  transport: z
+    .object({
+      accessibleParkingNearby: granularAnswer.optional(),
+      safeDropOff: granularAnswer.optional(),
+      publicTransitNearby: granularAnswer.optional(),
+    })
+    .optional(),
+  extraFeatures: z
+    .array(
+      z.enum([
+        'quiet_hours',
+        'staff_training',
+        'accessible_website',
+        'assistance_on_request',
+        'delivery_curbside',
+        'online_booking',
+        'accessible_seating',
+        'gender_neutral_washroom',
+        'visual_signage',
+        'multilingual_support',
+      ])
+    )
+    .optional(),
+  publicNotes: z.string().max(500).optional(),
+});
+
+export const businessAccessClaimSchema = z.object({
+  contactName: z.string().min(1).max(100),
+  contactEmail: z.string().email(),
+  contactPhone: z.string().max(30).optional(),
+  role: z.enum(['owner', 'manager', 'staff', 'other']),
+});
+
+export const businessAccessSubmitSchema = z.object({
+  profile: accessibilityProfileSchema,
+  photoUrls: z.array(z.string()).default([]),
+  publish: z.boolean().default(false),
+});
+
+export const businessVisitSchema = z.object({
+  placeId: z.string().min(1),
+  visitType: z.enum(['first_visit', 'follow_up', 'verification']),
+  visitDate: z.string().datetime().or(z.string().min(1)),
+  outcome: z.enum([
+    'left_materials',
+    'spoke_to_manager',
+    'not_interested',
+    'closed',
+    'needs_follow_up',
+  ]),
+  contactName: z.string().max(100).optional(),
+  interestLevel: z.enum(['high', 'medium', 'low', 'none']).optional(),
+  notes: z.string().max(2000).optional(),
+  nextFollowUpDate: z.string().optional(),
+});
+
 export type SignupInput = z.infer<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type PlaceInput = z.infer<typeof placeSchema>;
@@ -164,3 +265,6 @@ export type AccessibilityChecklistInput = z.infer<typeof accessibilityChecklistS
 export type PlaceSubmissionInput = z.infer<typeof placeSubmissionSchema>;
 export type BusinessClaimInput = z.infer<typeof businessClaimSchema>;
 export type AccessibilityUpdateInput = z.infer<typeof accessibilityUpdateSchema>;
+export type AccessibilityProfileInput = z.infer<typeof accessibilityProfileSchema>;
+export type BusinessAccessClaimInput = z.infer<typeof businessAccessClaimSchema>;
+export type BusinessAccessSubmitInput = z.infer<typeof businessAccessSubmitSchema>;
