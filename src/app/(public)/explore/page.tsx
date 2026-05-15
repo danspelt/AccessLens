@@ -166,13 +166,13 @@ export default async function ExplorePage({
   );
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       {/* Page header */}
-      <div className="bg-white border-b border-slate-200">
+      <div className="sticky top-16 z-20 border-b border-slate-200/70 bg-white/85 shadow-sm shadow-slate-900/[0.03] backdrop-blur-md supports-[backdrop-filter]:bg-white/70">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">
+              <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
                 Explore Victoria, BC
               </h1>
               <p className="mt-1 text-sm text-slate-500">
@@ -195,8 +195,8 @@ export default async function ExplorePage({
             className="shrink-0 lg:w-72"
             aria-label="Search filters"
           >
-            <div className="sticky top-20 rounded-xl panel-surface p-5">
-              <h2 className="mb-4 text-sm font-semibold text-slate-900">Filter Places</h2>
+            <div className="sticky top-28 rounded-2xl panel-surface p-5">
+              <h2 className="mb-4 font-display text-sm font-semibold text-slate-900">Filter places</h2>
               <div className="mb-4 border-b border-slate-100 pb-4">
                 <NearAddressSearch />
               </div>
@@ -209,7 +209,7 @@ export default async function ExplorePage({
           {/* Main content */}
           <div className="flex-1 min-w-0 space-y-6">
             <section aria-label="Map of Victoria and accessible places">
-              <div className="relative min-h-[260px] h-[min(48vh,480px)] w-full overflow-hidden rounded-xl border border-slate-200/90 bg-gradient-to-b from-slate-100 to-slate-200/90 shadow-inset-well ring-1 ring-slate-900/[0.06]">
+              <div className="relative min-h-[260px] h-[min(48vh,480px)] w-full overflow-hidden rounded-2xl border border-slate-200/90 bg-gradient-to-b from-slate-100 to-slate-200/90 shadow-card ring-1 ring-slate-900/[0.06]">
                 <AccessLensMapClient
                   places={mapPlaces}
                   className="h-full w-full"
@@ -246,7 +246,7 @@ export default async function ExplorePage({
             </section>
 
             {places.length === 0 ? (
-              <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-slate-300 bg-white py-10 text-center">
+              <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-slate-300/90 bg-white/90 py-10 text-center shadow-sm ring-1 ring-slate-900/[0.03] backdrop-blur-sm">
                 <MapPin className="h-10 w-10 text-slate-300" aria-hidden="true" />
                 <div>
                   <p className="text-base font-semibold text-slate-700">No places match your filters</p>
@@ -267,7 +267,7 @@ export default async function ExplorePage({
               </div>
             ) : (
               <section aria-label="List of accessible places">
-                <h2 className="mb-3 text-sm font-semibold text-slate-900">Places</h2>
+                <h2 className="mb-3 font-display text-sm font-semibold text-slate-900">Places</h2>
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {places.map((place) => (
                     <PlaceCard key={place._id} place={place} />

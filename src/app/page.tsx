@@ -118,7 +118,7 @@ async function getHomeData() {
 function TrustStrip({ items }: { items: HomeTrustStripItem[] }) {
   if (items.length === 0) return null;
   return (
-    <div className="border-b border-slate-200 bg-white">
+    <div className="border-b border-slate-200/70 bg-white/70 backdrop-blur-md supports-[backdrop-filter]:bg-white/55">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <ul
           className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-sm text-slate-600"
@@ -147,7 +147,7 @@ function FeaturesSection({ items }: { items: HomeFeatureItem[] }) {
     <section className="border-y border-slate-100 bg-gradient-to-b from-slate-50 to-white py-20" aria-labelledby="features-heading">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
-          <p className="text-sm font-semibold uppercase tracking-wider text-primary-600">The map</p>
+          <p className="eyebrow">The map</p>
           <h2 id="features-heading" className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
             Everything you need to navigate accessibly
           </h2>
@@ -182,7 +182,7 @@ function ValuesSection({ items }: { items: HomeValueItem[] }) {
   return (
     <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8" aria-labelledby="values-heading">
       <div className="text-center mb-14">
-        <p className="text-sm font-semibold uppercase tracking-wider text-primary-600">Why AccessLens</p>
+        <p className="eyebrow">Why AccessLens</p>
         <h2 id="values-heading" className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
           A map that respects how people move through the world
         </h2>
@@ -217,7 +217,7 @@ function HowItWorksSection({ steps }: { steps: HomeStepItem[] }) {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
-          <p className="text-sm font-semibold uppercase tracking-wider text-primary-600">Get started</p>
+          <p className="eyebrow">Get started</p>
           <h2 id="how-it-works-heading" className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
             How it works
           </h2>
@@ -331,7 +331,7 @@ export default async function HomePage() {
     .slice(0, 8);
 
   return (
-    <div className="bg-white">
+    <div className="relative">
       {/* Hero */}
       <section className="relative overflow-hidden text-white">
         <div
@@ -347,12 +347,12 @@ export default async function HomePage() {
           <div className="absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-white/20 blur-3xl" />
         </div>
         <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
-          <div className="mx-auto max-w-3xl rounded-3xl border border-white/15 bg-primary-900/60 px-6 py-10 text-center shadow-2xl shadow-black/30 backdrop-blur-md sm:px-10 sm:py-12">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-sm font-medium text-white backdrop-blur-sm ring-1 ring-white/20">
+          <div className="motion-safe:animate-fade-up mx-auto max-w-3xl rounded-3xl border border-white/20 bg-gradient-to-br from-primary-950/55 via-primary-900/55 to-primary-800/45 px-6 py-10 text-center shadow-[0_25px_80px_-12px_rgba(8,47,73,0.5)] ring-1 ring-white/10 backdrop-blur-md sm:px-10 sm:py-12">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/12 px-4 py-1.5 text-sm font-medium text-white/95 backdrop-blur-sm ring-1 ring-white/10">
               <MapPin className="h-4 w-4" aria-hidden="true" />
               {liveCityLabel}
             </div>
-            <h1 className="text-5xl font-bold tracking-tight text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.35)] sm:text-6xl lg:text-7xl">
+            <h1 className="font-display text-5xl font-bold tracking-tight text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.35)] sm:text-6xl lg:text-7xl">
               {hero.titleLine1}
               <span className="block text-primary-200"> {hero.titleLine2}</span>
             </h1>
@@ -404,7 +404,7 @@ export default async function HomePage() {
       {cities.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8" aria-labelledby="cities-heading">
           <div className="text-center mb-10">
-            <p className="text-sm font-semibold uppercase tracking-wider text-primary-600">Cities</p>
+            <p className="eyebrow">Cities</p>
             <h2 id="cities-heading" className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
               Where AccessLens is live
             </h2>
@@ -440,7 +440,7 @@ export default async function HomePage() {
             aria-hidden="true"
           />
           <div className="relative text-center mb-12">
-            <p className="text-sm font-semibold uppercase tracking-wider text-primary-600">Explore</p>
+            <p className="eyebrow">Explore</p>
             <h2 id="categories-heading" className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
               Browse by category
             </h2>
@@ -476,7 +476,7 @@ export default async function HomePage() {
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-8">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-wider text-primary-600">Top-rated</p>
+                <p className="eyebrow">Top-rated</p>
                 <h2 id="featured-heading" className="mt-1 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
                   Highest accessibility scores
                 </h2>
@@ -568,7 +568,7 @@ export default async function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 bg-slate-50">
+      <footer className="relative border-t border-slate-200/80 bg-gradient-to-b from-white/70 via-slate-50 to-slate-100/95">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
             <div className="lg:col-span-1">
@@ -576,7 +576,7 @@ export default async function HomePage() {
                 <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-b from-primary-500 to-primary-700 text-white shadow-btn-primary ring-1 ring-white/20">
                   <MapPin className="h-5 w-5" aria-hidden="true" />
                 </span>
-                <h3 className="text-lg font-bold text-slate-900">AccessLens</h3>
+                <h3 className="font-display text-lg font-bold text-slate-900">AccessLens</h3>
               </div>
               <p className="mt-3 text-sm leading-relaxed text-slate-600">
                 Community-sourced accessibility information for public places.

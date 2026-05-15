@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { Navbar } from '@/components/layout/Navbar';
 import { SkipLink } from '@/components/layout/SkipLink';
@@ -7,6 +7,12 @@ import { SkipLink } from '@/components/layout/SkipLink';
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
+  display: 'swap',
+});
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-display',
   display: 'swap',
 });
 
@@ -27,8 +33,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="min-h-screen bg-white text-slate-900">
+    <html lang="en" className={`${inter.variable} ${plusJakarta.variable}`}>
+      <body className="min-h-screen bg-site font-sans text-slate-900 antialiased">
         <SkipLink />
         <Navbar />
         <main id="main">{children}</main>

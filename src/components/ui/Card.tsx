@@ -12,7 +12,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={clsx(
-          'rounded-xl border border-slate-200/90 bg-gradient-to-b from-white via-white to-slate-50/95 shadow-card ring-1 ring-slate-900/[0.035]',
+          'rounded-2xl border border-slate-200/90 bg-gradient-to-b from-white via-white to-slate-50/95 shadow-card ring-1 ring-slate-900/[0.035]',
           hover &&
             'cursor-pointer transition-[box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:shadow-card-hover',
           {

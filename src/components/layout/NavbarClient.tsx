@@ -165,7 +165,7 @@ export function NavbarClient({ user }: NavbarClientProps) {
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-b from-primary-500 to-primary-700 shadow-btn-primary ring-1 ring-white/25 transition-transform active:translate-y-px">
               <MapPin className="h-4 w-4 text-white drop-shadow-sm" aria-hidden="true" />
             </div>
-            <span className="text-xl font-bold tracking-tight text-slate-900 drop-shadow-[0_1px_0_rgba(255,255,255,0.8)]">
+            <span className="font-display text-xl font-bold tracking-tight text-slate-900 drop-shadow-[0_1px_0_rgba(255,255,255,0.8)]">
               Access<span className="bg-gradient-to-b from-primary-500 to-primary-700 bg-clip-text text-transparent">Lens</span>
             </span>
           </Link>

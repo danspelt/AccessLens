@@ -291,7 +291,7 @@ export default function SignInPage() {
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-b from-primary-500 to-primary-700 shadow-btn-primary ring-1 ring-white/25">
             <MapPin className="h-6 w-6 text-white" aria-hidden="true" />
           </div>
-          <h1 className="text-3xl font-bold text-white drop-shadow-sm">Welcome back</h1>
+          <h1 className="font-display text-3xl font-bold tracking-tight text-white drop-shadow-sm">Welcome back</h1>
           <p className="mt-2 text-slate-100 drop-shadow-sm">Sign in to your AccessLens account</p>
         </div>
         <div className="rounded-2xl border border-white/30 bg-white/95 p-8 shadow-card ring-1 ring-white/50 backdrop-blur-md">

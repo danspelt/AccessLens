@@ -2,14 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  }
+}
+
 :root {
-  --background: #ffffff;
+  --background: #f6f8fc;
   --foreground: #0f172a;
   --font-inter: 'Inter', system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
   --font-dyslexia: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
   --accent: #0284c7;
-  --base-font-size: 16px;
-  --line-height: 1.5;
+  --base-font-size: 17px;
+  --line-height: 1.55;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -20,7 +29,7 @@
 }
 
 [data-theme="light"] {
-  --background: #ffffff;
+  --background: #f6f8fc;
   --foreground: #0f172a;
 }
 
@@ -35,15 +44,36 @@
 
 body {
   color: var(--foreground);
-  background: var(--background);
-  font-family: var(--font-inter);
+  font-family: var(--font-inter), system-ui, sans-serif;
   font-size: var(--base-font-size);
   line-height: var(--line-height);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+::selection {
+  background-color: rgb(186 230 253 / 0.85);
+  color: rgb(12 74 110);
 }
 
 /* High contrast */
+[data-high-contrast="true"] body {
+  background-image: none !important;
+  background-color: var(--background) !important;
+}
+
+[data-high-contrast="true"] .bg-app-canvas {
+  background-image: none !important;
+  background-color: var(--background) !important;
+}
+
 [data-high-contrast="true"] {
   --background: #ffffff;
   --foreground: #0b1220;
@@ -94,16 +124,16 @@ body {
    * `border bg-white shadow-card` for consistent 3D surfaces sitewide.
    */
   .panel-surface {
-    @apply border border-slate-200/90 bg-gradient-to-b from-white via-white to-slate-50/95 shadow-card ring-1 ring-slate-900/[0.035];
+    @apply rounded-2xl border border-slate-200/85 bg-gradient-to-br from-white via-white to-slate-50 shadow-card ring-1 ring-slate-900/[0.045];
   }
 
   /** CTA links styled outside `<Button />` */
   .link-cta-primary {
-    @apply inline-flex items-center justify-center rounded-lg bg-gradient-to-b from-primary-500 to-primary-700 font-semibold text-white shadow-btn-primary ring-1 ring-white/15 transition-[transform,box-shadow,background-image] hover:from-primary-500 hover:to-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 active:translate-y-px;
+    @apply inline-flex items-center justify-center rounded-xl bg-gradient-to-b from-primary-500 to-primary-700 font-semibold text-white shadow-btn-primary ring-1 ring-white/15 transition-[transform,box-shadow,background-image] hover:from-primary-500 hover:to-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 active:translate-y-px;
   }
 
   .link-cta-outline {
-    @apply inline-flex items-center justify-center rounded-lg border border-slate-300/90 bg-gradient-to-b from-white to-slate-50 font-semibold text-slate-700 shadow-btn-outline transition-[transform,box-shadow,background-image] hover:to-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 active:translate-y-px;
+    @apply inline-flex items-center justify-center rounded-xl border border-slate-300/90 bg-gradient-to-b from-white to-slate-50 font-semibold text-slate-700 shadow-btn-outline transition-[transform,box-shadow,background-image] hover:to-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 active:translate-y-px;
   }
 }
 
@@ -112,21 +142,35 @@ body {
     text-wrap: balance;
   }
 
-  /** Subtle page backdrop depth (dashboard / app shells) */
+  /**
+   * Default marketing / app backdrop — airy cool gradient tuned for accessibility contrast.
+   */
+  .bg-site {
+    background-color: #f4f7fc;
+    background-image:
+      radial-gradient(ellipse 130% 65% at 50% -30%, rgb(191 219 254 / 0.42), transparent 52%),
+      radial-gradient(ellipse 55% 42% at 100% 8%, rgb(199 210 254 / 0.28), transparent 50%),
+      radial-gradient(ellipse 50% 38% at 0% 92%, rgb(165 243 252 / 0.2), transparent 50%);
+  }
+
+  /** Subtle depth for authenticated dashboard shells */
   .bg-app-canvas {
-    background: linear-gradient(
-      180deg,
-      rgb(241 245 249) 0%,
-      rgb(248 250 252) 45%,
-      rgb(226 232 240) 100%
-    );
+    background-color: #f4f7fc;
+    background-image:
+      radial-gradient(ellipse 110% 50% at 50% -20%, rgb(226 232 240 / 0.65), transparent 55%),
+      linear-gradient(180deg, rgb(247 249 253) 0%, rgb(240 244 250) 100%);
+  }
+
+  /** Section labels — consistent rhythm with homepage */
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.2em] text-primary-600;
   }
 }
 
 /* Leaflet map styles */
 .leaflet-container {
   z-index: 0;
-  border-radius: 0.75rem;
+  border-radius: 1rem;
 }
 
 /* Custom scrollbar */

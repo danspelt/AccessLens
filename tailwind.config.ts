@@ -34,6 +34,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-display)', 'var(--font-inter)', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
         'inset-highlight': 'inset 0 1px 0 0 rgb(255 255 255 / 0.92)',
@@ -58,6 +59,15 @@ const config: Config = {
           '0 1px 0 0 rgb(255 255 255 / 0.9) inset, 0 2px 6px -2px rgb(14 165 233 / 0.18)',
         'nav-pill-hover':
           '0 1px 0 0 rgb(255 255 255 / 0.85) inset, 0 2px 6px -2px rgb(15 23 42 / 0.08)',
+      },
+      keyframes: {
+        'fade-up': {
+          '0%': { opacity: '0', transform: 'translateY(8px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+      },
+      animation: {
+        'fade-up': 'fade-up 0.45s ease-out both',
       },
       borderRadius: {
         xl: '1rem',

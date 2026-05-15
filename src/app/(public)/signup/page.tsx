@@ -150,7 +150,7 @@ export default function SignupPage() {
             <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-600 lg:mx-0">
               <MapPin className="h-8 w-8 text-white" aria-hidden="true" />
             </div>
-            <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+            <h1 className="font-display text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
               Join AccessLens
             </h1>
             <p className="mt-3 text-lg text-slate-600 sm:text-xl">Map accessibility in Victoria, BC — together.</p>

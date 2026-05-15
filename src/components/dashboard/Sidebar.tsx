@@ -39,6 +39,16 @@ const adminItems = [
 
 const studentItems = [{ label: 'Student outreach', href: '/student', icon: Users }];
 
+function userInitials(displayName: string) {
+  const parts = displayName.trim().split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) {
+    const a = parts[0][0];
+    const b = parts[parts.length - 1][0];
+    if (a && b) return `${a}${b}`.toUpperCase();
+  }
+  return displayName.trim().slice(0, 2).toUpperCase() || '?';
+}
+
 export function Sidebar({ userName, userRole = 'user' }: { userName: string; userRole?: UserRole }) {
   const pathname = usePathname();
   const isActive = (href: string) => (href === '/dashboard' ? pathname === href : pathname.startsWith(href));
@@ -47,10 +57,18 @@ export function Sidebar({ userName, userRole = 'user' }: { userName: string; use
   const showStudent = canAccessStudentOutreach(userRole);
 
   return (
-    <div className="rounded-2xl border border-slate-200/90 bg-gradient-to-b from-white via-white to-slate-50/95 p-5 shadow-card ring-1 ring-slate-900/[0.035]">
-      <div className="mb-5">
-        <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Signed in as</p>
-        <p className="mt-1.5 truncate text-base font-semibold text-slate-900">{userName}</p>
+    <div className="rounded-2xl border border-slate-200/80 bg-gradient-to-b from-white via-white to-slate-50 p-5 shadow-card ring-1 ring-slate-900/[0.04]">
+      <div className="mb-6 flex items-center gap-3 rounded-xl border border-slate-100 bg-gradient-to-br from-primary-50/80 to-white p-3 ring-1 ring-primary-100/50">
+        <div
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 text-sm font-bold text-white shadow-btn-primary ring-1 ring-white/20"
+          aria-hidden="true"
+        >
+          {userInitials(userName)}
+        </div>
+        <div className="min-w-0">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Signed in</p>
+          <p className="truncate font-display text-base font-semibold tracking-tight text-slate-900">{userName}</p>
+        </div>
       </div>
 
       <nav aria-label="Dashboard navigation">
