@@ -28,11 +28,14 @@ export function PlaceFilters() {
 
   const updateFilters = () => {
     const params = new URLSearchParams();
+    const city = searchParams.get('city');
+    if (city) params.set('city', city);
     if (category !== 'all') params.set('category', category);
     if (hasStepFree) params.set('hasStepFree', 'true');
     if (hasAccessibleWashroom) params.set('hasAccessibleWashroom', 'true');
     if (hasAccessibleParking) params.set('hasAccessibleParking', 'true');
-    router.push(`/explore?${params.toString()}`);
+    const qs = params.toString();
+    router.push(qs ? `/places?${qs}` : '/places');
   };
 
   return (

@@ -32,7 +32,7 @@ export default function Home() {
 
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row lg:justify-start">
               <Link
-                href="/explore"
+                href="/places"
                 className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:bg-blue-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
               >
                 <MapPin className="h-5 w-5" />
@@ -279,7 +279,7 @@ export default function Home() {
               Get started free
             </Link>
             <Link
-              href="/explore"
+              href="/places"
               className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-transparent px-8 py-4 text-lg font-semibold text-white border-2 border-white transition-all hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-600 sm:w-auto"
             >
               <MapPin className="h-5 w-5" />

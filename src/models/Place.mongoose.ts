@@ -10,6 +10,7 @@ export type PlaceCategory =
   | 'other';
 
 export interface IPlace extends mongoose.Document {
+  slug?: string;
   name: string;
   category: PlaceCategory;
   address: string;
@@ -30,6 +31,7 @@ export interface IPlace extends mongoose.Document {
 
 const PlaceSchema = new Schema<IPlace>(
   {
+    slug: { type: String, unique: true, sparse: true, index: true },
     name: { type: String, required: true, index: true },
     category: {
       type: String,

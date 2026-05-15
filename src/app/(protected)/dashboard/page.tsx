@@ -5,6 +5,7 @@ import { Review } from '@/models/Review';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { ObjectId } from 'mongodb';
+import { placeDetailPath } from '@/lib/places/publicPath';
 
 async function getUserPlaces(userId: ObjectId) {
   const placesCollection = await getCollection<Place>('places');
@@ -33,6 +34,7 @@ async function getUserReviews(userId: ObjectId) {
         ...review,
         placeName: place?.name || 'Unknown Place',
         placeId: place?._id.toString(),
+        placeHref: place ? placeDetailPath(place) : '/places',
       };
     })
   );
@@ -87,7 +89,7 @@ export default async function DashboardPage() {
               {places.map((place) => (
                 <Link
                   key={place._id.toString()}
-                  href={`/places/${place._id.toString()}`}
+                  href={placeDetailPath(place)}
                   className="block rounded-lg border border-gray-200 bg-white p-4 hover:shadow-md transition-shadow"
                 >
                   <h3 className="font-semibold text-gray-900">{place.name}</h3>
@@ -122,7 +124,7 @@ export default async function DashboardPage() {
                 >
                   <div className="flex items-start justify-between mb-2">
                     <Link
-                      href={`/places/${review.placeId}`}
+                      href={review.placeHref}
                       className="font-semibold text-gray-900 hover:text-blue-600"
                     >
                       {review.placeName}

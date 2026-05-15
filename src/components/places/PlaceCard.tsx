@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Place } from '@/models/Place';
+import { placeDetailPath } from '@/lib/places/publicPath';
 
 interface PlaceCardProps {
   place: Place;
@@ -20,7 +21,7 @@ export function PlaceCard({ place, avgRating, reviewCount }: PlaceCardProps) {
 
   return (
     <Link
-      href={`/places/${place._id.toString()}`}
+      href={placeDetailPath(place)}
       className="block rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
     >
       <div className="flex items-start justify-between">

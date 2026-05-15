@@ -4,6 +4,7 @@ import { getCollection } from '@/lib/db/mongoClient';
 import { Place } from '@/models/Place';
 import { getSession } from '@/lib/auth/session';
 import { ObjectId } from 'mongodb';
+import { ensureUniquePlaceSlug } from '@/lib/places/slug';
 
 export async function GET(request: NextRequest) {
   try {
@@ -64,6 +65,7 @@ export async function POST(request: NextRequest) {
     const validated = placeSchema.parse(body);
 
     const placesCollection = await getCollection<Place>('places');
+    const slug = await ensureUniquePlaceSlug(placesCollection, validated.name);
 
     const latitude = validated.latitude;
     const longitude = validated.longitude;
@@ -76,6 +78,7 @@ export async function POST(request: NextRequest) {
 
     const newPlace: Omit<Place, '_id'> = {
       ...validated,
+      slug,
       location,
       latitude:
         typeof latitude === 'number'
@@ -101,6 +104,7 @@ export async function POST(request: NextRequest) {
       {
         place: {
           id: placeId,
+          slug,
           ...validated,
           location,
         },

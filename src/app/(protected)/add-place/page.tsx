@@ -52,8 +52,8 @@ export default function AddPlacePage() {
         return;
       }
 
-      // Redirect to the new place
-      router.push(`/places/${data.place.id}`);
+      const pathKey = data.place.slug ?? data.place.id;
+      router.push(`/places/${pathKey}`);
     } catch (err) {
       setError('An unexpected error occurred');
       setIsLoading(false);

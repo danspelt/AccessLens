@@ -16,6 +16,8 @@ export type GeoPoint = {
 
 export interface Place {
   _id: ObjectId;
+  /** URL-safe identifier; optional on legacy documents */
+  slug?: string;
   name: string;
   category: PlaceCategory;
   address: string;

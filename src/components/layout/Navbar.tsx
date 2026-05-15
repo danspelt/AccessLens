@@ -21,10 +21,16 @@ export async function Navbar() {
 
             <div className="hidden items-center gap-1 sm:flex">
               <Link
-                href="/explore"
+                href="/places"
                 className="rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
               >
-                Explore
+                Places
+              </Link>
+              <Link
+                href="/city/victoria-bc"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+              >
+                Victoria
               </Link>
               {user && (
                 <>
