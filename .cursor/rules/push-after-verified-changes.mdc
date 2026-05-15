@@ -1,0 +1,16 @@
+---
+description: After verified code changes, commit and push to origin main
+alwaysApply: true
+---
+
+# Ship verified changes to `main`
+
+When implementation work in this repository is **done and passing checks**:
+
+1. Run verification suited to the edit (at minimum **`npm run typecheck`**; also run **`npm run lint`** and **`npm run build`** when the change could affect UI, routing, or production output).
+2. If checks pass and there are meaningful changes to commit, **create a commit** with a short message focused on *why* (not a dump of filenames).
+3. **Push to `origin main`** right away: `git push origin main`.
+
+Do **not** leave working, verified fixes only on disk—push them unless the user explicitly asks to wait.
+
+**Exceptions:** the user says not to push yet; changes include secrets or must not land on remote; or push fails (report the error and stop).
