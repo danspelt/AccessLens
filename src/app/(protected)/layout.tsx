@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { redirect } from 'next/navigation';
 import { ObjectId } from 'mongodb';
 import { auth } from '@/auth';

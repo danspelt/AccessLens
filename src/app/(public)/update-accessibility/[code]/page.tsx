@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { notFound, redirect } from 'next/navigation';
 import { findPlaceByAccessCode, serializePlaceForBusiness } from '@/lib/db/placesByAccessCode';
 import { normalizeAccessCode, isValidAccessCodeFormat } from '@/lib/access/codeFormat';

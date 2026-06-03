@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import Link from 'next/link';
 import { ArrowRight, MapPin } from 'lucide-react';
 import { getCollection } from '@/lib/db/mongoClient';
@@ -47,70 +49,89 @@ const FALLBACK_CTA: HomeCtaContent = {
 
 // --- Server data fetch -----------------------------------------------------
 
+const FALLBACK_HOME_DATA = {
+  hero: FALLBACK_HERO,
+  trustStrip: [] as HomeTrustStripItem[],
+  features: [] as HomeFeatureItem[],
+  values: [] as HomeValueItem[],
+  howItWorks: [] as HomeStepItem[],
+  sampleChecklist: [] as HomeChecklistItem[],
+  cta: FALLBACK_CTA,
+  testimonial: null as null,
+  cities: [] as Awaited<ReturnType<typeof getActiveCities>>,
+  stats: { totalPlaces: 0, totalCities: 0, totalCategories: 0, avgScore: null as null | number },
+  categoryCounts: [] as { _id: string; count: number }[],
+  featuredPlaces: [] as { id: string; name: string; address: string; city: string; province: string; category: string; accessibilityScore?: number }[],
+};
+
 async function getHomeData() {
-  const placesCollection = await getCollection<Place>('places');
+  try {
+    const placesCollection = await getCollection<Place>('places');
 
-  const [content, cities, totalPlaces, categoryAgg, featuredPlaces] = await Promise.all([
-    getSiteContentBatch([
-      'home.hero',
-      'home.trustStrip',
-      'home.features',
-      'home.values',
-      'home.howItWorks',
-      'home.sampleChecklist',
-      'home.cta',
-      'home.testimonial',
-    ] as const),
-    getActiveCities(),
-    placesCollection.countDocuments({}),
-    placesCollection
-      .aggregate<{ _id: string; count: number }>([
-        { $group: { _id: '$category', count: { $sum: 1 } } },
-        { $sort: { count: -1 } },
+    const [content, cities, totalPlaces, categoryAgg, featuredPlaces] = await Promise.all([
+      getSiteContentBatch([
+        'home.hero',
+        'home.trustStrip',
+        'home.features',
+        'home.values',
+        'home.howItWorks',
+        'home.sampleChecklist',
+        'home.cta',
+        'home.testimonial',
+      ] as const),
+      getActiveCities(),
+      placesCollection.countDocuments({}),
+      placesCollection
+        .aggregate<{ _id: string; count: number }>([
+          { $group: { _id: '$category', count: { $sum: 1 } } },
+          { $sort: { count: -1 } },
+        ])
+        .toArray(),
+      placesCollection
+        .find({ accessibilityScore: { $exists: true } })
+        .sort({ accessibilityScore: -1, createdAt: -1 })
+        .limit(6)
+        .toArray(),
+    ]);
+
+    const avgScoreAgg = await placesCollection
+      .aggregate<{ _id: null; avg: number | null }>([
+        { $match: { accessibilityScore: { $exists: true } } },
+        { $group: { _id: null, avg: { $avg: '$accessibilityScore' } } },
       ])
-      .toArray(),
-    placesCollection
-      .find({ accessibilityScore: { $exists: true } })
-      .sort({ accessibilityScore: -1, createdAt: -1 })
-      .limit(6)
-      .toArray(),
-  ]);
+      .toArray();
+    const avgScore = avgScoreAgg[0]?.avg ?? null;
 
-  const avgScoreAgg = await placesCollection
-    .aggregate<{ _id: null; avg: number | null }>([
-      { $match: { accessibilityScore: { $exists: true } } },
-      { $group: { _id: null, avg: { $avg: '$accessibilityScore' } } },
-    ])
-    .toArray();
-  const avgScore = avgScoreAgg[0]?.avg ?? null;
-
-  return {
-    hero: content['home.hero'] ?? FALLBACK_HERO,
-    trustStrip: content['home.trustStrip'] ?? [],
-    features: content['home.features'] ?? [],
-    values: content['home.values'] ?? [],
-    howItWorks: content['home.howItWorks'] ?? [],
-    sampleChecklist: content['home.sampleChecklist'] ?? [],
-    cta: content['home.cta'] ?? FALLBACK_CTA,
-    testimonial: content['home.testimonial'] ?? null,
-    cities,
-    stats: {
-      totalPlaces,
-      totalCities: cities.length,
-      totalCategories: categoryAgg.length,
-      avgScore: avgScore === null ? null : Math.round(avgScore),
-    },
-    categoryCounts: categoryAgg,
-    featuredPlaces: featuredPlaces.map((p) => ({
-      id: p._id.toString(),
-      name: p.name,
-      address: p.address,
-      city: p.city,
-      province: p.province,
-      category: p.category,
-      accessibilityScore: p.accessibilityScore,
-    })),
-  };
+    return {
+      hero: content['home.hero'] ?? FALLBACK_HERO,
+      trustStrip: content['home.trustStrip'] ?? [],
+      features: content['home.features'] ?? [],
+      values: content['home.values'] ?? [],
+      howItWorks: content['home.howItWorks'] ?? [],
+      sampleChecklist: content['home.sampleChecklist'] ?? [],
+      cta: content['home.cta'] ?? FALLBACK_CTA,
+      testimonial: content['home.testimonial'] ?? null,
+      cities,
+      stats: {
+        totalPlaces,
+        totalCities: cities.length,
+        totalCategories: categoryAgg.length,
+        avgScore: avgScore === null ? null : Math.round(avgScore),
+      },
+      categoryCounts: categoryAgg,
+      featuredPlaces: featuredPlaces.map((p) => ({
+        id: p._id.toString(),
+        name: p.name,
+        address: p.address,
+        city: p.city,
+        province: p.province,
+        category: p.category,
+        accessibilityScore: p.accessibilityScore,
+      })),
+    };
+  } catch {
+    return FALLBACK_HOME_DATA;
+  }
 }
 
 // --- UI sub-components -----------------------------------------------------
@@ -601,6 +622,16 @@ export default async function HomePage() {
                 <li>
                   <Link href="/places/new" className="transition-colors hover:text-primary-600">
                     Add a place
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/for-businesses" className="transition-colors hover:text-primary-600">
+                    For businesses
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/pitch" className="transition-colors hover:text-primary-600">
+                    For government
                   </Link>
                 </li>
                 <li>
