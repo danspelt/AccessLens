@@ -93,6 +93,34 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
     );
   }
 
+  if (!session?.user?.id) {
+    const next = `/places/${id}/report`;
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+        <div className="max-w-md w-full rounded-2xl panel-surface p-8 text-center">
+          <h1 className="text-lg font-semibold text-slate-900">Sign in to report an issue</h1>
+          <p className="mt-2 text-sm text-slate-600">
+            You need an AccessLens account before commenting on or reporting a business.
+          </p>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href={`/signup?callbackUrl=${encodeURIComponent(next)}`}
+              className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700"
+            >
+              Create a free account
+            </Link>
+            <Link
+              href={`/signin?callbackUrl=${encodeURIComponent(next)}`}
+              className="text-sm font-semibold text-primary-700 underline"
+            >
+              Sign in
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (session?.user?.accountType === 'business') {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">

@@ -2,11 +2,13 @@ import NextAuth from 'next-auth';
 import Google from 'next-auth/providers/google';
 import Credentials from 'next-auth/providers/credentials';
 import Resend from 'next-auth/providers/resend';
+import type { Provider } from 'next-auth/providers';
 import { MongoDBAdapter } from '@auth/mongodb-adapter';
 import { authConfig } from './auth.config';
 import getClientPromise from '@/lib/db/mongoClient';
 import { getCollection } from '@/lib/db/mongoClient';
 import { verifyPassword } from '@/lib/auth/authHelpers';
+import { isGoogleAuthConfigured, isResendAuthConfigured } from '@/lib/auth/providers';
 import { ObjectId } from 'mongodb';
 import type { AccountType, BusinessSubscriptionStatus, User } from '@/models/User';
 
@@ -37,65 +39,89 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     databaseName: process.env.MONGODB_DB,
   }),
   providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      allowDangerousEmailAccountLinking: true,
-      profile(profile) {
-        return {
-          id: profile.sub,
-          name: profile.name,
-          email: profile.email?.toLowerCase(),
-          image: profile.picture,
-        };
-      },
-    }),
+    ...(isGoogleAuthConfigured()
+      ? [
+          Google({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            allowDangerousEmailAccountLinking: true,
+            profile(profile) {
+              return {
+                id: profile.sub,
+                name: profile.name,
+                email: profile.email?.toLowerCase(),
+                image: profile.picture,
+              };
+            },
+          }),
+        ]
+      : []),
     Credentials({
+      name: 'Email and password',
       credentials: {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
-        const users = await getCollection('users');
-        const user = await users.findOne({
-          email: (credentials.email as string).toLowerCase(),
-        });
-        if (!user || !user.passwordHash) return null;
-        const valid = await verifyPassword(
-          credentials.password as string,
-          user.passwordHash as string,
-        );
-        if (!valid) return null;
-        return {
-          id: user._id.toString(),
-          email: user.email as string,
-          name: user.name as string,
-        };
+        try {
+          const email = String(credentials?.email ?? '')
+            .trim()
+            .toLowerCase();
+          const password = String(credentials?.password ?? '');
+          if (!email || !password) return null;
+
+          const users = await getCollection('users');
+          const user = await users.findOne({ email });
+          if (!user?.passwordHash) return null;
+
+          const valid = await verifyPassword(password, user.passwordHash as string);
+          if (!valid) return null;
+
+          return {
+            id: user._id.toString(),
+            email: user.email as string,
+            name: (user.name as string) || email,
+          };
+        } catch (error) {
+          console.error('Credentials authorize failed:', error);
+          return null;
+        }
       },
     }),
-    Resend({
-      apiKey: process.env.RESEND_API_KEY,
-      from: process.env.RESEND_FROM_EMAIL || 'AccessLens <noreply@example.com>',
-    }),
-  ],
+    ...(isResendAuthConfigured()
+      ? [
+          Resend({
+            apiKey: process.env.RESEND_API_KEY,
+            from: process.env.RESEND_FROM_EMAIL || 'AccessLens <noreply@example.com>',
+          }),
+        ]
+      : []),
+  ] as Provider[],
   callbacks: {
     ...authConfig.callbacks,
     async jwt({ token, user, ...rest }) {
       const base = await authConfig.callbacks.jwt({ token, user, ...rest });
-      if (user?.id) {
-        base.id = user.id;
+      const userId = [user?.id, base.id, base.sub].find(
+        (value): value is string => typeof value === 'string' && value.length > 0
+      );
+      if (userId) {
+        base.id = userId;
+        if (typeof base.sub !== 'string') base.sub = userId;
       }
-      const sub = base.sub ?? (user?.id as string | undefined);
-      const flags = await loadAccountFlagsForToken(sub);
+      const flags = await loadAccountFlagsForToken(
+        typeof base.id === 'string' ? base.id : typeof base.sub === 'string' ? base.sub : undefined
+      );
       base.accountType = flags.accountType;
       base.businessSubscriptionStatus = flags.businessSubscriptionStatus;
       return base;
     },
     async session({ session, token, ...rest }) {
       const s = await authConfig.callbacks.session({ session, token, ...rest });
-      if (token?.id) {
-        s.user.id = token.id as string;
+      const userId = [token?.id, token?.sub].find(
+        (value): value is string => typeof value === 'string' && value.length > 0
+      );
+      if (userId) {
+        s.user.id = userId;
       }
       s.user.accountType = (token.accountType as AccountType) ?? 'reviewer';
       s.user.businessSubscriptionStatus =

@@ -362,20 +362,26 @@ export default async function PlaceDetailPage({ params }: Props) {
                   </p>
                 </div>
               ) : (
-                <div className="mb-6 rounded-xl border border-primary-200 bg-primary-50 p-4 text-center">
-                  <p className="text-sm text-primary-700">
+                <div className="mb-6 rounded-xl border border-primary-200 bg-primary-50 p-5 text-center">
+                  <p className="text-sm font-semibold text-primary-900">Account required to comment</p>
+                  <p className="mt-1 text-sm text-primary-800">
+                    Create a free AccessLens account before you can review this business. Your sign-in
+                    keeps reviews honest and lets you earn contributor badges.
+                  </p>
+                  <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+                    <Link
+                      href={`/signup?callbackUrl=${encodeURIComponent(`/places/${place._id}`)}`}
+                      className="rounded-lg bg-primary-600 px-4 py-2 text-sm font-semibold text-white hover:bg-primary-700"
+                    >
+                      Create a free account
+                    </Link>
                     <Link
                       href={`/signin?callbackUrl=${encodeURIComponent(`/places/${place._id}`)}`}
-                      className="font-semibold underline hover:text-primary-800"
+                      className="text-sm font-semibold text-primary-800 underline hover:text-primary-950"
                     >
                       Sign in
-                    </Link>{' '}
-                    or{' '}
-                    <Link href="/signup" className="font-semibold underline hover:text-primary-800">
-                      create an account
-                    </Link>{' '}
-                    to share your accessibility experience.
-                  </p>
+                    </Link>
+                  </div>
                 </div>
               )}
 

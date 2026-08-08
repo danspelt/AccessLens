@@ -25,14 +25,16 @@ export const authConfig = {
   session: { strategy: 'jwt' as const },
   callbacks: {
     jwt({ token, user }) {
-      if (user?.id) {
-        token.id = user.id;
+      const userId = user?.id || token.id || token.sub;
+      if (userId) {
+        token.id = userId;
       }
       return token;
     },
     session({ session, token }) {
-      if (token?.id) {
-        session.user.id = token.id as string;
+      const userId = (token.id as string | undefined) || token.sub;
+      if (userId) {
+        session.user.id = userId;
       }
       session.user.accountType = (token.accountType as AccountType | undefined) ?? 'reviewer';
       session.user.businessSubscriptionStatus =

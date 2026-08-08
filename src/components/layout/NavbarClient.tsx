@@ -1,10 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { signOut } from 'next-auth/react';
-import { MapPin, Menu, X, Plus, LogOut, LogIn, UserPlus } from 'lucide-react';
+import { Menu, X, Plus, LogOut, LogIn, UserPlus } from 'lucide-react';
 import { clsx } from 'clsx';
 
 interface NavUser {
@@ -163,9 +164,14 @@ export function NavbarClient({ user }: NavbarClientProps) {
             className="flex items-center gap-2.5 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
             aria-label="AccessLens home"
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-b from-primary-500 to-primary-700 shadow-btn-primary ring-1 ring-white/25 transition-transform active:translate-y-px">
-              <MapPin className="h-4 w-4 text-white drop-shadow-sm" aria-hidden="true" />
-            </div>
+            <Image
+              src="/icon.png"
+              alt=""
+              width={36}
+              height={36}
+              className="h-9 w-9 rounded-xl shadow-btn-primary ring-1 ring-white/40 transition-transform active:translate-y-px"
+              priority
+            />
             <span className="font-display text-xl font-bold tracking-tight text-slate-900 drop-shadow-[0_1px_0_rgba(255,255,255,0.8)]">
               Access<span className="bg-gradient-to-b from-primary-500 to-primary-700 bg-clip-text text-transparent">Lens</span>
             </span>
