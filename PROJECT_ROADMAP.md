@@ -187,13 +187,22 @@ Per-place boolean flags:
 
 ## Next Priority Tasks
 
-1. **Run seed data** → `npx tsx scripts/seedVictoria.ts`
-2. **Add S3/MinIO** → swap local file uploads for cloud storage
-3. **OAuth** → add Google/Apple sign-in via Auth.js
-4. **Admin moderation** → review queue for photos and reports
-5. **Gamification** → badges: Explorer, Accessibility Hero, City Mapper
-6. **AI photo analysis** → detect ramps, doors, barriers from uploaded photos
-7. **Vancouver expansion** → replicate for next city
+1. **AI photo analysis** → detect ramps, doors, barriers from uploaded photos
+2. **S3/MinIO** → swap local file uploads for cloud storage
+3. **Apple Sign-In** via Auth.js
+4. **Stripe billing** → move `businessSubscriptionStatus` from `pending` → `active`
+5. **Street-view scanning** / native mobile (separate apps)
+
+---
+
+## Recently completed (2026-08)
+
+- [x] **Admin moderation hub** — `/admin` with pending counts; place submissions, photos, outreach, review verification
+- [x] **Gamification badges** — `evaluateBadges` awards Explorer / Accessibility Hero / City Mapper / Photo Contributor / Verified Reviewer
+- [x] **Vancouver expansion** — `vancouver-bc` city + ~15 high-confidence civic/transit seeds (`scripts/seedVancouver.ts`)
+- [x] **Test suite** — Vitest unit tests + Playwright smoke e2e; CI runs both
+- [x] **Next.js 16 proxy** — `src/proxy.ts` replaces deprecated `middleware.ts`
+- [x] Local Mongo via `docker-compose.mongo.dev.yml` (`authSource=admin`)
 
 ---
 
@@ -204,7 +213,7 @@ Per-place boolean flags:
 | Bootstrap & Stack | ✅ Complete |
 | Data Models | ✅ Complete |
 | Accessibility Checklist + Score | ✅ Complete |
-| Auth (signup/login/logout) | ✅ Complete |
+| Auth (Auth.js / NextAuth v5) | ✅ Complete |
 | Places API | ✅ Complete |
 | Reviews API | ✅ Complete |
 | Reports API | ✅ Complete |
@@ -212,6 +221,9 @@ Per-place boolean flags:
 | Maps (Leaflet) | ✅ Complete |
 | All UI Pages | ✅ Complete |
 | UI Component Library | ✅ Complete |
-| Seed Data (50 Victoria places) | ✅ Complete |
+| Seed Data (Victoria + Vancouver) | ✅ Complete |
+| Admin moderation | ✅ Complete |
+| Gamification badges | ✅ Complete |
+| Automated tests (Vitest + Playwright) | ✅ Complete |
 | Docker | ✅ Complete |
 | Production Release | ⬜ Pending |

@@ -2,7 +2,7 @@
 
 **Accessibility Intelligence for Cities**
 
-A community-driven accessibility platform where people upload photos, accessibility data, and experiences about real-world public places — starting with **Victoria, BC**.
+A community-driven accessibility platform where people upload photos, accessibility data, and experiences about real-world public places — live in **Victoria** and **Vancouver**, BC.
 
 > Think: Google Maps + Yelp + Accessibility Data
 
@@ -72,6 +72,20 @@ cp .env.local.example .env.local
 Required variables:
 - `MONGODB_URI` / `MONGODB_DB` — your MongoDB connection
 - `AUTH_SECRET` — generate with `openssl rand -base64 32`
+- `BUSINESS_SESSION_SECRET` — 32+ chars for business QR access sessions (iron-session)
+
+For local Docker Mongo (`docker-compose.mongo.dev.yml`):
+
+```bash
+docker compose -f docker-compose.mongo.dev.yml up -d
+# MONGODB_URI=mongodb://root:devpassword@localhost:27017/accesslens?authSource=admin
+```
+
+Scripts do not auto-load `.env.local`. Prefer:
+
+```bash
+node --env-file=.env.local --import tsx scripts/seedCities.ts
+```
 
 Optional (enable extra sign-in methods):
 - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — [Google Cloud Console](https://console.cloud.google.com/apis/credentials) OAuth 2.0 credentials (Authorized redirect URI: `http://localhost:3000/api/auth/callback/google`)
@@ -106,6 +120,12 @@ npx tsx scripts/seedContent.ts --force
 
 # Real accessibility data for Victoria, BC (~50 places)
 npx tsx scripts/seedVictoria.ts
+
+# High-confidence civic/transit locations for Vancouver, BC (~15 places)
+npx tsx scripts/seedVancouver.ts
+
+# Optional: award badges for existing contribution history
+npx tsx scripts/backfillBadges.ts
 ```
 
 Seed scripts are **idempotent**: re-running only upserts missing documents. `seedContent.ts` never overwrites edits made through the admin API unless `--force` is passed.
@@ -132,11 +152,12 @@ Open [http://localhost:3000](http://localhost:3000).
 | `/` | Landing page |
 | `/explore` | Browse all places with map + filters |
 | `/places/[id]` | Place detail: checklist, score, photos, reviews, map |
-| `/cities/victoria-bc` | Victoria city page with category browsing |
-| `/cities/victoria-bc/[category]` | Category listing (e.g. libraries, parks) |
+| `/cities/[citySlug]` | City page with category browsing (e.g. `victoria-bc`, `vancouver-bc`) |
+| `/cities/[citySlug]/[category]` | Category listing (e.g. libraries, parks) |
+| `/admin` | Admin moderation hub (admin role) |
 | `/qr` | QR entry hub (pilot location anchors) |
 | `/qr/[locationSlug]` | Nearby places for a scanned QR anchor (e.g. `downtown-victoria`) |
-| `/add-place` | Add a new place (authenticated) |
+| `/places/new` | Submit a new place (authenticated) |
 | `/places/[id]/report` | Report an accessibility issue |
 | `/dashboard` | User dashboard (authenticated) |
 
@@ -155,6 +176,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | POST | `/api/auth/signup` | Create account (credentials; includes `accountType`) |
 | POST | `/api/auth/complete-signup-intent` | After Google OAuth, set reviewer vs business from signup intent |
 | `*` | `/api/auth/[...nextauth]` | Auth.js sign-in / sign-out / callbacks |
+| GET | `/api/badges` | Badge progress for the signed-in user |
 | GET | `/api/health` | Health check (DB ping) |
 | GET | `/api/places/nearby` | Places near `lat` / `lon` (requires `location` + 2dsphere index) |
 
@@ -189,11 +211,21 @@ If logs show **`MissingSecret`**, define **`AUTH_SECRET`** (32+ random character
 
 Built in alignment with the **Accessible Canada Act** and the **BC Accessibility Act**. This platform helps communities track, document, and improve real-world accessibility.
 
+## Tests
+
+```bash
+npm test           # Vitest unit tests (scoring, badges, Zod, checklist tags)
+npm run test:e2e   # Playwright smoke tests (requires build + Mongo seeded)
+```
+
 ## Roadmap
 
 - [ ] AI-powered accessibility detection from photos
 - [ ] Street-view scanning integration
-- [ ] Vancouver expansion
+- [x] Vancouver expansion (civic/transit seed set)
+- [x] Admin moderation hub + review verification
+- [x] Gamification badges with award + backfill
+- [x] Automated test suite (Vitest + Playwright)
 - [ ] Government compliance reporting dashboard
 - [ ] Native mobile app (iOS / Android)
 - [ ] S3/MinIO photo storage

@@ -9,6 +9,22 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: devpassword
+
+    env:
+      MONGODB_URI: mongodb://root:devpassword@127.0.0.1:27017/accesslens?authSource=admin
+      MONGODB_DB: accesslens
+      AUTH_SECRET: abcdefghijklmnopqrstuvwxyz123456
+      BUSINESS_SESSION_SECRET: abcdefghijklmnopqrstuvwxyz123456
+      NEXT_PUBLIC_APP_URL: http://127.0.0.1:3000
+
     steps:
       - uses: actions/checkout@v4
 
@@ -26,10 +42,38 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Unit tests
+        run: npm test
+
+      - name: Seed database
+        run: |
+          npx tsx scripts/initIndexes.ts
+          npx tsx scripts/seedCities.ts
+          npx tsx scripts/seedContent.ts
+          npx tsx scripts/seedVictoria.ts
+
       - name: Build
         run: npm run build
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Start app
+        run: npm run start &
+        
+      - name: Wait for app
+        run: |
+          for i in $(seq 1 60); do
+            if curl -sf http://127.0.0.1:3000/api/health >/dev/null; then
+              echo ready
+              exit 0
+            fi
+            sleep 2
+          done
+          echo 'App failed to start'
+          exit 1
+
+      - name: E2E smoke tests
+        run: npm run test:e2e
         env:
-          MONGODB_URI: mongodb://127.0.0.1:27017/ci
-          MONGODB_DB: accesslens_ci
-          # Same min length as production; Docker/Coolify must pass at image build for middleware
-          AUTH_SECRET: abcdefghijklmnopqrstuvwxyz123456
+          PLAYWRIGHT_BASE_URL: http://127.0.0.1:3000
