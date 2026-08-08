@@ -13,9 +13,10 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const outreachStatus = searchParams.get('outreachStatus');
-  const citySlug = searchParams.get('citySlug') || 'victoria-bc';
+  const citySlug = searchParams.get('citySlug');
 
-  const filter: Record<string, unknown> = { citySlug };
+  const filter: Record<string, unknown> = {};
+  if (citySlug) filter.citySlug = citySlug;
   if (outreachStatus) filter.outreachStatus = outreachStatus;
 
   const places = await getCollection<Place>('places');

@@ -12,11 +12,14 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const status = (searchParams.get('status') || 'pending_review') as OutreachStatus;
-  const citySlug = searchParams.get('citySlug') || 'victoria-bc';
+  const citySlug = searchParams.get('citySlug');
+
+  const filter: Record<string, unknown> = { outreachStatus: status };
+  if (citySlug) filter.citySlug = citySlug;
 
   const places = await getCollection<Place>('places');
   const rows = await places
-    .find({ citySlug, outreachStatus: status })
+    .find(filter)
     .sort({ lastUpdatedByBusinessAt: -1, updatedAt: -1 })
     .limit(100)
     .toArray();

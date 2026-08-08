@@ -25,14 +25,14 @@ export async function GET(request: NextRequest) {
   if (!g.ok) return NextResponse.json({ error: g.error }, { status: g.status });
 
   const { searchParams } = new URL(request.url);
-  const citySlug = searchParams.get('citySlug') || 'victoria-bc';
+  const citySlug = searchParams.get('citySlug') || undefined;
   const filter = searchParams.get('filter'); // all | unclaimed | needs_follow_up
 
   const placesCol = await getCollection<Place>('places');
   const visitsCol = await getCollection<BusinessVisit>('businessVisits');
 
   const places = await placesCol
-    .find({ citySlug })
+    .find(citySlug ? { citySlug } : {})
     .project({
       name: 1,
       address: 1,

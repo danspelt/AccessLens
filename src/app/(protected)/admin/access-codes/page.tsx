@@ -18,15 +18,34 @@ interface PlaceRow {
 
 export default function AdminAccessCodesPage() {
   const [places, setPlaces] = useState<PlaceRow[]>([]);
+  const [cities, setCities] = useState<{ slug: string; name: string }[]>([]);
+  const [citySlug, setCitySlug] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
 
+  useEffect(() => {
+    void (async () => {
+      try {
+        const res = await fetch('/api/admin/cities');
+        const data = await res.json();
+        if (res.ok && Array.isArray(data.cities)) {
+          const active = data.cities.filter((c: { isActive?: boolean }) => c.isActive !== false);
+          setCities(active.map((c: { slug: string; name: string }) => ({ slug: c.slug, name: c.name })));
+          if (active[0]?.slug) setCitySlug(active[0].slug);
+        }
+      } catch {
+        /* cities optional for load */
+      }
+    })();
+  }, []);
+
   const load = useCallback(async () => {
+    if (!citySlug) return;
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/admin/access-codes?citySlug=victoria-bc');
+      const res = await fetch(`/api/admin/access-codes?citySlug=${encodeURIComponent(citySlug)}`);
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || 'Failed to load');
@@ -38,7 +57,7 @@ export default function AdminAccessCodesPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [citySlug]);
 
   useEffect(() => {
     load();
@@ -84,10 +103,26 @@ export default function AdminAccessCodesPage() {
             Business access codes
           </h1>
           <p className="mt-1 text-sm text-slate-600">
-            Generate six-digit codes and QR links for Victoria pilot outreach.
+            Generate six-digit codes and QR links for business outreach by city.
           </p>
+          {cities.length > 0 ? (
+            <label className="mt-3 flex items-center gap-2 text-sm text-slate-700">
+              City
+              <select
+                className="rounded-lg border border-slate-300 bg-white px-2 py-1.5"
+                value={citySlug}
+                onChange={(e) => setCitySlug(e.target.value)}
+              >
+                {cities.map((c) => (
+                  <option key={c.slug} value={c.slug}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
         </div>
-        <Button type="button" variant="outline" onClick={load} disabled={loading}>
+        <Button type="button" variant="outline" onClick={load} disabled={loading || !citySlug}>
           <RefreshCw className="h-4 w-4" aria-hidden="true" />
           Refresh
         </Button>

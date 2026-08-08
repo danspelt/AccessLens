@@ -5,17 +5,17 @@ import { Place } from '@/models/Place';
 import { BusinessVisit } from '@/models/BusinessVisit';
 
 /** Pilot impact metrics for funders and municipalities. */
-export async function GET() {
+export async function GET(request: Request) {
   const admin = await requireAdmin();
   if (!admin.ok) {
     return NextResponse.json({ error: admin.error }, { status: admin.status });
   }
 
-  const citySlug = 'victoria-bc';
+  const citySlug = new URL(request.url).searchParams.get('citySlug') || undefined;
   const places = await getCollection<Place>('places');
   const visits = await getCollection<BusinessVisit>('businessVisits');
 
-  const baseFilter = { citySlug };
+  const baseFilter: Record<string, unknown> = citySlug ? { citySlug } : {};
   const [
     totalPlaces,
     withCodes,

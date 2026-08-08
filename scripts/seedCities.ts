@@ -30,6 +30,16 @@ const cities: CitySeed[] = [
     order: 1,
     isActive: true,
   },
+  {
+    slug: 'vancouver-bc',
+    name: 'Vancouver',
+    province: 'BC',
+    country: 'Canada',
+    description:
+      'Coastal metropolis on the Pacific, with SkyTrain hubs, civic buildings, and major parks — seeded with high-confidence civic and transit locations.',
+    order: 2,
+    isActive: true,
+  },
 ];
 
 async function seedCities() {
