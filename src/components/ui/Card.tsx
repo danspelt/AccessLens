@@ -12,9 +12,9 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={clsx(
-          'rounded-2xl border border-slate-200/90 bg-gradient-to-b from-white via-white to-slate-50/95 shadow-card ring-1 ring-slate-900/[0.035]',
+          'rounded-2xl border border-white/80 bg-gradient-to-b from-white via-white to-slate-100/90 shadow-card ring-1 ring-slate-900/[0.06]',
           hover &&
-            'cursor-pointer transition-[box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:shadow-card-hover',
+            'cursor-pointer transition-[box-shadow,transform] duration-200 motion-safe:hover:-translate-y-1 hover:shadow-card-hover',
           {
             'p-0': padding === 'none',
             'p-4': padding === 'sm',

@@ -19,15 +19,15 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           'disabled:pointer-events-none disabled:opacity-50',
           'transition-[transform,box-shadow,background-color,color,filter] duration-150',
           {
-            'bg-gradient-to-b from-primary-500 to-primary-700 text-white shadow-btn-primary ring-1 ring-white/15 hover:from-primary-500 hover:to-primary-600 focus-visible:ring-primary-500 active:translate-y-px':
+            'bg-gradient-to-b from-primary-400 to-primary-700 text-white shadow-btn-primary ring-1 ring-white/25 hover:from-primary-400 hover:to-primary-600 focus-visible:ring-primary-500 active:translate-y-[3px] active:shadow-btn-primary-active':
               variant === 'primary',
-            'border border-slate-300/90 bg-gradient-to-b from-slate-100 to-slate-200/95 text-slate-800 shadow-btn-secondary hover:to-slate-200 focus-visible:ring-slate-500 active:translate-y-px':
+            'border border-slate-300/90 bg-gradient-to-b from-slate-50 to-slate-200 text-slate-800 shadow-btn-secondary hover:to-slate-100 focus-visible:ring-slate-500 active:translate-y-[3px] active:shadow-btn-outline-active':
               variant === 'secondary',
-            'border border-slate-300/90 bg-gradient-to-b from-white to-slate-50 text-slate-700 shadow-btn-outline hover:to-slate-100 focus-visible:ring-slate-500 active:translate-y-px':
+            'border border-slate-300/90 bg-gradient-to-b from-white to-slate-100 text-slate-700 shadow-btn-outline hover:to-slate-50 focus-visible:ring-slate-500 active:translate-y-[3px] active:shadow-btn-outline-active':
               variant === 'outline',
-            'text-slate-600 hover:bg-slate-100 hover:shadow-sm hover:shadow-slate-900/5 focus-visible:ring-slate-500 active:translate-y-px':
+            'text-slate-600 hover:bg-slate-100 hover:shadow-chip-icon focus-visible:ring-slate-500 active:translate-y-px':
               variant === 'ghost',
-            'bg-gradient-to-b from-red-500 to-red-700 text-white shadow-btn-danger ring-1 ring-white/15 hover:from-red-500 hover:to-red-600 focus-visible:ring-red-500 active:translate-y-px':
+            'bg-gradient-to-b from-red-400 to-red-700 text-white shadow-btn-danger ring-1 ring-white/20 hover:from-red-400 hover:to-red-600 focus-visible:ring-red-500 active:translate-y-[3px] active:shadow-btn-danger-active':
               variant === 'danger',
             'px-3 py-1.5 text-sm gap-1.5': size === 'sm',
             'px-4 py-2 text-sm gap-2': size === 'md',

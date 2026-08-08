@@ -63,10 +63,10 @@ export function Sidebar({ userName, userRole = 'user' }: { userName: string; use
   const showStudent = canAccessStudentOutreach(userRole);
 
   return (
-    <div className="rounded-2xl border border-slate-200/80 bg-gradient-to-b from-white via-white to-slate-50 p-5 shadow-card ring-1 ring-slate-900/[0.04]">
-      <div className="mb-6 flex items-center gap-3 rounded-xl border border-slate-100 bg-gradient-to-br from-primary-50/80 to-white p-3 ring-1 ring-primary-100/50">
+    <div className="rounded-2xl border border-white/80 bg-gradient-to-b from-white via-white to-slate-100/90 p-5 shadow-card ring-1 ring-slate-900/[0.06]">
+      <div className="mb-6 flex items-center gap-3 rounded-xl border border-white/80 bg-gradient-to-br from-primary-50 to-white p-3 shadow-inset-well ring-1 ring-primary-100/70">
         <div
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 text-sm font-bold text-white shadow-btn-primary ring-1 ring-white/20"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary-400 to-primary-700 text-sm font-bold text-white shadow-orb ring-1 ring-white/30"
           aria-hidden="true"
         >
           {userInitials(userName)}
@@ -90,8 +90,8 @@ export function Sidebar({ userName, userRole = 'user' }: { userName: string; use
                     'flex min-h-[3.25rem] items-center gap-4 rounded-2xl px-5 py-4 text-lg font-semibold leading-snug transition-[color,background-color,box-shadow,transform]',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
                     active
-                      ? 'bg-gradient-to-b from-primary-50 to-primary-100/90 text-primary-800 shadow-btn-outline ring-1 ring-primary-200/70'
-                      : 'text-slate-600 hover:bg-gradient-to-b hover:from-white hover:to-slate-100/90 hover:text-slate-900 hover:shadow-btn-secondary hover:ring-1 hover:ring-slate-200/80 active:translate-y-px'
+                      ? 'bg-gradient-to-b from-primary-50 to-primary-100 text-primary-800 shadow-nav-pill-active ring-1 ring-primary-200/80'
+                      : 'text-slate-600 hover:bg-gradient-to-b hover:from-white hover:to-slate-100 hover:text-slate-900 hover:shadow-nav-pill-hover hover:ring-1 hover:ring-slate-200/80 active:translate-y-[2px]'
                   )}
                   aria-current={active ? 'page' : undefined}
                 >

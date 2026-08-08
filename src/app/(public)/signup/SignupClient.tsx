@@ -253,7 +253,7 @@ export function SignupClient({ googleEnabled }: { googleEnabled: boolean }) {
           )}
 
           {step === 2 && accountType && (
-            <div className="rounded-3xl border-2 border-slate-200/90 bg-gradient-to-b from-white to-slate-50/95 p-8 shadow-card ring-1 ring-slate-900/[0.035] sm:p-10">
+            <div className="rounded-3xl border border-white/80 bg-gradient-to-b from-white to-slate-100/90 p-8 shadow-card ring-1 ring-slate-900/[0.06] sm:p-10">
               <button
                 type="button"
                 onClick={() => {

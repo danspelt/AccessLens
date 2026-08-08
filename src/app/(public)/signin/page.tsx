@@ -26,7 +26,7 @@ export default function SignInPage() {
           <h1 className="font-display text-3xl font-bold tracking-tight text-white drop-shadow-sm">Welcome back</h1>
           <p className="mt-2 text-slate-100 drop-shadow-sm">Sign in with your AccessLens email and password</p>
         </div>
-        <div className="rounded-2xl border border-white/30 bg-white/95 p-8 shadow-card ring-1 ring-white/50 backdrop-blur-md">
+        <div className="rounded-2xl border border-white/40 bg-gradient-to-b from-white to-slate-50 p-8 shadow-sheet ring-1 ring-white/50 backdrop-blur-md">
           <Suspense fallback={<div className="h-48 animate-pulse rounded-lg bg-slate-100" />}>
             <SignInForm googleEnabled={googleEnabled} resendEnabled={resendEnabled} />
           </Suspense>

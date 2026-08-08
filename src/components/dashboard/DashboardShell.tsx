@@ -18,7 +18,9 @@ export function DashboardShell({
           <aside className="hidden lg:block w-80 shrink-0">
             <Sidebar userName={userName} userRole={userRole} />
           </aside>
-          <div className="min-w-0 flex-1">{children}</div>
+          <div className="min-w-0 flex-1 rounded-[1.75rem] border border-white/70 bg-white/55 p-4 shadow-inset-well ring-1 ring-slate-900/[0.04] sm:p-6">
+            {children}
+          </div>
         </div>
       </div>
     </div>

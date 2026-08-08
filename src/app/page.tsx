@@ -149,7 +149,7 @@ function TrustStrip({ items }: { items: HomeTrustStripItem[] }) {
             const Icon = resolveIcon(icon);
             return (
               <li key={label} className="flex items-center gap-2">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-50 text-primary-700">
+                <span className="orb-3d flex h-9 w-9 items-center justify-center rounded-full text-primary-700">
                   <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
                 </span>
                 <span className="font-medium text-slate-700">{label}</span>
@@ -182,7 +182,7 @@ function FeaturesSection({ items }: { items: HomeFeatureItem[] }) {
             return (
               <div
                 key={feature.title}
-                className="rounded-2xl panel-surface p-6 transition-all duration-300 motion-safe:hover:-translate-y-0.5 motion-safe:hover:border-primary-200/80 motion-safe:hover:shadow-card-hover"
+                className="rounded-2xl panel-surface p-6 transition-all duration-300 motion-safe:hover:-translate-y-1 motion-safe:hover:shadow-card-hover"
               >
                 <div className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl ${feature.colorClass}`}>
                   <Icon className="h-6 w-6" aria-hidden="true" />
@@ -253,7 +253,7 @@ function HowItWorksSection({ steps }: { steps: HomeStepItem[] }) {
           />
           {steps.map(({ step, title, description }) => (
             <div key={step} className="relative text-center">
-              <div className="relative z-10 mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-primary-600 text-xl font-bold text-white shadow-lg ring-4 ring-slate-50">
+              <div className="relative z-10 mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-b from-primary-400 to-primary-700 text-xl font-bold text-white shadow-orb ring-4 ring-slate-50">
                 {step}
               </div>
               <h3 className="text-xl font-semibold text-slate-900">{title}</h3>
@@ -368,8 +368,8 @@ export default async function HomePage() {
           <div className="absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-white/20 blur-3xl" />
         </div>
         <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
-          <div className="motion-safe:animate-fade-up mx-auto max-w-3xl rounded-3xl border border-white/50 bg-white/[0.93] px-6 py-10 text-center shadow-[0_25px_80px_-12px_rgba(8,47,73,0.35)] ring-1 ring-slate-900/[0.06] backdrop-blur-xl sm:px-10 sm:py-12">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary-200/90 bg-primary-50 px-4 py-1.5 text-sm font-semibold text-primary-900 backdrop-blur-sm">
+          <div className="motion-safe:animate-fade-up mx-auto max-w-3xl rounded-3xl border border-white/70 bg-gradient-to-b from-white via-white to-slate-50 px-6 py-10 text-center shadow-sheet ring-1 ring-slate-900/[0.08] backdrop-blur-xl sm:px-10 sm:py-12">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary-200/90 bg-gradient-to-b from-primary-50 to-primary-100/80 px-4 py-1.5 text-sm font-semibold text-primary-900 shadow-chip-icon backdrop-blur-sm">
               <MapPin className="h-4 w-4 text-primary-700" aria-hidden="true" />
               {liveCityLabel}
             </div>
@@ -382,7 +382,7 @@ export default async function HomePage() {
             </p>
 
             {stats.totalPlaces > 0 && (
-              <dl className="mt-8 grid grid-cols-3 gap-4 rounded-2xl border border-slate-200/90 bg-slate-50/95 px-4 py-4 backdrop-blur-sm">
+              <dl className="mt-8 grid grid-cols-3 gap-4 rounded-2xl border border-white/80 bg-gradient-to-b from-slate-50 to-white px-4 py-4 shadow-inset-well">
                 <div>
                   <dt className="text-xs font-semibold uppercase tracking-wider text-slate-500">Places</dt>
                   <dd className="mt-1 text-2xl font-bold tabular-nums text-slate-900">{stats.totalPlaces}</dd>
@@ -403,14 +403,14 @@ export default async function HomePage() {
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link
                 href={hero.primaryCtaHref}
-                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-b from-primary-500 to-primary-700 px-8 py-4 text-base font-semibold text-white shadow-btn-primary ring-1 ring-white/15 transition-colors hover:from-primary-500 hover:to-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-b from-primary-400 to-primary-700 px-8 py-4 text-base font-semibold text-white shadow-btn-primary ring-1 ring-white/25 transition-[transform,box-shadow] hover:from-primary-400 hover:to-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 active:translate-y-[3px] active:shadow-btn-primary-active"
               >
                 {hero.primaryCtaLabel}
                 <ArrowRight className="h-5 w-5" aria-hidden="true" />
               </Link>
               <Link
                 href={hero.secondaryCtaHref}
-                className="inline-flex items-center gap-2 rounded-xl border border-slate-300/95 bg-white px-8 py-4 text-base font-semibold text-slate-800 shadow-btn-outline transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-300/95 bg-gradient-to-b from-white to-slate-100 px-8 py-4 text-base font-semibold text-slate-800 shadow-btn-outline transition-[transform,box-shadow] hover:to-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 active:translate-y-[3px] active:shadow-btn-outline-active"
               >
                 {hero.secondaryCtaLabel}
               </Link>
@@ -435,7 +435,7 @@ export default async function HomePage() {
               <Link
                 key={c.slug}
                 href={`/cities/${c.slug}`}
-                className="group flex items-center justify-between gap-4 rounded-2xl panel-surface p-5 hover:shadow-card-hover transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                className="group flex items-center justify-between gap-4 rounded-2xl panel-surface p-5 transition-all duration-200 motion-safe:hover:-translate-y-1 hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
               >
                 <div className="min-w-0">
                   <p className="font-semibold text-slate-900 group-hover:text-primary-700 truncate">
@@ -474,9 +474,9 @@ export default async function HomePage() {
               <Link
                 key={slug}
                 href={`/explore?category=${slug}`}
-                className="group flex flex-col items-center gap-3 rounded-2xl border border-slate-200/80 bg-gradient-to-b from-white/95 to-slate-50/85 p-6 shadow-card ring-1 ring-slate-900/[0.04] backdrop-blur-md transition-all duration-300 motion-safe:hover:-translate-y-1 motion-safe:hover:border-primary-200 motion-safe:hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+                className="group flex flex-col items-center gap-3 rounded-2xl panel-surface p-6 backdrop-blur-md transition-all duration-300 motion-safe:hover:-translate-y-1.5 motion-safe:hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
               >
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-50 text-3xl">
+                <div className="orb-3d flex h-14 w-14 items-center justify-center rounded-2xl text-3xl">
                   <span aria-hidden="true">{icon}</span>
                 </div>
                 <span className="text-center text-sm font-semibold text-slate-800 group-hover:text-primary-700">
@@ -518,9 +518,9 @@ export default async function HomePage() {
                   <Link
                     key={p.id}
                     href={`/places/${p.id}`}
-                    className="group flex gap-4 rounded-2xl bg-white p-5 shadow-card ring-1 ring-slate-900/[0.04] hover:shadow-card-hover transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                    className="group flex gap-4 rounded-2xl panel-surface p-5 transition-all duration-200 motion-safe:hover:-translate-y-1 hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                   >
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-2xl">
+                    <div className="orb-3d flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-2xl">
                       <span aria-hidden="true">{icon}</span>
                     </div>
                     <div className="min-w-0 flex-1">

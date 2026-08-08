@@ -184,7 +184,7 @@ export default async function ExplorePage({
             </div>
             <div className="flex items-center gap-2 text-sm text-slate-500">
               <MapPin className="h-4 w-4 text-primary-500" aria-hidden="true" />
-              Victoria, BC
+              Victoria &amp; Vancouver, BC
             </div>
           </div>
         </div>
@@ -211,7 +211,7 @@ export default async function ExplorePage({
           {/* Main content */}
           <div className="flex-1 min-w-0 space-y-6">
             <section aria-label="Map of Victoria and accessible places">
-              <div className="relative min-h-[260px] h-[min(48vh,480px)] w-full overflow-hidden rounded-2xl border border-slate-200/90 bg-gradient-to-b from-slate-100 to-slate-200/90 shadow-card ring-1 ring-slate-900/[0.06]">
+              <div className="relative min-h-[260px] h-[min(48vh,480px)] w-full overflow-hidden rounded-2xl border border-white/80 bg-gradient-to-b from-slate-100 to-slate-200/90 shadow-card ring-1 ring-slate-900/[0.08]">
                 <AccessLensMapClient
                   places={mapPlaces}
                   className="h-full w-full"

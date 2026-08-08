@@ -39,26 +39,39 @@ const config: Config = {
       boxShadow: {
         'inset-highlight': 'inset 0 1px 0 0 rgb(255 255 255 / 0.92)',
         'inset-well':
-          'inset 0 2px 4px rgb(15 23 42 / 0.05), inset 0 -1px 0 rgb(15 23 42 / 0.04)',
+          'inset 0 3px 8px rgb(15 23 42 / 0.08), inset 0 -1px 0 rgb(255 255 255 / 0.7)',
         field:
-          'inset 0 1px 3px rgb(15 23 42 / 0.05), 0 1px 0 0 rgb(255 255 255 / 0.98)',
-        card: '0 1px 0 0 rgb(255 255 255 / 0.95) inset, 0 4px 18px -4px rgb(15 23 42 / 0.11), 0 2px 8px -2px rgb(15 23 42 / 0.07)',
+          'inset 0 2px 5px rgb(15 23 42 / 0.08), 0 1px 0 0 rgb(255 255 255 / 0.98)',
+        card:
+          '0 1px 0 0 rgb(255 255 255 / 0.98) inset, 0 -1px 0 0 rgb(15 23 42 / 0.05) inset, 0 2px 0 0 rgb(203 213 225), 0 16px 32px -12px rgb(15 23 42 / 0.2), 0 6px 14px -6px rgb(15 23 42 / 0.12)',
         'card-hover':
-          '0 1px 0 0 rgb(255 255 255 / 0.95) inset, 0 16px 36px -10px rgb(15 23 42 / 0.16), 0 8px 16px -4px rgb(15 23 42 / 0.1)',
+          '0 1px 0 0 rgb(255 255 255 / 0.98) inset, 0 -1px 0 0 rgb(15 23 42 / 0.04) inset, 0 4px 0 0 rgb(186 230 253), 0 28px 50px -16px rgb(15 23 42 / 0.28), 0 12px 22px -8px rgb(14 165 233 / 0.18)',
         'nav-bar':
-          '0 1px 0 0 rgb(255 255 255 / 0.95) inset, 0 10px 28px -8px rgb(15 23 42 / 0.12), 0 4px 12px -4px rgb(15 23 42 / 0.08)',
-        'btn-primary': '0 2px 0 0 rgb(7 89 133), 0 6px 18px -4px rgb(2 132 199 / 0.42)',
-        'btn-danger': '0 2px 0 0 rgb(127 29 29), 0 6px 18px -4px rgb(220 38 38 / 0.38)',
+          '0 1px 0 0 rgb(255 255 255 / 0.98) inset, 0 3px 0 0 rgb(226 232 240), 0 18px 36px -12px rgb(15 23 42 / 0.2)',
+        'btn-primary':
+          '0 1px 0 0 rgb(255 255 255 / 0.32) inset, 0 4px 0 0 rgb(7 89 133), 0 12px 22px -6px rgb(2 132 199 / 0.5)',
+        'btn-primary-active':
+          '0 1px 0 0 rgb(255 255 255 / 0.18) inset, 0 1px 0 0 rgb(7 89 133), 0 4px 10px -3px rgb(2 132 199 / 0.35)',
+        'btn-danger':
+          '0 1px 0 0 rgb(255 255 255 / 0.28) inset, 0 4px 0 0 rgb(127 29 29), 0 12px 22px -6px rgb(220 38 38 / 0.45)',
+        'btn-danger-active':
+          '0 1px 0 0 rgb(255 255 255 / 0.16) inset, 0 1px 0 0 rgb(127 29 29), 0 4px 10px -3px rgb(220 38 38 / 0.3)',
         'btn-outline':
-          '0 1px 0 0 rgb(255 255 255 / 0.9) inset, 0 2px 8px -2px rgb(15 23 42 / 0.09)',
+          '0 1px 0 0 rgb(255 255 255 / 0.95) inset, 0 3px 0 0 rgb(203 213 225), 0 10px 18px -8px rgb(15 23 42 / 0.16)',
+        'btn-outline-active':
+          '0 1px 0 0 rgb(255 255 255 / 0.9) inset, 0 1px 0 0 rgb(203 213 225), 0 3px 8px -3px rgb(15 23 42 / 0.1)',
         'btn-secondary':
-          '0 1px 0 0 rgb(255 255 255 / 0.75) inset, 0 2px 6px -2px rgb(15 23 42 / 0.07)',
-        'chip-icon': '0 1px 0 0 rgb(255 255 255 / 0.85) inset, 0 2px 5px -1px rgb(15 23 42 / 0.12)',
-        sheet: '0 12px 40px -8px rgb(15 23 42 / 0.2), 0 4px 16px -4px rgb(15 23 42 / 0.08)',
+          '0 1px 0 0 rgb(255 255 255 / 0.8) inset, 0 3px 0 0 rgb(203 213 225), 0 8px 14px -6px rgb(15 23 42 / 0.12)',
+        'chip-icon':
+          '0 1px 0 0 rgb(255 255 255 / 0.9) inset, 0 2px 0 0 rgb(203 213 225), 0 4px 8px -2px rgb(15 23 42 / 0.16)',
+        orb:
+          'inset 0 -5px 10px rgb(15 23 42 / 0.12), inset 0 3px 6px rgb(255 255 255 / 0.85), 0 10px 18px -6px rgb(15 23 42 / 0.22)',
+        sheet:
+          '0 1px 0 0 rgb(255 255 255 / 0.9) inset, 0 18px 50px -12px rgb(15 23 42 / 0.28), 0 8px 20px -8px rgb(15 23 42 / 0.12)',
         'nav-pill-active':
-          '0 1px 0 0 rgb(255 255 255 / 0.9) inset, 0 2px 6px -2px rgb(14 165 233 / 0.18)',
+          '0 1px 0 0 rgb(255 255 255 / 0.95) inset, 0 2px 0 0 rgb(186 230 253), 0 6px 12px -4px rgb(14 165 233 / 0.28)',
         'nav-pill-hover':
-          '0 1px 0 0 rgb(255 255 255 / 0.85) inset, 0 2px 6px -2px rgb(15 23 42 / 0.08)',
+          '0 1px 0 0 rgb(255 255 255 / 0.9) inset, 0 2px 0 0 rgb(226 232 240), 0 6px 12px -4px rgb(15 23 42 / 0.12)',
       },
       keyframes: {
         'fade-up': {

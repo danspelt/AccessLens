@@ -44,11 +44,11 @@ export function PlaceCard({ place }: PlaceCardProps) {
   return (
     <Link
       href={`/places/${place._id}`}
-      className="group flex flex-col overflow-hidden panel-surface transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+      className="group flex flex-col overflow-hidden panel-surface transition-[box-shadow,transform] duration-200 motion-safe:hover:-translate-y-1 hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
       aria-label={`${place.name} — ${categoryLabel} in ${place.city}`}
     >
       {/* Photo or placeholder */}
-      <div className="relative h-40 w-full overflow-hidden bg-slate-100">
+      <div className="relative h-40 w-full overflow-hidden bg-gradient-to-b from-slate-100 to-slate-200 shadow-inset-well">
         {thumbnail ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -58,14 +58,14 @@ export function PlaceCard({ place }: PlaceCardProps) {
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <span className="text-5xl" role="img" aria-label={categoryLabel}>
+            <span className="orb-3d flex h-16 w-16 items-center justify-center rounded-full text-4xl" role="img" aria-label={categoryLabel}>
               {categoryIcon}
             </span>
           </div>
         )}
         {score !== undefined && color && (
           <div
-            className={`absolute right-2 top-2 rounded-full border px-2.5 py-0.5 text-xs font-bold ${scoreColors[color]}`}
+            className={`absolute right-2 top-2 rounded-full border px-2.5 py-0.5 text-xs font-bold shadow-chip-icon ${scoreColors[color]}`}
             aria-label={`Accessibility score: ${score} out of 100`}
           >
             {score}

@@ -96,6 +96,13 @@ body {
   border-color: color-mix(in srgb, var(--foreground) 35%, transparent) !important;
 }
 
+[data-high-contrast="true"] .panel-surface,
+[data-high-contrast="true"] .shadow-card,
+[data-high-contrast="true"] .shadow-btn-primary,
+[data-high-contrast="true"] .orb-3d {
+  box-shadow: none !important;
+}
+
 /* Dyslexia-friendly font */
 [data-dyslexia-font="true"] body {
   font-family: var(--font-dyslexia);
@@ -124,16 +131,21 @@ body {
    * `border bg-white shadow-card` for consistent 3D surfaces sitewide.
    */
   .panel-surface {
-    @apply rounded-2xl border border-slate-200/85 bg-gradient-to-br from-white via-white to-slate-50 shadow-card ring-1 ring-slate-900/[0.045];
+    @apply rounded-2xl border border-white/80 bg-gradient-to-b from-white via-white to-slate-100/90 shadow-card ring-1 ring-slate-900/[0.06];
+  }
+
+  .orb-3d {
+    @apply shadow-orb ring-1 ring-white/60;
+    background-image: radial-gradient(circle at 32% 28%, rgb(255 255 255 / 0.95), rgb(224 242 254) 42%, rgb(186 230 253) 100%);
   }
 
   /** CTA links styled outside `<Button />` */
   .link-cta-primary {
-    @apply inline-flex items-center justify-center rounded-xl bg-gradient-to-b from-primary-500 to-primary-700 font-semibold text-white shadow-btn-primary ring-1 ring-white/15 transition-[transform,box-shadow,background-image] hover:from-primary-500 hover:to-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 active:translate-y-px;
+    @apply inline-flex items-center justify-center rounded-xl bg-gradient-to-b from-primary-400 to-primary-700 font-semibold text-white shadow-btn-primary ring-1 ring-white/20 transition-[transform,box-shadow,background-image] hover:from-primary-400 hover:to-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 active:translate-y-[3px] active:shadow-btn-primary-active;
   }
 
   .link-cta-outline {
-    @apply inline-flex items-center justify-center rounded-xl border border-slate-300/90 bg-gradient-to-b from-white to-slate-50 font-semibold text-slate-700 shadow-btn-outline transition-[transform,box-shadow,background-image] hover:to-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 active:translate-y-px;
+    @apply inline-flex items-center justify-center rounded-xl border border-slate-300/90 bg-gradient-to-b from-white to-slate-100 font-semibold text-slate-700 shadow-btn-outline transition-[transform,box-shadow,background-image] hover:to-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 active:translate-y-[3px] active:shadow-btn-outline-active;
   }
 }
 
@@ -146,19 +158,21 @@ body {
    * Default marketing / app backdrop — airy cool gradient tuned for accessibility contrast.
    */
   .bg-site {
-    background-color: #f4f7fc;
+    background-color: #eef3fa;
     background-image:
-      radial-gradient(ellipse 130% 65% at 50% -30%, rgb(191 219 254 / 0.42), transparent 52%),
-      radial-gradient(ellipse 55% 42% at 100% 8%, rgb(199 210 254 / 0.28), transparent 50%),
-      radial-gradient(ellipse 50% 38% at 0% 92%, rgb(165 243 252 / 0.2), transparent 50%);
+      radial-gradient(ellipse 90% 50% at 50% -18%, rgb(255 255 255 / 0.95), transparent 58%),
+      radial-gradient(ellipse 70% 45% at 100% 0%, rgb(186 230 253 / 0.45), transparent 55%),
+      radial-gradient(ellipse 55% 40% at 0% 100%, rgb(165 243 252 / 0.28), transparent 50%),
+      linear-gradient(180deg, #f8fbff 0%, #e8eef8 100%);
   }
 
   /** Subtle depth for authenticated dashboard shells */
   .bg-app-canvas {
-    background-color: #f4f7fc;
+    background-color: #eef3fa;
     background-image:
-      radial-gradient(ellipse 110% 50% at 50% -20%, rgb(226 232 240 / 0.65), transparent 55%),
-      linear-gradient(180deg, rgb(247 249 253) 0%, rgb(240 244 250) 100%);
+      radial-gradient(ellipse 90% 40% at 50% -12%, rgb(255 255 255 / 0.9), transparent 55%),
+      radial-gradient(ellipse 50% 35% at 100% 0%, rgb(186 230 253 / 0.28), transparent 50%),
+      linear-gradient(180deg, rgb(248 251 255) 0%, rgb(232 238 248) 100%);
   }
 
   /** Section labels — consistent rhythm with homepage */

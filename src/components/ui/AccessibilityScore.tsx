@@ -48,7 +48,7 @@ export function AccessibilityScore({
     <div className="flex flex-col gap-1">
       <div
         className={clsx(
-          'inline-flex items-center gap-2 rounded-lg border bg-gradient-to-b shadow-sm ring-1 ring-black/[0.04]',
+          'inline-flex items-center gap-2 rounded-lg border bg-gradient-to-b shadow-chip-icon ring-1 ring-black/[0.04]',
           colors.panel,
           sizes.padding
         )}
