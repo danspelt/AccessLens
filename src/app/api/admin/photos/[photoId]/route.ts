@@ -5,6 +5,8 @@ import { requireAdmin } from '@/lib/auth/requireAdmin';
 import { getCollection } from '@/lib/db/mongoClient';
 import { PlacePhoto } from '@/models/PlacePhoto';
 import { Place } from '@/models/Place';
+import { scheduleBadgeEvaluation } from '@/lib/badges/awardBadges';
+import { logActivity } from '@/lib/db/activity';
 
 const actionSchema = z.object({
   action: z.enum(['approve', 'reject']),
@@ -57,6 +59,19 @@ export async function POST(request: NextRequest, context: RouteContext) {
           { $set: { photoUrls, updatedAt: now } }
         ),
       ]);
+
+      await logActivity({
+        userId: admin.user._id.toString(),
+        type: 'photo_approved',
+        entityType: 'photo',
+        entityId: photoId,
+        message: `Approved photo for ${photo.placeName}`,
+        metadata: { placeId: photo.placeId.toString(), action: 'approve' },
+      });
+
+      if (photo.uploadedBy.userId) {
+        scheduleBadgeEvaluation(photo.uploadedBy.userId.toString());
+      }
     } else {
       await photosCol.updateOne(
         { _id: photo._id },
@@ -69,6 +84,15 @@ export async function POST(request: NextRequest, context: RouteContext) {
           },
         }
       );
+
+      await logActivity({
+        userId: admin.user._id.toString(),
+        type: 'photo_rejected',
+        entityType: 'photo',
+        entityId: photoId,
+        message: `Rejected photo for ${photo.placeName}`,
+        metadata: { placeId: photo.placeId.toString(), action: 'reject' },
+      });
     }
 
     return NextResponse.json({ success: true, status: action === 'approve' ? 'approved' : 'rejected' });

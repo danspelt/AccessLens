@@ -6,6 +6,7 @@ import { Place, calculateAccessibilityScore } from '@/models/Place';
 import { ObjectId } from 'mongodb';
 import slugify from 'slugify';
 import { logActivity } from '@/lib/db/activity';
+import { scheduleBadgeEvaluation } from '@/lib/badges/awardBadges';
 
 export async function GET(request: NextRequest) {
   try {
@@ -63,7 +64,9 @@ export async function POST(request: NextRequest) {
     const validated = placeSchema.parse(body);
 
     const slug = slugify(validated.name, { lower: true, strict: true });
-    const citySlug = validated.citySlug || 'victoria-bc';
+    const citySlug =
+      validated.citySlug ||
+      slugify(`${validated.city}-${validated.province || 'BC'}`, { lower: true, strict: true });
     const checklist = validated.checklist || {};
     const accessibilityScore = calculateAccessibilityScore(checklist);
 
@@ -108,6 +111,8 @@ export async function POST(request: NextRequest) {
       message: `Added ${place.name}`,
       metadata: { placeId: result.insertedId.toString(), placeName: place.name },
     });
+
+    scheduleBadgeEvaluation(session.user.id);
 
     return NextResponse.json(
       { place: { id: result.insertedId.toString(), ...place } },

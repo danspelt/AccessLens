@@ -8,6 +8,7 @@ import { Place } from '@/models/Place';
 import { User } from '@/models/User';
 import { ObjectId } from 'mongodb';
 import { logActivity } from '@/lib/db/activity';
+import { scheduleBadgeEvaluation } from '@/lib/badges/awardBadges';
 
 export async function GET(
   _request: NextRequest,
@@ -103,6 +104,8 @@ export async function POST(
       message: `Reviewed ${place.name}`,
       metadata: { placeId: id, placeName: place.name, rating: review.rating },
     });
+
+    scheduleBadgeEvaluation(userId);
 
     return NextResponse.json(
       { review: { id: result.insertedId.toString(), ...review } },

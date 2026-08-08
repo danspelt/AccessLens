@@ -4,6 +4,7 @@ import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { randomUUID } from 'crypto';
 import { logActivity } from '@/lib/db/activity';
+import { scheduleBadgeEvaluation } from '@/lib/badges/awardBadges';
 
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10 MB
 const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50 MB
@@ -134,6 +135,9 @@ export async function POST(request: NextRequest) {
         message,
         metadata: { context, count: uploadedUrls.length, urls: uploadedUrls, kinds },
       });
+      if (photoCount > 0) {
+        scheduleBadgeEvaluation(session.user.id);
+      }
     }
 
     return NextResponse.json({ urls: uploadedUrls, kinds }, { status: 201 });

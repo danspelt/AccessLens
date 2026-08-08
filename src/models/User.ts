@@ -27,7 +27,7 @@ export const BADGE_DESCRIPTIONS: Record<UserBadge, string> = {
   accessibility_hero: 'Submitted 25+ accessibility reviews',
   city_mapper: 'Added 10+ places to the map',
   photo_contributor: 'Uploaded 20+ accessibility photos',
-  verified_reviewer: 'Reviews verified by the community',
+  verified_reviewer: 'Has reviews approved by AccessLens moderators',
 };
 
 export interface User {

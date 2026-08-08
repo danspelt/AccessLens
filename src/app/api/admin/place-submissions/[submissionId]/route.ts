@@ -7,6 +7,7 @@ import { User } from '@/models/User';
 import { ObjectId } from 'mongodb';
 import slugify from 'slugify';
 import { logActivity } from '@/lib/db/activity';
+import { scheduleBadgeEvaluation } from '@/lib/badges/awardBadges';
 
 interface RouteContext {
   params: Promise<{ submissionId: string }>;
@@ -118,6 +119,10 @@ export async function POST(request: NextRequest, context: RouteContext) {
           placeName: submission.placeData.name,
         },
       });
+
+      if (submission.submittedBy.userId) {
+        scheduleBadgeEvaluation(submission.submittedBy.userId.toString());
+      }
 
       return NextResponse.json({
         message: 'Submission approved and place created',

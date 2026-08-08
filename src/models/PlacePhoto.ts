@@ -30,6 +30,7 @@ export interface PlacePhoto {
     type: 'business' | 'community' | 'student';
     name?: string;
     email?: string;
+    userId?: ObjectId;
   };
   reviewedBy?: ObjectId | null;
   reviewedAt?: Date | null;

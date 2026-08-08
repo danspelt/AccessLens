@@ -7,6 +7,7 @@ import { BusinessVisit } from '@/models/BusinessVisit';
 import { User } from '@/models/User';
 import { Place } from '@/models/Place';
 import { canAccessStudentOutreach } from '@/lib/auth/outreachRoles';
+import { scheduleBadgeEvaluation } from '@/lib/badges/awardBadges';
 
 async function requireStudentOrAdmin() {
   const session = await auth();
@@ -114,6 +115,8 @@ export async function POST(request: NextRequest) {
 
     const visits = await getCollection<BusinessVisit>('businessVisits');
     const result = await visits.insertOne(visit as BusinessVisit);
+
+    scheduleBadgeEvaluation(gate.user._id.toString());
 
     return NextResponse.json({ visitId: result.insertedId.toString() }, { status: 201 });
   } catch (error) {
