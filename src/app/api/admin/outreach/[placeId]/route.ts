@@ -5,6 +5,8 @@ import { requireAdmin } from '@/lib/auth/requireAdmin';
 import { getCollection } from '@/lib/db/mongoClient';
 import { Place } from '@/models/Place';
 import type { VerificationLevel } from '@/lib/accessibility/tags';
+import { logActivity } from '@/lib/db/activity';
+import { scheduleBadgeEvaluation } from '@/lib/badges/awardBadges';
 
 const actionSchema = z.object({
   action: z.enum(['publish', 'reject', 'mark_student_verified']),
@@ -65,6 +67,26 @@ export async function POST(request: NextRequest, context: RouteContext) {
         },
       }
     );
+
+    const activityType =
+      action === 'publish'
+        ? ('outreach_publish' as const)
+        : action === 'reject'
+          ? ('outreach_reject' as const)
+          : ('outreach_mark_student_verified' as const);
+
+    await logActivity({
+      userId: admin.user._id.toString(),
+      type: activityType,
+      entityType: 'place',
+      entityId: placeId,
+      message: `Outreach ${action} for ${place.name}`,
+      metadata: { outreachStatus, status, verificationLevel },
+    });
+
+    if (action === 'publish' && place.createdByUserId) {
+      scheduleBadgeEvaluation(place.createdByUserId.toString());
+    }
 
     return NextResponse.json({ success: true, outreachStatus, verificationLevel, status });
   } catch (error) {

@@ -17,6 +17,8 @@ import {
   BarChart3,
   Users,
   Camera,
+  Shield,
+  FileInput,
 } from 'lucide-react';
 import type { UserRole } from '@/models/User';
 import { canAccessAdminOutreach, canAccessStudentOutreach } from '@/lib/auth/outreachRoles';
@@ -31,9 +33,12 @@ const navItems = [
 ];
 
 const adminItems = [
+  { label: 'Moderation hub', href: '/admin', icon: Shield },
+  { label: 'Place submissions', href: '/admin/place-submissions', icon: FileInput },
   { label: 'Access codes', href: '/admin/access-codes', icon: KeyRound },
   { label: 'Outreach review', href: '/admin/outreach', icon: ClipboardCheck },
   { label: 'Photo review', href: '/admin/photos', icon: Camera },
+  { label: 'Review verification', href: '/admin/reviews', icon: Star },
   { label: 'Impact report', href: '/admin/reports', icon: BarChart3 },
 ];
 
@@ -51,7 +56,8 @@ function userInitials(displayName: string) {
 
 export function Sidebar({ userName, userRole = 'user' }: { userName: string; userRole?: UserRole }) {
   const pathname = usePathname();
-  const isActive = (href: string) => (href === '/dashboard' ? pathname === href : pathname.startsWith(href));
+  const isActive = (href: string) =>
+    href === '/dashboard' || href === '/admin' ? pathname === href : pathname.startsWith(href);
 
   const showAdmin = canAccessAdminOutreach(userRole);
   const showStudent = canAccessStudentOutreach(userRole);
