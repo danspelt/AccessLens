@@ -17,16 +17,30 @@ interface NavbarClientProps {
   user: NavUser | null;
 }
 
+function useDarkNav(pathname: string) {
+  return (
+    pathname === '/' ||
+    pathname === '/signin' ||
+    pathname.startsWith('/signin/') ||
+    pathname === '/signup' ||
+    pathname.startsWith('/signup/') ||
+    pathname === '/pitch' ||
+    pathname.startsWith('/pitch/')
+  );
+}
+
 function NavbarMobile({
   user,
   navLinks,
   isActive,
   onLogout,
+  dark,
 }: {
   user: NavUser | null;
   navLinks: { href: string; label: string }[];
   isActive: (href: string) => boolean;
   onLogout: () => Promise<void>;
+  dark: boolean;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -35,7 +49,10 @@ function NavbarMobile({
       <button
         type="button"
         onClick={() => setMobileOpen(!mobileOpen)}
-        className="inline-flex items-center justify-center rounded-md p-2 text-slate-600 hover:bg-slate-100 md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+        className={clsx(
+          'inline-flex items-center justify-center rounded-md p-2 md:hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
+          dark ? 'text-white hover:bg-white/10' : 'text-slate-600 hover:bg-slate-100'
+        )}
         aria-expanded={mobileOpen}
         aria-controls="mobile-menu"
         aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
@@ -49,7 +66,12 @@ function NavbarMobile({
       {mobileOpen && (
         <div
           id="mobile-menu"
-          className="fixed inset-x-0 top-16 z-30 max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-slate-200/90 bg-gradient-to-b from-white to-slate-50/95 shadow-sheet md:hidden"
+          className={clsx(
+            'fixed inset-x-0 top-16 z-30 max-h-[calc(100dvh-4rem)] overflow-y-auto border-b shadow-sheet md:hidden',
+            dark
+              ? 'border-white/15 bg-gradient-to-b from-primary-950/95 to-slate-950/95 backdrop-blur-md'
+              : 'border-slate-200/90 bg-gradient-to-b from-white to-slate-50/95'
+          )}
           role="navigation"
           aria-label="Mobile navigation"
         >
@@ -60,9 +82,13 @@ function NavbarMobile({
                 href={href}
                 className={clsx(
                   'block rounded-md px-3 py-2 text-base font-medium transition-colors',
-                  isActive(href)
-                    ? 'bg-primary-50 text-primary-700'
-                    : 'text-slate-600 hover:bg-slate-100'
+                  dark
+                    ? isActive(href)
+                      ? 'bg-white/15 text-white'
+                      : 'text-slate-200 hover:bg-white/10'
+                    : isActive(href)
+                      ? 'bg-primary-50 text-primary-700'
+                      : 'text-slate-600 hover:bg-slate-100'
                 )}
                 aria-current={isActive(href) ? 'page' : undefined}
               >
@@ -70,13 +96,18 @@ function NavbarMobile({
               </Link>
             ))}
           </div>
-          <div className="border-t border-slate-200 px-4 py-3">
+          <div className={clsx('border-t px-4 py-3', dark ? 'border-white/10' : 'border-slate-200')}>
             {user ? (
               <div className="space-y-2">
-                <p className="text-sm text-slate-500">Signed in as {user.name}</p>
+                <p className={clsx('text-sm', dark ? 'text-slate-300' : 'text-slate-500')}>
+                  Signed in as {user.name}
+                </p>
                 <button
                   onClick={onLogout}
-                  className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-base font-medium text-slate-700 hover:bg-slate-100"
+                  className={clsx(
+                    'flex w-full items-center gap-2 rounded-md px-3 py-2 text-base font-medium',
+                    dark ? 'text-white hover:bg-white/10' : 'text-slate-700 hover:bg-slate-100'
+                  )}
                 >
                   <LogOut className="h-4 w-4" aria-hidden="true" />
                   Logout
@@ -86,7 +117,12 @@ function NavbarMobile({
               <div className="flex gap-3">
                 <Link
                   href="/signin"
-                  className="flex-1 rounded-lg border border-slate-300/90 bg-gradient-to-b from-white to-slate-50 px-4 py-2 text-center text-sm font-medium text-slate-700 shadow-btn-outline transition-[transform,box-shadow] hover:to-slate-100 active:translate-y-px"
+                  className={clsx(
+                    'flex-1 rounded-lg px-4 py-2 text-center text-sm font-medium transition-[transform,box-shadow] active:translate-y-px',
+                    dark
+                      ? 'border border-white/35 bg-white/10 text-white shadow-sm hover:bg-white/15'
+                      : 'border border-slate-300/90 bg-gradient-to-b from-white to-slate-50 text-slate-700 shadow-btn-outline hover:to-slate-100'
+                  )}
                 >
                   Sign in
                 </Link>
@@ -107,9 +143,8 @@ function NavbarMobile({
 
 export function NavbarClient({ user }: NavbarClientProps) {
   const pathname = usePathname();
+  const dark = useDarkNav(pathname);
 
-  // The dashboard area has its own shell + sidebar navigation.
-  // Hide the global navbar on those routes.
   const hideOnDashboardRoutes =
     pathname === '/dashboard' ||
     pathname.startsWith('/dashboard/') ||
@@ -153,12 +188,17 @@ export function NavbarClient({ user }: NavbarClientProps) {
 
   return (
     <nav
-      className="sticky top-0 z-40 border-b border-white/70 bg-gradient-to-b from-white via-white/90 to-slate-100/85 shadow-nav-bar backdrop-blur-md backdrop-saturate-150"
+      className={clsx(
+        'sticky top-0 z-40 border-b backdrop-blur-md backdrop-saturate-150',
+        dark
+          ? 'border-white/10 bg-gradient-to-b from-primary-950/85 via-primary-950/70 to-slate-950/55 shadow-[0_12px_32px_-16px_rgb(2_6_23_/_0.55)]'
+          : 'border-white/70 bg-gradient-to-b from-white via-white/90 to-slate-100/85 shadow-nav-bar'
+      )}
       aria-label="Main navigation"
+      data-nav-theme={dark ? 'dark' : 'light'}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
           <Link
             href="/"
             className="flex items-center gap-2.5 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
@@ -172,12 +212,26 @@ export function NavbarClient({ user }: NavbarClientProps) {
               className="h-9 w-9 rounded-xl shadow-orb ring-1 ring-white/50 transition-transform active:translate-y-[2px]"
               priority
             />
-            <span className="font-display text-xl font-bold tracking-tight text-slate-900 drop-shadow-[0_1px_0_rgba(255,255,255,0.8)]">
-              Access<span className="bg-gradient-to-b from-primary-500 to-primary-700 bg-clip-text text-transparent">Lens</span>
+            <span
+              className={clsx(
+                'font-display text-xl font-bold tracking-tight',
+                dark ? 'text-white drop-shadow-sm' : 'text-slate-900 drop-shadow-[0_1px_0_rgba(255,255,255,0.8)]'
+              )}
+            >
+              Access
+              <span
+                className={clsx(
+                  'bg-clip-text text-transparent',
+                  dark
+                    ? 'bg-gradient-to-b from-sky-200 to-primary-300'
+                    : 'bg-gradient-to-b from-primary-500 to-primary-700'
+                )}
+              >
+                Lens
+              </span>
             </span>
           </Link>
 
-          {/* Desktop nav links */}
           <div className="hidden items-center gap-1 md:flex" role="list">
             {navLinks.map(({ href, label }) => (
               <Link
@@ -186,9 +240,13 @@ export function NavbarClient({ user }: NavbarClientProps) {
                 role="listitem"
                 className={clsx(
                   'rounded-lg px-3 py-2 text-sm font-medium transition-[color,background-color,box-shadow,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
-                  isActive(href)
-                    ? 'bg-gradient-to-b from-primary-50 to-primary-100/90 text-primary-800 shadow-nav-pill-active ring-1 ring-primary-200/60'
-                    : 'text-slate-600 shadow-sm shadow-transparent hover:bg-gradient-to-b hover:from-white hover:to-slate-100/90 hover:text-slate-900 hover:shadow-nav-pill-hover hover:ring-1 hover:ring-slate-200/80 active:translate-y-px'
+                  dark
+                    ? isActive(href)
+                      ? 'bg-white/15 text-white shadow-sm ring-1 ring-white/25'
+                      : 'text-slate-200 hover:bg-white/10 hover:text-white active:translate-y-px'
+                    : isActive(href)
+                      ? 'bg-gradient-to-b from-primary-50 to-primary-100/90 text-primary-800 shadow-nav-pill-active ring-1 ring-primary-200/60'
+                      : 'text-slate-600 shadow-sm shadow-transparent hover:bg-gradient-to-b hover:from-white hover:to-slate-100/90 hover:text-slate-900 hover:shadow-nav-pill-hover hover:ring-1 hover:ring-slate-200/80 active:translate-y-px'
                 )}
                 aria-current={isActive(href) ? 'page' : undefined}
               >
@@ -197,11 +255,12 @@ export function NavbarClient({ user }: NavbarClientProps) {
             ))}
           </div>
 
-          {/* Desktop auth */}
           <div className="hidden items-center gap-3 md:flex">
             {user ? (
               <>
-                <span className="text-sm text-slate-600">{user.name}</span>
+                <span className={clsx('text-sm', dark ? 'text-slate-200' : 'text-slate-600')}>
+                  {user.name}
+                </span>
                 <Link
                   href="/places/new"
                   className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-to-b from-primary-400 to-primary-700 px-4 py-2 text-sm font-medium text-white shadow-btn-primary ring-1 ring-white/25 transition-[transform,box-shadow,filter] hover:from-primary-400 hover:to-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 active:translate-y-[3px] active:shadow-btn-primary-active"
@@ -212,7 +271,12 @@ export function NavbarClient({ user }: NavbarClientProps) {
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300/90 bg-gradient-to-b from-white to-slate-100 px-4 py-2 text-sm font-medium text-slate-700 shadow-btn-outline transition-[transform,box-shadow] hover:to-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 active:translate-y-[3px] active:shadow-btn-outline-active"
+                  className={clsx(
+                    'inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-[transform,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:translate-y-[3px]',
+                    dark
+                      ? 'border border-white/35 bg-white/10 text-white hover:bg-white/15 focus-visible:ring-primary-300'
+                      : 'border border-slate-300/90 bg-gradient-to-b from-white to-slate-100 text-slate-700 shadow-btn-outline hover:to-slate-50 focus-visible:ring-slate-500 active:shadow-btn-outline-active'
+                  )}
                 >
                   <LogOut className="h-4 w-4" aria-hidden="true" />
                   Logout
@@ -222,7 +286,12 @@ export function NavbarClient({ user }: NavbarClientProps) {
               <>
                 <Link
                   href="/signin"
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300/90 bg-gradient-to-b from-white to-slate-100 px-4 py-2 text-sm font-medium text-slate-700 shadow-btn-outline transition-[transform,box-shadow] hover:to-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 active:translate-y-[3px] active:shadow-btn-outline-active"
+                  className={clsx(
+                    'inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-[transform,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:translate-y-[3px]',
+                    dark
+                      ? 'border border-white/35 bg-white/10 text-white hover:bg-white/15 focus-visible:ring-primary-300'
+                      : 'border border-slate-300/90 bg-gradient-to-b from-white to-slate-100 text-slate-700 shadow-btn-outline hover:to-slate-50 focus-visible:ring-slate-500 active:shadow-btn-outline-active'
+                  )}
                 >
                   <LogIn className="h-4 w-4" aria-hidden="true" />
                   Sign in
@@ -244,6 +313,7 @@ export function NavbarClient({ user }: NavbarClientProps) {
             navLinks={navLinks}
             isActive={isActive}
             onLogout={handleLogout}
+            dark={dark}
           />
         </div>
       </div>

@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import {
-  MapPin,
   Eye,
   EyeOff,
   Users,
@@ -19,6 +18,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Label } from '@/components/ui/Label';
 import { Alert } from '@/components/ui/Alert';
+import { AuthCanvas } from '@/components/auth/AuthCanvas';
 import type { AccountType } from '@/models/User';
 import { SIGNUP_INTENT_STORAGE_KEY } from '@/lib/signupIntent';
 
@@ -128,55 +128,63 @@ export function SignupClient({ googleEnabled }: { googleEnabled: boolean }) {
   }
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-slate-50">
-      <div className="mx-auto grid max-w-7xl gap-12 px-5 py-12 sm:px-8 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-10 lg:py-20 xl:max-w-[90rem]">
-        {/* Hero */}
-        <div className="order-2 lg:order-1">
-          <div className="relative overflow-hidden rounded-[1.75rem] border-2 border-slate-200 bg-gradient-to-br from-primary-600 to-primary-900 p-10 shadow-xl">
+    <AuthCanvas>
+      <div className="mx-auto grid w-full max-w-7xl flex-1 gap-12 px-5 py-12 sm:px-8 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-10 lg:py-16 xl:max-w-[90rem]">
+        <div className="order-2 motion-safe:animate-fade-up lg:order-1">
+          <div className="relative overflow-hidden rounded-[1.75rem] border border-white/25 bg-gradient-to-br from-primary-500/40 via-primary-700/50 to-slate-950/80 p-10 shadow-sheet ring-1 ring-white/20 backdrop-blur-md">
             <Image
               src="/icon.png"
               alt=""
               width={96}
               height={96}
-              className="h-24 w-24 rounded-3xl ring-2 ring-white/30"
+              className="h-24 w-24 rounded-3xl shadow-btn-primary ring-2 ring-white/30"
               priority
             />
             <p className="mt-6 font-display text-2xl font-bold text-white">
               Map accessibility together
             </p>
-            <p className="mt-2 text-primary-100">
+            <p className="mt-2 text-primary-100/95">
               Create an account to review businesses, report barriers, and help everyone navigate the city.
             </p>
           </div>
-          <p className="mt-6 text-base text-slate-600 leading-relaxed sm:text-lg">
+          <p className="mt-6 text-base leading-relaxed text-slate-300 sm:text-lg">
             Choose how you&apos;ll use AccessLens — community reviewers help everyone navigate with
             real experiences; business accounts list their venues on the map (paid billing coming soon).
           </p>
         </div>
 
-        {/* Flow */}
-        <div className="order-1 lg:order-2">
+        <div className="order-1 motion-safe:animate-fade-up [animation-delay:60ms] lg:order-2">
           <div className="mb-8 text-center lg:text-left">
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-600 lg:mx-0">
-              <MapPin className="h-8 w-8 text-white" aria-hidden="true" />
-            </div>
-            <h1 className="font-display text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+            <Image
+              src="/icon.png"
+              alt=""
+              width={64}
+              height={64}
+              className="mx-auto mb-5 h-16 w-16 rounded-2xl shadow-btn-primary ring-2 ring-white/30 lg:mx-0"
+              priority
+            />
+            <p className="font-display text-sm font-semibold tracking-[0.18em] text-primary-200 uppercase">
+              AccessLens
+            </p>
+            <h1 className="mt-2 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">
               Join AccessLens
             </h1>
-            <p className="mt-3 text-lg text-slate-600 sm:text-xl">Map accessibility in Victoria, BC — together.</p>
+            <p className="mt-3 text-lg text-slate-200/90 sm:text-xl">
+              Map accessibility in Victoria, BC — together.
+            </p>
           </div>
 
           {step === 1 && (
             <div className="space-y-6">
-              <p className="text-lg font-semibold text-slate-800 sm:text-xl">How will you use AccessLens?</p>
+              <p className="text-lg font-semibold text-white sm:text-xl">How will you use AccessLens?</p>
               <div className="grid gap-6 sm:grid-cols-1">
                 <button
                   type="button"
                   onClick={() => selectType('reviewer')}
-                  className="group flex w-full flex-col rounded-3xl border-2 border-slate-200/90 bg-gradient-to-b from-white to-slate-50/95 p-7 text-left shadow-card ring-1 ring-slate-900/[0.035] transition-all hover:border-primary-300 hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 sm:p-8"
+                  className="group flex w-full flex-col rounded-3xl border border-white/50 bg-gradient-to-b from-white to-slate-50 p-7 text-left shadow-sheet ring-1 ring-white/40 transition-all hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 sm:p-8"
                 >
                   <div className="flex items-start gap-4">
-                    <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary-100 text-primary-700">
+                    <span className="orb-3d flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-primary-700">
                       <Users className="h-7 w-7" aria-hidden="true" />
                     </span>
                     <div className="min-w-0 flex-1">
@@ -207,10 +215,10 @@ export function SignupClient({ googleEnabled }: { googleEnabled: boolean }) {
                 <button
                   type="button"
                   onClick={() => selectType('business')}
-                  className="group flex w-full flex-col rounded-3xl border-2 border-slate-200/90 bg-gradient-to-b from-white to-slate-50/95 p-7 text-left shadow-card ring-1 ring-slate-900/[0.035] transition-all hover:border-amber-200 hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 sm:p-8"
+                  className="group flex w-full flex-col rounded-3xl border border-white/50 bg-gradient-to-b from-white to-slate-50 p-7 text-left shadow-sheet ring-1 ring-white/40 transition-all hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 sm:p-8"
                 >
                   <div className="flex items-start gap-4">
-                    <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-amber-100 text-amber-800">
+                    <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-b from-amber-50 to-amber-100 text-amber-800 shadow-chip-icon ring-1 ring-amber-200/80">
                       <Building2 className="h-7 w-7" aria-hidden="true" />
                     </span>
                     <div className="min-w-0 flex-1">
@@ -240,11 +248,11 @@ export function SignupClient({ googleEnabled }: { googleEnabled: boolean }) {
                   </div>
                 </button>
               </div>
-              <p className="text-center text-base text-slate-500 sm:text-lg">
+              <p className="text-center text-base text-slate-300 sm:text-lg">
                 Already have an account?{' '}
                 <Link
                   href={`/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`}
-                  className="font-medium text-primary-600 hover:text-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded"
+                  className="rounded font-medium text-primary-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300"
                 >
                   Sign in
                 </Link>
@@ -253,7 +261,7 @@ export function SignupClient({ googleEnabled }: { googleEnabled: boolean }) {
           )}
 
           {step === 2 && accountType && (
-            <div className="rounded-3xl border border-white/80 bg-gradient-to-b from-white to-slate-100/90 p-8 shadow-card ring-1 ring-slate-900/[0.06] sm:p-10">
+            <div className="rounded-3xl border border-white/40 bg-gradient-to-b from-white to-slate-50 p-8 shadow-sheet ring-1 ring-white/50 sm:p-10">
               <button
                 type="button"
                 onClick={() => {
@@ -261,7 +269,7 @@ export function SignupClient({ googleEnabled }: { googleEnabled: boolean }) {
                   setAccountType(null);
                   setError(null);
                 }}
-                className="mb-5 inline-flex items-center gap-2 text-base font-medium text-slate-600 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded"
+                className="mb-5 inline-flex items-center gap-2 rounded text-base font-medium text-slate-600 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
               >
                 <ArrowLeft className="h-5 w-5" aria-hidden="true" />
                 Back
@@ -312,6 +320,7 @@ export function SignupClient({ googleEnabled }: { googleEnabled: boolean }) {
                       id="name"
                       type="text"
                       autoComplete="name"
+                      autoFocus
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Alex Smith"
@@ -356,7 +365,7 @@ export function SignupClient({ googleEnabled }: { googleEnabled: boolean }) {
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute inset-y-0 right-0 flex items-center px-4 text-slate-400 hover:text-slate-600"
+                        className="absolute inset-y-0 right-0 flex items-center rounded-r-xl px-4 text-slate-400 transition-colors hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                         aria-label={showPassword ? 'Hide password' : 'Show password'}
                       >
                         {showPassword ? (
@@ -380,7 +389,7 @@ export function SignupClient({ googleEnabled }: { googleEnabled: boolean }) {
                   Already have an account?{' '}
                   <Link
                     href={`/signin?callbackUrl=${encodeURIComponent(callbackUrl)}`}
-                    className="font-medium text-primary-600 hover:text-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded"
+                    className="rounded font-medium text-primary-600 hover:text-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                   >
                     Sign in
                   </Link>
@@ -389,11 +398,11 @@ export function SignupClient({ googleEnabled }: { googleEnabled: boolean }) {
             </div>
           )}
 
-          <p className="mt-8 text-center text-sm text-slate-500 sm:text-base lg:text-left">
+          <p className="mt-8 text-center text-sm text-slate-400 sm:text-base lg:text-left">
             By signing up, you agree to contribute accessibility information in good faith.
           </p>
         </div>
       </div>
-    </div>
+    </AuthCanvas>
   );
 }

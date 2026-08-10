@@ -69,7 +69,8 @@ body {
   background-color: var(--background) !important;
 }
 
-[data-high-contrast="true"] .bg-app-canvas {
+[data-high-contrast="true"] .bg-app-canvas,
+[data-high-contrast="true"] .bg-auth-canvas {
   background-image: none !important;
   background-color: var(--background) !important;
 }
@@ -178,6 +179,18 @@ body {
   /** Section labels — consistent rhythm with homepage */
   .eyebrow {
     @apply text-xs font-semibold uppercase tracking-[0.2em] text-primary-600;
+  }
+
+  /**
+   * Auth pages — deep primary field with soft light wells (pairs with AuthCanvas).
+   */
+  .bg-auth-canvas {
+    background-color: #020617;
+    background-image:
+      radial-gradient(ellipse 80% 55% at 15% 10%, rgb(14 165 233 / 0.35), transparent 55%),
+      radial-gradient(ellipse 70% 50% at 90% 85%, rgb(3 105 161 / 0.4), transparent 50%),
+      radial-gradient(ellipse 50% 40% at 50% 50%, rgb(7 89 133 / 0.25), transparent 60%),
+      linear-gradient(165deg, #0c4a6e 0%, #0f172a 48%, #020617 100%);
   }
 }
 

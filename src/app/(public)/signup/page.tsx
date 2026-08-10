@@ -4,7 +4,7 @@ import { SignupClient } from './SignupClient';
 
 export default function SignupPage() {
   return (
-    <Suspense fallback={<div className="min-h-[calc(100vh-4rem)] bg-slate-50" />}>
+    <Suspense fallback={<div className="min-h-[calc(100vh-4rem)] bg-auth-canvas" />}>
       <SignupClient googleEnabled={isGoogleAuthConfigured()} />
     </Suspense>
   );

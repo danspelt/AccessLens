@@ -170,21 +170,24 @@ export default async function ExplorePage({
   return (
     <div className="min-h-screen">
       {/* Page header */}
-      <div className="sticky top-16 z-20 border-b border-slate-200/70 bg-white/85 shadow-sm shadow-slate-900/[0.03] backdrop-blur-md supports-[backdrop-filter]:bg-white/70">
+      <div className="sticky top-16 z-20 border-b border-white/70 bg-gradient-to-b from-white/95 via-white/85 to-slate-50/80 shadow-nav-bar backdrop-blur-md supports-[backdrop-filter]:from-white/80">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-                Explore Victoria, BC
+          <div className="flex items-center justify-between gap-4">
+            <div className="min-w-0">
+              <p className="eyebrow">Explore</p>
+              <h1 className="mt-1 font-display text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                Victoria &amp; Vancouver, BC
               </h1>
               <p className="mt-1 text-sm text-slate-500">
                 {places.length} place{places.length !== 1 ? 's' : ''} found
                 {hasActiveFilters && ' with active filters'}
               </p>
             </div>
-            <div className="flex items-center gap-2 text-sm text-slate-500">
-              <MapPin className="h-4 w-4 text-primary-500" aria-hidden="true" />
-              Victoria &amp; Vancouver, BC
+            <div className="hidden items-center gap-2 rounded-full border border-primary-200/80 bg-gradient-to-b from-primary-50 to-primary-100/80 px-3 py-1.5 text-sm font-medium text-primary-900 shadow-chip-icon sm:inline-flex">
+              <span className="orb-3d flex h-7 w-7 items-center justify-center rounded-full text-primary-700">
+                <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
+              </span>
+              Live map
             </div>
           </div>
         </div>

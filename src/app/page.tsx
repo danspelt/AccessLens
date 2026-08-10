@@ -368,49 +368,52 @@ export default async function HomePage() {
           <div className="absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-white/20 blur-3xl" />
         </div>
         <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
-          <div className="motion-safe:animate-fade-up mx-auto max-w-3xl rounded-3xl border border-white/70 bg-gradient-to-b from-white via-white to-slate-50 px-6 py-10 text-center shadow-sheet ring-1 ring-slate-900/[0.08] backdrop-blur-xl sm:px-10 sm:py-12">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary-200/90 bg-gradient-to-b from-primary-50 to-primary-100/80 px-4 py-1.5 text-sm font-semibold text-primary-900 shadow-chip-icon backdrop-blur-sm">
-              <MapPin className="h-4 w-4 text-primary-700" aria-hidden="true" />
+          <div className="motion-safe:animate-fade-up mx-auto max-w-3xl text-center">
+            <p className="font-display text-sm font-semibold tracking-[0.22em] text-primary-200 uppercase drop-shadow-sm">
+              AccessLens
+            </p>
+            <div className="mt-5 mb-6 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-sm font-semibold text-white shadow-chip-icon backdrop-blur-sm">
+              <MapPin className="h-4 w-4 text-primary-200" aria-hidden="true" />
               {liveCityLabel}
             </div>
-            <h1 className="font-display text-5xl font-bold tracking-tight text-slate-900 sm:text-6xl lg:text-7xl">
+            <h1 className="font-display text-5xl font-bold tracking-tight text-white drop-shadow-sm sm:text-6xl lg:text-7xl">
               {hero.titleLine1}
-              <span className="block text-primary-800"> {hero.titleLine2}</span>
+              <span className="mt-1 block text-primary-200"> {hero.titleLine2}</span>
             </h1>
-            <p className="mt-6 text-xl font-medium leading-relaxed text-slate-700">
+            <p className="mx-auto mt-6 max-w-2xl text-xl font-medium leading-relaxed text-slate-100/95">
               {hero.description}
             </p>
 
             {stats.totalPlaces > 0 && (
-              <dl className="mt-8 grid grid-cols-3 gap-4 rounded-2xl border border-white/80 bg-gradient-to-b from-slate-50 to-white px-4 py-4 shadow-inset-well">
+              <dl className="motion-safe:animate-fade-up mx-auto mt-8 grid max-w-lg grid-cols-3 gap-4 rounded-2xl border border-white/20 bg-white/10 px-4 py-4 shadow-sheet backdrop-blur-md [animation-delay:90ms]">
                 <div>
-                  <dt className="text-xs font-semibold uppercase tracking-wider text-slate-500">Places</dt>
-                  <dd className="mt-1 text-2xl font-bold tabular-nums text-slate-900">{stats.totalPlaces}</dd>
+                  <dt className="text-xs font-semibold uppercase tracking-wider text-primary-100/80">Places</dt>
+                  <dd className="mt-1 text-2xl font-bold tabular-nums text-white">{stats.totalPlaces}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs font-semibold uppercase tracking-wider text-slate-500">Categories</dt>
-                  <dd className="mt-1 text-2xl font-bold tabular-nums text-slate-900">{stats.totalCategories}</dd>
+                  <dt className="text-xs font-semibold uppercase tracking-wider text-primary-100/80">Categories</dt>
+                  <dd className="mt-1 text-2xl font-bold tabular-nums text-white">{stats.totalCategories}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs font-semibold uppercase tracking-wider text-slate-500">Avg score</dt>
-                  <dd className="mt-1 text-2xl font-bold tabular-nums text-slate-900">
+                  <dt className="text-xs font-semibold uppercase tracking-wider text-primary-100/80">Avg score</dt>
+                  <dd className="mt-1 text-2xl font-bold tabular-nums text-white">
                     {stats.avgScore !== null ? `${stats.avgScore}/100` : '—'}
                   </dd>
                 </div>
               </dl>
             )}
 
-            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <div className="motion-safe:animate-fade-up mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center [animation-delay:140ms]">
               <Link
                 href={hero.primaryCtaHref}
-                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-b from-primary-400 to-primary-700 px-8 py-4 text-base font-semibold text-white shadow-btn-primary ring-1 ring-white/25 transition-[transform,box-shadow] hover:from-primary-400 hover:to-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 active:translate-y-[3px] active:shadow-btn-primary-active"
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-b from-primary-400 to-primary-700 px-8 py-4 text-base font-semibold text-white shadow-btn-primary ring-1 ring-white/25 transition-[transform,box-shadow] hover:from-primary-400 hover:to-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2 focus-visible:ring-offset-primary-900 active:translate-y-[3px] active:shadow-btn-primary-active"
               >
                 {hero.primaryCtaLabel}
                 <ArrowRight className="h-5 w-5" aria-hidden="true" />
               </Link>
               <Link
                 href={hero.secondaryCtaHref}
-                className="inline-flex items-center gap-2 rounded-xl border border-slate-300/95 bg-gradient-to-b from-white to-slate-100 px-8 py-4 text-base font-semibold text-slate-800 shadow-btn-outline transition-[transform,box-shadow] hover:to-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 active:translate-y-[3px] active:shadow-btn-outline-active"
+                className="inline-flex items-center gap-2 rounded-xl border border-white/40 bg-white/10 px-8 py-4 text-base font-semibold text-white shadow-sm backdrop-blur-sm transition-[transform,box-shadow,background-color] hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2 focus-visible:ring-offset-primary-900 active:translate-y-[3px]"
               >
                 {hero.secondaryCtaLabel}
               </Link>
@@ -550,12 +553,13 @@ export default async function HomePage() {
       {/* CTA */}
       <section className="py-20" aria-labelledby="cta-heading">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <div className="relative overflow-hidden rounded-3xl border border-slate-200/80 bg-gradient-to-br from-white via-primary-50/40 to-sky-50/50 p-10 text-center shadow-xl sm:p-14">
+          <div className="relative overflow-hidden rounded-3xl border border-slate-200/80 bg-gradient-to-br from-white via-primary-50/40 to-sky-50/50 p-10 text-center shadow-sheet sm:p-14">
             <div
-              className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary-200/30 blur-2xl"
+              className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-primary-200/30 blur-2xl motion-safe:animate-auth-glow"
               aria-hidden="true"
             />
-            <h2 id="cta-heading" className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            <p className="eyebrow">Get involved</p>
+            <h2 id="cta-heading" className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
               {cta.title}
             </h2>
             <p className="mt-4 text-lg text-slate-600 leading-relaxed">
