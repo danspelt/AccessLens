@@ -72,7 +72,7 @@ export function Sidebar({ userName, userRole = 'user' }: { userName: string; use
           {userInitials(userName)}
         </div>
         <div className="min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Signed in</p>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-primary-600">Signed in</p>
           <p className="truncate font-display text-base font-semibold tracking-tight text-slate-900">{userName}</p>
         </div>
       </div>

@@ -159,75 +159,89 @@ export default function DashboardClient({
     stats.latestContributionAt === null
       ? 'No activity yet'
       : formatDistanceToNow(new Date(stats.latestContributionAt), { addSuffix: true });
+  const isFresh = stats.placesCount === 0 && stats.reviewsCount === 0;
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div>
       {/* Header */}
-      <div className="border-b border-slate-200 bg-white">
-        <div className="w-full px-3 py-8 sm:px-6 lg:px-10">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div className="flex items-start gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-b from-primary-500 to-primary-700 text-white shadow-btn-primary ring-1 ring-white/20">
-                <LayoutDashboard className="h-6 w-6" aria-hidden="true" />
-              </div>
-              <div className="min-w-0">
-                <h1 className="text-3xl font-bold text-slate-900">Welcome back, {firstName}</h1>
-                <p className="mt-1 text-sm text-slate-600">
-                  Track your contributions and keep improving real-world accessibility.
-                </p>
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <Badge variant="info">
-                    <TrendingUp className="h-3.5 w-3.5" aria-hidden="true" />
-                    {stats.placesCount} place{stats.placesCount !== 1 ? 's' : ''}
-                  </Badge>
-                  <Badge variant="warning">
-                    <Star className="h-3.5 w-3.5" aria-hidden="true" />
-                    {stats.reviewsCount} review{stats.reviewsCount !== 1 ? 's' : ''}
-                  </Badge>
-                  <Badge variant="default">
-                    <Clock className="h-3.5 w-3.5" aria-hidden="true" />
-                    Latest: {latestLabel}
-                  </Badge>
-                </div>
-              </div>
+      <div className="motion-safe:animate-fade-up rounded-2xl border border-white/80 bg-gradient-to-b from-white to-slate-50/90 p-5 shadow-card ring-1 ring-slate-900/[0.05] sm:p-6">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="flex items-start gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-b from-primary-500 to-primary-700 text-white shadow-btn-primary ring-1 ring-white/20">
+              <LayoutDashboard className="h-6 w-6" aria-hidden="true" />
             </div>
-
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-              <Link href="/places/new" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full sm:w-auto">
-                  <Plus className="h-4 w-4" aria-hidden="true" />
-                  Add Place
-                </Button>
-              </Link>
-              <Link href="/explore" className="w-full sm:w-auto">
-                <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                  Explore
-                  <ChevronRight className="h-4 w-4" aria-hidden="true" />
-                </Button>
-              </Link>
+            <div className="min-w-0">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary-600">
+                {isFresh ? 'Welcome in' : 'Dashboard'}
+              </p>
+              <h1 className="mt-1 font-display text-3xl font-bold tracking-tight text-slate-900">
+                {isFresh ? `You're in, ${firstName}` : `Welcome back, ${firstName}`}
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                {isFresh
+                  ? 'Add a place or explore the map to start mapping accessibility.'
+                  : 'Track your contributions and keep improving real-world accessibility.'}
+              </p>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <Badge variant="info">
+                  <TrendingUp className="h-3.5 w-3.5" aria-hidden="true" />
+                  {stats.placesCount} place{stats.placesCount !== 1 ? 's' : ''}
+                </Badge>
+                <Badge variant="warning">
+                  <Star className="h-3.5 w-3.5" aria-hidden="true" />
+                  {stats.reviewsCount} review{stats.reviewsCount !== 1 ? 's' : ''}
+                </Badge>
+                <Badge variant="default">
+                  <Clock className="h-3.5 w-3.5" aria-hidden="true" />
+                  Latest: {latestLabel}
+                </Badge>
+              </div>
             </div>
           </div>
 
-          {/* Stats */}
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <Link href="/places/new" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full sm:w-auto">
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                Add Place
+              </Button>
+            </Link>
+            <Link href="/explore" className="w-full sm:w-auto">
+              <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                Explore
+                <ChevronRight className="h-4 w-4" aria-hidden="true" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="motion-safe:animate-fade-up [animation-delay:80ms]">
             <StatCard
               label="Places added"
               value={`${stats.placesCount}`}
               hint="Your mapped locations"
               icon={<MapPin className="h-5 w-5" />}
             />
+          </div>
+          <div className="motion-safe:animate-fade-up [animation-delay:120ms]">
             <StatCard
               label="Reviews submitted"
               value={`${stats.reviewsCount}`}
               hint="Your accessibility notes"
               icon={<MessageSquare className="h-5 w-5" />}
             />
+          </div>
+          <div className="motion-safe:animate-fade-up [animation-delay:160ms]">
             <StatCard
               label="Avg rating"
               value={avgRatingLabel}
               hint={stats.avgRating === null ? 'Add reviews to see this' : 'Across your reviews'}
               icon={<Star className="h-5 w-5" />}
             />
+          </div>
+          <div className="motion-safe:animate-fade-up [animation-delay:200ms]">
             <StatCard
               label="Latest contribution"
               value={stats.latestContributionAt ? 'Active' : 'Start'}
@@ -238,7 +252,7 @@ export default function DashboardClient({
         </div>
       </div>
 
-      <div className="w-full px-3 py-8 sm:px-6 lg:px-10">
+      <div className="mt-6 motion-safe:animate-fade-up [animation-delay:140ms]">
         <div className="grid gap-8 lg:grid-cols-3">
           {/* Activity */}
           <section className="lg:col-span-1" aria-labelledby="activity-heading">
@@ -516,7 +530,6 @@ export default function DashboardClient({
             </section>
           </div>
         </div>
-      </div>
     </div>
   );
 }

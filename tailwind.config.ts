@@ -78,6 +78,10 @@ const config: Config = {
           '0%': { opacity: '0', transform: 'translateY(8px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
+        'enter-left': {
+          '0%': { opacity: '0', transform: 'translateX(-12px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
         'auth-glow': {
           '0%, 100%': { opacity: '0.55', transform: 'scale(1)' },
           '50%': { opacity: '0.9', transform: 'scale(1.08)' },
@@ -85,6 +89,7 @@ const config: Config = {
       },
       animation: {
         'fade-up': 'fade-up 0.45s ease-out both',
+        'enter-left': 'enter-left 0.45s ease-out both',
         'auth-glow': 'auth-glow 8s ease-in-out infinite',
       },
       borderRadius: {
