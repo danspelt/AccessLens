@@ -530,6 +530,7 @@ export default function DashboardClient({
             </section>
           </div>
         </div>
+      </div>
     </div>
   );
 }
