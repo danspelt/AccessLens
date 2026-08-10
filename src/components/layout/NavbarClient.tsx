@@ -69,7 +69,7 @@ function NavbarMobile({
           className={clsx(
             'fixed inset-x-0 top-16 z-30 max-h-[calc(100dvh-4rem)] overflow-y-auto border-b shadow-sheet md:hidden',
             dark
-              ? 'border-white/15 bg-gradient-to-b from-primary-950/95 to-slate-950/95 backdrop-blur-md'
+              ? 'border-white/20 bg-slate-950/98 backdrop-blur-md'
               : 'border-slate-200/90 bg-gradient-to-b from-white to-slate-50/95'
           )}
           role="navigation"
@@ -84,8 +84,8 @@ function NavbarMobile({
                   'block rounded-md px-3 py-2 text-base font-medium transition-colors',
                   dark
                     ? isActive(href)
-                      ? 'bg-white/15 text-white'
-                      : 'text-slate-200 hover:bg-white/10'
+                      ? 'bg-white/20 text-white'
+                      : 'text-white/90 hover:bg-white/15'
                     : isActive(href)
                       ? 'bg-primary-50 text-primary-700'
                       : 'text-slate-600 hover:bg-slate-100'
@@ -191,7 +191,7 @@ export function NavbarClient({ user }: NavbarClientProps) {
       className={clsx(
         'sticky top-0 z-40 border-b backdrop-blur-md backdrop-saturate-150',
         dark
-          ? 'border-white/10 bg-gradient-to-b from-primary-950/85 via-primary-950/70 to-slate-950/55 shadow-[0_12px_32px_-16px_rgb(2_6_23_/_0.55)]'
+          ? 'border-white/20 bg-slate-950/95 shadow-[0_12px_32px_-16px_rgb(2_6_23_/_0.7)]'
           : 'border-white/70 bg-gradient-to-b from-white via-white/90 to-slate-100/85 shadow-nav-bar'
       )}
       aria-label="Main navigation"
@@ -201,7 +201,10 @@ export function NavbarClient({ user }: NavbarClientProps) {
         <div className="flex h-16 items-center justify-between">
           <Link
             href="/"
-            className="flex items-center gap-2.5 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+            className={clsx(
+              'flex items-center gap-2.5 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
+              dark ? 'focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950' : 'focus-visible:ring-offset-2'
+            )}
             aria-label="AccessLens home"
           >
             <Image
@@ -215,18 +218,11 @@ export function NavbarClient({ user }: NavbarClientProps) {
             <span
               className={clsx(
                 'font-display text-xl font-bold tracking-tight',
-                dark ? 'text-white drop-shadow-sm' : 'text-slate-900 drop-shadow-[0_1px_0_rgba(255,255,255,0.8)]'
+                dark ? 'text-white' : 'text-slate-900 drop-shadow-[0_1px_0_rgba(255,255,255,0.8)]'
               )}
             >
               Access
-              <span
-                className={clsx(
-                  'bg-clip-text text-transparent',
-                  dark
-                    ? 'bg-gradient-to-b from-sky-200 to-primary-300'
-                    : 'bg-gradient-to-b from-primary-500 to-primary-700'
-                )}
-              >
+              <span className={dark ? 'text-sky-300' : 'bg-gradient-to-b from-primary-500 to-primary-700 bg-clip-text text-transparent'}>
                 Lens
               </span>
             </span>
@@ -242,8 +238,8 @@ export function NavbarClient({ user }: NavbarClientProps) {
                   'rounded-lg px-3 py-2 text-sm font-medium transition-[color,background-color,box-shadow,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
                   dark
                     ? isActive(href)
-                      ? 'bg-white/15 text-white shadow-sm ring-1 ring-white/25'
-                      : 'text-slate-200 hover:bg-white/10 hover:text-white active:translate-y-px'
+                      ? 'bg-white/20 text-white shadow-sm ring-1 ring-white/35'
+                      : 'text-white/90 hover:bg-white/15 hover:text-white active:translate-y-px'
                     : isActive(href)
                       ? 'bg-gradient-to-b from-primary-50 to-primary-100/90 text-primary-800 shadow-nav-pill-active ring-1 ring-primary-200/60'
                       : 'text-slate-600 shadow-sm shadow-transparent hover:bg-gradient-to-b hover:from-white hover:to-slate-100/90 hover:text-slate-900 hover:shadow-nav-pill-hover hover:ring-1 hover:ring-slate-200/80 active:translate-y-px'
@@ -258,7 +254,7 @@ export function NavbarClient({ user }: NavbarClientProps) {
           <div className="hidden items-center gap-3 md:flex">
             {user ? (
               <>
-                <span className={clsx('text-sm', dark ? 'text-slate-200' : 'text-slate-600')}>
+                <span className={clsx('text-sm', dark ? 'text-white' : 'text-slate-600')}>
                   {user.name}
                 </span>
                 <Link
