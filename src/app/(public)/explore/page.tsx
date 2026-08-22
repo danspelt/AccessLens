@@ -9,7 +9,7 @@ import { PlaceCard } from '@/components/places/PlaceCard';
 import { PlaceFilters } from '@/components/places/PlaceFilters';
 import { AccessLensMapClient } from '@/components/map/AccessLensMapClient';
 import { NearAddressSearch } from '@/components/explore/NearAddressSearch';
-import { MapPin } from 'lucide-react';
+import { Camera, ChevronDown, CircleParking, MapPin, MessageSquare, Plus } from 'lucide-react';
 import Link from 'next/link';
 
 function placeLatLng(p: {
@@ -183,11 +183,21 @@ export default async function ExplorePage({
                 {hasActiveFilters && ' with active filters'}
               </p>
             </div>
-            <div className="hidden items-center gap-2 rounded-full border border-primary-200/80 bg-gradient-to-b from-primary-50 to-primary-100/80 px-3 py-1.5 text-sm font-medium text-primary-900 shadow-chip-icon sm:inline-flex">
-              <span className="orb-3d flex h-7 w-7 items-center justify-center rounded-full text-primary-700">
-                <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
-              </span>
-              Live map
+            <div className="flex shrink-0 items-center gap-2">
+              <div className="hidden items-center gap-2 rounded-full border border-primary-200/80 bg-gradient-to-b from-primary-50 to-primary-100/80 px-3 py-1.5 text-sm font-medium text-primary-900 shadow-chip-icon md:inline-flex">
+                <span className="orb-3d flex h-7 w-7 items-center justify-center rounded-full text-primary-700">
+                  <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
+                </span>
+                Live map
+              </div>
+              <Link
+                href="/places/new"
+                className="link-cta-primary min-h-11 gap-2 px-3 py-2 text-sm font-semibold sm:px-4"
+              >
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                <span className="hidden sm:inline">Add a place</span>
+                <span className="sm:hidden">Add</span>
+              </Link>
             </div>
           </div>
         </div>
@@ -200,15 +210,25 @@ export default async function ExplorePage({
             className="shrink-0 lg:w-72"
             aria-label="Search filters"
           >
-            <div className="sticky top-28 rounded-2xl panel-surface p-5">
-              <h2 className="mb-4 font-display text-sm font-semibold text-slate-900">Filter places</h2>
-              <div className="mb-4 border-b border-slate-100 pb-4">
-                <NearAddressSearch />
+            <details className="group sticky top-28 rounded-2xl panel-surface" open={hasActiveFilters}>
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-2xl p-5 font-display text-sm font-semibold text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 lg:cursor-default">
+                <span>
+                  Filter places
+                  {hasActiveFilters ? (
+                    <span className="ml-2 font-sans text-xs font-medium text-primary-700">Active</span>
+                  ) : null}
+                </span>
+                <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180 lg:hidden" aria-hidden="true" />
+              </summary>
+              <div className="border-t border-slate-100 px-5 pb-5 pt-4 lg:!block">
+                <div className="mb-4 border-b border-slate-100 pb-4">
+                  <NearAddressSearch />
+                </div>
+                <Suspense fallback={<div className="h-64 animate-pulse rounded-lg bg-slate-100" />}>
+                  <PlaceFilters />
+                </Suspense>
               </div>
-              <Suspense fallback={<div className="h-64 animate-pulse rounded-lg bg-slate-100" />}>
-                <PlaceFilters />
-              </Suspense>
-            </div>
+            </details>
           </aside>
 
           {/* Main content */}
@@ -245,9 +265,47 @@ export default async function ExplorePage({
                 id="explore-map-hint"
                 className="mt-2 text-center text-xs text-slate-500"
               >
-                Click a blue pin for accessibility details. Click empty map to drop a pin and review accessibility
-                for a new place.
+                Select a map pin for a place summary and link to full accessibility details. Select an empty area to
+                start adding a place.
               </p>
+            </section>
+
+            <section
+              aria-labelledby="community-evidence-heading"
+              className="rounded-2xl border border-primary-200 bg-primary-50/70 p-4 sm:p-5"
+            >
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h2 id="community-evidence-heading" className="font-display text-base font-semibold text-primary-950">
+                    Help build Victoria&apos;s accessibility record
+                  </h2>
+                  <p className="mt-1 max-w-3xl text-sm leading-relaxed text-primary-900">
+                    Add a missing place, then strengthen place records over time with entrance or barrier photos,
+                    confirmed checklist details, and written notes from a recent visit.
+                  </p>
+                  <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs font-medium text-primary-800" aria-label="Useful community contributions">
+                    <li className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" aria-hidden="true" />Place details</li>
+                    <li className="flex items-center gap-1.5"><Camera className="h-3.5 w-3.5" aria-hidden="true" />Photos of access features</li>
+                    <li className="flex items-center gap-1.5"><MessageSquare className="h-3.5 w-3.5" aria-hidden="true" />Accessibility notes</li>
+                  </ul>
+                </div>
+                <div className="flex shrink-0 flex-col gap-2 sm:items-stretch">
+                  <Link
+                    href="/places/new"
+                    className="link-cta-primary min-h-11 gap-2 px-4 py-2.5 text-sm font-semibold"
+                  >
+                    <Plus className="h-4 w-4" aria-hidden="true" />
+                    Add a place
+                  </Link>
+                  <Link
+                    href="/official-data/accessible-parking"
+                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-primary-300 bg-white px-4 py-2.5 text-sm font-semibold text-primary-800 hover:bg-primary-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                  >
+                    <CircleParking className="h-4 w-4" aria-hidden="true" />
+                    Review parking candidates
+                  </Link>
+                </div>
+              </div>
             </section>
 
             {places.length === 0 ? (

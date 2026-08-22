@@ -5,9 +5,7 @@ import { randomUUID } from 'crypto';
 import { findPlaceByAccessCode } from '@/lib/db/placesByAccessCode';
 import { requireBusinessAccessForPlace } from '@/lib/business/session';
 import { normalizeAccessCode } from '@/lib/access/codeFormat';
-
-const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
-const IMAGE_TYPES = new Set(['image/jpeg', 'image/jpg', 'image/png', 'image/webp']);
+import { classifyUpload, contentMatchesType } from '@/lib/uploads/validation';
 
 interface RouteContext {
   params: Promise<{ code: string }>;
@@ -42,18 +40,22 @@ export async function POST(request: NextRequest, context: RouteContext) {
     const uploadedUrls: string[] = [];
 
     for (const file of files) {
-      if (!IMAGE_TYPES.has(file.type)) {
+      const classification = classifyUpload(file.type);
+      if (!classification || classification.kind !== 'image') {
         return NextResponse.json({ error: `File type not allowed: ${file.name}` }, { status: 400 });
       }
-      if (file.size > MAX_IMAGE_SIZE) {
+      if (file.size > classification.maxSize) {
         return NextResponse.json({ error: `${file.name} exceeds 10MB` }, { status: 400 });
       }
 
-      const ext = file.type.includes('png') ? 'png' : file.type.includes('webp') ? 'webp' : 'jpg';
-      const filename = `${randomUUID()}.${ext}`;
+      const buffer = Buffer.from(await file.arrayBuffer());
+      if (!contentMatchesType(buffer, file.type)) {
+        return NextResponse.json({ error: `${file.name} content does not match its declared file type` }, { status: 400 });
+      }
+      const filename = `${randomUUID()}.${classification.extension}`;
       const uploadDir = join(process.cwd(), 'public', 'uploads', 'places');
       await mkdir(uploadDir, { recursive: true });
-      await writeFile(join(uploadDir, filename), Buffer.from(await file.arrayBuffer()));
+      await writeFile(join(uploadDir, filename), buffer);
       uploadedUrls.push(`/uploads/places/${filename}`);
     }
 

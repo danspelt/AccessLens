@@ -5,46 +5,7 @@ import { join } from 'path';
 import { randomUUID } from 'crypto';
 import { logActivity } from '@/lib/db/activity';
 import { scheduleBadgeEvaluation } from '@/lib/badges/awardBadges';
-
-const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10 MB
-const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50 MB
-
-const IMAGE_TYPES = new Set([
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/webp',
-]);
-
-const VIDEO_TYPES = new Set([
-  'video/mp4',
-  'video/webm',
-  'video/quicktime',
-  'video/x-m4v',
-  'video/ogg',
-]);
-
-const MIME_TO_EXT: Record<string, string> = {
-  'image/jpeg': 'jpg',
-  'image/jpg': 'jpg',
-  'image/png': 'png',
-  'image/webp': 'webp',
-  'video/mp4': 'mp4',
-  'video/webm': 'webm',
-  'video/quicktime': 'mov',
-  'video/x-m4v': 'm4v',
-  'video/ogg': 'ogv',
-};
-
-function classifyFile(file: File): { kind: 'image' | 'video'; maxSize: number } | null {
-  if (IMAGE_TYPES.has(file.type)) {
-    return { kind: 'image', maxSize: MAX_IMAGE_SIZE };
-  }
-  if (VIDEO_TYPES.has(file.type)) {
-    return { kind: 'video', maxSize: MAX_VIDEO_SIZE };
-  }
-  return null;
-}
+import { ALLOWED_UPLOAD_CONTEXTS, classifyUpload, contentMatchesType } from '@/lib/uploads/validation';
 
 const PUBLIC_UPLOAD_CONTEXTS = new Set(['places', 'submissions']);
 
@@ -56,12 +17,16 @@ export async function POST(request: NextRequest) {
     const files = formData.getAll('files') as File[];
     const context = (formData.get('context') as string) || 'general';
 
+    if (!ALLOWED_UPLOAD_CONTEXTS.has(context)) {
+      return NextResponse.json({ error: 'Invalid upload context' }, { status: 400 });
+    }
+
     if (!session?.user?.id && !PUBLIC_UPLOAD_CONTEXTS.has(context)) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
     if (!session?.user?.id && PUBLIC_UPLOAD_CONTEXTS.has(context)) {
-      const hasVideo = files.some((file) => VIDEO_TYPES.has(file.type));
+      const hasVideo = files.some((file) => classifyUpload(file.type)?.kind === 'video');
       if (hasVideo) {
         return NextResponse.json(
           { error: 'Sign in to upload videos, or upload photos only.' },
@@ -82,7 +47,7 @@ export async function POST(request: NextRequest) {
     const kinds: ('image' | 'video')[] = [];
 
     for (const file of files) {
-      const classified = classifyFile(file);
+      const classified = classifyUpload(file.type);
       if (!classified) {
         return NextResponse.json(
           {
@@ -104,8 +69,11 @@ export async function POST(request: NextRequest) {
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
 
-      const ext = MIME_TO_EXT[file.type] || (classified.kind === 'video' ? 'mp4' : 'jpg');
-      const filename = `${randomUUID()}.${ext}`;
+      if (!contentMatchesType(buffer, file.type)) {
+        return NextResponse.json({ error: `${file.name} content does not match its declared file type` }, { status: 400 });
+      }
+
+      const filename = `${randomUUID()}.${classified.extension}`;
       const uploadDir = join(process.cwd(), 'public', 'uploads', context);
 
       await mkdir(uploadDir, { recursive: true });

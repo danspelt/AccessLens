@@ -41,7 +41,6 @@ export async function GET(
       ...r,
       _id: r._id.toString(),
       placeId: r.placeId.toString(),
-      userId: r.userId.toString(),
       authorName: userMap.get(r.userId.toString()) || 'Anonymous',
       createdAt: r.createdAt.toISOString(),
       updatedAt: r.updatedAt.toISOString(),

@@ -51,6 +51,20 @@ Optional env var:
 
 ## Getting Started
 
+### Local City of Victoria parking candidates
+
+`npm run import:victoria-parking` performs a dry run against a bounded query of five active,
+accessible-designated parking-space records from the City of Victoria Open Data API. Add `-- --write`
+to replace `data/victoria-accessible-parking.candidates.json`. The importer never connects to MongoDB.
+
+The output is candidate data, not published or community-verified place data. Keep the included City
+attribution and provenance, and do not treat the source as a guarantee of current accessibility. Before
+publishing a candidate, a community or moderation flow should confirm current signage, dimensions,
+route conditions, availability, and parking rules.
+
+Source: [City parking-space layer](https://maps.victoria.ca/server/rest/services/OpenData/OpenData_Parking/MapServer/6).
+Licence: [Open Government Licence — City of Victoria](https://opendata.victoria.ca/pages/open-data-licence).
+
 ### 1. Prerequisites
 
 - Node.js 20+
@@ -206,6 +220,25 @@ Deploy to [Coolify](https://coolify.io), Railway, Fly.io, or any Docker host.
 If logs show **`UntrustedHost`**, the app trusts the proxy **`Host`** by default so Coolify preview URLs (e.g. `*.sslip.io`) work. Set **`AUTH_URL`** in Coolify to your **public** base URL (`https://…`) so redirects and OAuth callbacks match what browsers use, and add `…/api/auth/callback/google` in Google OAuth **Authorized redirect URIs**. Set **`AUTH_TRUST_HOST=false`** only if you rely on a single fixed `AUTH_URL` and want to disallow other hosts.
 
 If logs show **`MissingSecret`**, define **`AUTH_SECRET`** (32+ random characters) in Coolify. With the included **`Dockerfile`**, that variable must be available **during the Docker image build** (middleware is compiled on the Edge runtime and reads the secret at build time). In Coolify, enable the option to pass the variable at **build time** as well as at runtime (e.g. “Available at Buildtime” / build arguments), or set the same `AUTH_SECRET` in both build and runtime environment sections.
+
+### Launch readiness gate
+
+Run configuration validation without printing secrets or connecting to production services:
+
+```bash
+NODE_ENV=production node --env-file=.env.local --import tsx scripts/checkEnvironment.ts
+```
+
+Before launch, all of the following must be true:
+
+- `MONGODB_URI`, `MONGODB_DB`, `AUTH_SECRET` (32+ characters), `BUSINESS_SESSION_SECRET` (32+ characters), `AUTH_URL`, and `NEXT_PUBLIC_APP_URL` are configured; production URLs use HTTPS.
+- `GET /api/health` returns HTTP 200 with `database: connected`. It returns 503 when MongoDB is unavailable so an unhealthy instance does not receive traffic.
+- `/app/public/uploads` is mounted to private, persistent, backed-up storage, or the local upload implementation is replaced with object storage. Container-local files are otherwise lost on redeploy.
+- The reverse proxy overwrites untrusted `Host` headers when `AUTH_TRUST_HOST` is enabled.
+- An administrator has tested sign-up, sign-in, sign-out, password reset/magic link if enabled, Google OAuth if enabled, authorization boundaries, upload/rejection/moderation, and account deletion/data-request procedures.
+- Manual WCAG 2.2 AA review covers keyboard focus order and unobscured focus, 200%/400% zoom and reflow, contrast in every state, screen-reader announcements, map/list equivalence, mobile touch targets, validation errors, and reduced motion.
+
+The health endpoint intentionally returns a generic database warning; inspect private server logs for diagnostic details rather than exposing connection errors to users.
 
 ## Legal
 

@@ -86,8 +86,11 @@ export function ReviewForm({ placeId }: ReviewFormProps) {
 
       {error && <Alert variant="error">{error}</Alert>}
 
-      <div>
-        <Label required id="rating-label">Accessibility rating</Label>
+      <fieldset>
+        <legend className="text-sm font-medium text-slate-700">
+          Accessibility rating <span className="text-red-500" aria-hidden="true">*</span>
+          <span className="sr-only"> (required)</span>
+        </legend>
         <div className="mt-2">
           <StarRating
             value={rating}
@@ -99,7 +102,7 @@ export function ReviewForm({ placeId }: ReviewFormProps) {
             1 = Very inaccessible · 5 = Fully accessible
           </p>
         </div>
-      </div>
+      </fieldset>
 
       <div>
         <Label htmlFor="review-comment" required>
@@ -122,8 +125,8 @@ export function ReviewForm({ placeId }: ReviewFormProps) {
         </p>
       </div>
 
-      <div>
-        <Label>Photos &amp; video (optional)</Label>
+      <fieldset>
+        <legend className="text-sm font-medium text-slate-700">Photos &amp; video (optional)</legend>
         <div className="mt-1.5">
           <PhotoUpload
             variant="media"
@@ -138,7 +141,7 @@ export function ReviewForm({ placeId }: ReviewFormProps) {
         <p className="mt-1 text-xs text-slate-500">
           Images or short clips of entrances, ramps, washrooms, and barriers are most helpful.
         </p>
-      </div>
+      </fieldset>
 
       <Button type="submit" loading={loading} size="lg" className="w-full">
         Submit Review

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { MapPin, Star, CheckCircle, XCircle } from 'lucide-react';
-import { PLACE_CATEGORIES, CATEGORY_ICONS, getScoreColor } from '@/models/Place';
+import { PLACE_CATEGORIES, CATEGORY_ICONS, getScoreColor, getScoreLabel } from '@/models/Place';
 
 interface PlaceCardPlace {
   _id: string;
@@ -27,6 +27,7 @@ interface PlaceCardProps {
 export function PlaceCard({ place }: PlaceCardProps) {
   const score = place.accessibilityScore;
   const color = score !== undefined ? getScoreColor(score) : null;
+  const scoreLabel = score !== undefined ? getScoreLabel(score) : null;
 
   const scoreColors = {
     green: 'bg-green-100 text-green-700 border-green-200',
@@ -45,7 +46,6 @@ export function PlaceCard({ place }: PlaceCardProps) {
     <Link
       href={`/places/${place._id}`}
       className="group flex flex-col overflow-hidden panel-surface transition-[box-shadow,transform] duration-200 motion-safe:hover:-translate-y-1 hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-      aria-label={`${place.name} — ${categoryLabel} in ${place.city}`}
     >
       {/* Photo or placeholder */}
       <div className="relative h-40 w-full overflow-hidden bg-gradient-to-b from-slate-100 to-slate-200 shadow-inset-well">
@@ -53,8 +53,8 @@ export function PlaceCard({ place }: PlaceCardProps) {
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={thumbnail}
-            alt={`${place.name} entrance or accessibility photo`}
-            className="h-full w-full object-cover transition-transform group-hover:scale-105"
+            alt={`${place.name} photo`}
+            className="h-full w-full object-cover transition-transform motion-safe:group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
@@ -66,9 +66,15 @@ export function PlaceCard({ place }: PlaceCardProps) {
         {score !== undefined && color && (
           <div
             className={`absolute right-2 top-2 rounded-full border px-2.5 py-0.5 text-xs font-bold shadow-chip-icon ${scoreColors[color]}`}
-            aria-label={`Accessibility score: ${score} out of 100`}
+            aria-label={`Accessibility score: ${score} out of 100 — ${scoreLabel}`}
           >
-            {score}
+            <span>{score}/100</span>
+            <span className="ml-1 font-medium">{scoreLabel}</span>
+          </div>
+        )}
+        {score === undefined && (
+          <div className="absolute right-2 top-2 rounded-full border border-slate-200 bg-white/95 px-2.5 py-0.5 text-xs font-semibold text-slate-700 shadow-chip-icon">
+            Score unknown
           </div>
         )}
       </div>

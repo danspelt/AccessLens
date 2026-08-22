@@ -33,7 +33,10 @@ import {
   ArrowLeft,
   Star,
   AlertTriangle,
+  Camera,
+  CheckCircle2,
   Flag,
+  MessageSquare,
 } from 'lucide-react';
 import { Favorite } from '@/models/Favorite';
 import { getApprovedPhotoUrls } from '@/lib/db/placePhotos';
@@ -166,6 +169,27 @@ export default async function PlaceDetailPage({ params }: Props) {
   const partnerLabel = place.partnerLabel
     ? PARTNER_LABEL_DISPLAY[place.partnerLabel]
     : null;
+  const scoreCriteria: (keyof Place['checklist'])[] = [
+    'entranceRamp',
+    'automaticDoor',
+    'levelEntrance',
+    'elevator',
+    'wideAisles',
+    'accessibleWashroom',
+    'accessibleParking',
+    'transitAccessible',
+    'brailleSignage',
+    'serviceAnimalWelcome',
+  ];
+  const knownScoreCriteria = scoreCriteria.filter((key) => typeof place.checklist[key] === 'boolean').length;
+  const quickSummaryItems = [
+    { label: 'Entrance ramp', value: place.checklist.entranceRamp },
+    { label: 'Automatic door', value: place.checklist.automaticDoor },
+    { label: 'Elevator', value: place.checklist.elevator },
+    { label: 'Accessible washroom', value: place.checklist.accessibleWashroom },
+    { label: 'Accessible parking', value: place.checklist.accessibleParking },
+    { label: 'Service animals', value: place.checklist.serviceAnimalWelcome },
+  ];
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -277,7 +301,60 @@ export default async function PlaceDetailPage({ params }: Props) {
                   {place.description}
                 </p>
               )}
+
+              <div className="mt-5 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+                <p className="font-semibold text-slate-900">How to read this accessibility snapshot</p>
+                <p className="mt-1 leading-relaxed">
+                  The score summarizes 10 recorded accessibility criteria; it does not guarantee that a place will
+                  meet every person&apos;s needs. {knownScoreCriteria} of 10 score criteria currently have a Yes or No
+                  answer. Review the checklist, notes, photos, and recent community experiences before planning a visit.
+                </p>
+                <p className="mt-2 text-xs text-slate-500">
+                  Listing updated {new Date(place.updatedAt).toLocaleDateString('en-CA', { dateStyle: 'medium' })}.
+                </p>
+              </div>
+
+              <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3" aria-label="Contribute accessibility information">
+                <Link
+                  href="#reviews"
+                  className="flex min-h-11 items-center gap-2 rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+                >
+                  <MessageSquare className="h-4 w-4" aria-hidden="true" />
+                  {currentUser && canReviewAndReport ? 'Write a review or add photos' : 'Read or add reviews'}
+                </Link>
+                <Link
+                  href={`/places/${place._id}/update-accessibility`}
+                  className="flex min-h-11 items-center gap-2 rounded-lg border border-primary-200 bg-primary-50 px-4 py-2.5 text-sm font-semibold text-primary-800 hover:bg-primary-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                >
+                  <Camera className="h-4 w-4" aria-hidden="true" />
+                  Update details or photos
+                </Link>
+              </div>
             </div>
+
+            <section aria-labelledby="mobile-summary-heading" className="rounded-xl panel-surface p-5 lg:hidden">
+              <h2 id="mobile-summary-heading" className="mb-3 text-base font-semibold text-slate-900">
+                At a glance
+              </h2>
+              <dl className="grid gap-2 sm:grid-cols-2">
+                {quickSummaryItems.map(({ label, value }) => (
+                  <div key={label} className="flex min-h-9 items-center justify-between gap-3 border-b border-slate-100 py-1.5">
+                    <dt className="text-sm text-slate-700">{label}</dt>
+                    <dd
+                      className={`text-sm font-semibold ${
+                        value === true ? 'text-green-700' : value === false ? 'text-red-700' : 'text-slate-500'
+                      }`}
+                    >
+                      {value === true ? 'Yes' : value === false ? 'No' : 'Unknown'}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+              <a href="#checklist-heading" className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-primary-700 underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500">
+                <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+                View all accessibility details
+              </a>
+            </section>
 
             {/* Photos */}
             {(place as { displayPhotoUrls?: string[] }).displayPhotoUrls &&
@@ -323,6 +400,10 @@ export default async function PlaceDetailPage({ params }: Props) {
               <h2 id="checklist-heading" className="mb-4 text-lg font-semibold text-slate-900">
                 Accessibility Checklist
               </h2>
+              <p className="mb-4 text-sm leading-relaxed text-slate-600">
+                Yes and No are reported values. Unknown means the information has not been confirmed yet—not that
+                the feature is unavailable.
+              </p>
               {place.accessibilityNotes && (
                 <div className="mb-4 rounded-lg bg-blue-50 border border-blue-200 p-3 text-sm text-blue-800">
                   <strong>Notes:</strong> {place.accessibilityNotes}
@@ -341,7 +422,7 @@ export default async function PlaceDetailPage({ params }: Props) {
             </section>
 
             {/* Reviews section */}
-            <section aria-labelledby="reviews-heading" className="rounded-xl panel-surface p-6">
+            <section id="reviews" aria-labelledby="reviews-heading" className="scroll-mt-28 rounded-xl panel-surface p-4 sm:p-6">
               <h2 id="reviews-heading" className="mb-6 text-lg font-semibold text-slate-900">
                 Community Reviews ({reviewCount})
               </h2>
@@ -406,14 +487,7 @@ export default async function PlaceDetailPage({ params }: Props) {
             <div className="rounded-xl panel-surface p-5">
               <h2 className="mb-3 text-sm font-semibold text-slate-900">Quick Summary</h2>
               <dl className="space-y-2">
-                {[
-                  { label: 'Entrance ramp', value: place.checklist.entranceRamp },
-                  { label: 'Automatic door', value: place.checklist.automaticDoor },
-                  { label: 'Elevator', value: place.checklist.elevator },
-                  { label: 'Accessible washroom', value: place.checklist.accessibleWashroom },
-                  { label: 'Accessible parking', value: place.checklist.accessibleParking },
-                  { label: 'Service animals', value: place.checklist.serviceAnimalWelcome },
-                ].map(({ label, value }) => (
+                {quickSummaryItems.map(({ label, value }) => (
                   <div key={label} className="flex items-center justify-between gap-2">
                     <dt className="text-xs text-slate-600">{label}</dt>
                     <dd

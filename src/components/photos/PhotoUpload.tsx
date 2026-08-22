@@ -253,7 +253,12 @@ export function PhotoUpload(props: PhotoUploadProps) {
             role="button"
             tabIndex={0}
             aria-label="Upload photos. Click or drag image files here."
-            onKeyDown={(e) => e.key === 'Enter' && photoInputRef.current?.click()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                photoInputRef.current?.click();
+              }
+            }}
             onClick={() => photoInputRef.current?.click()}
             onDragOver={(e) => {
               e.preventDefault();
@@ -294,7 +299,12 @@ export function PhotoUpload(props: PhotoUploadProps) {
             role="button"
             tabIndex={0}
             aria-label="Upload videos. Click or drag video files here."
-            onKeyDown={(e) => e.key === 'Enter' && videoInputRef.current?.click()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                videoInputRef.current?.click();
+              }
+            }}
             onClick={() => videoInputRef.current?.click()}
             onDragOver={(e) => {
               e.preventDefault();
@@ -379,7 +389,7 @@ export function PhotoUpload(props: PhotoUploadProps) {
                           removePendingPhoto(i);
                         }}
                         aria-label={`Remove photo ${i + 1}`}
-                        className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none"
+                        className="absolute right-1 top-1 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity motion-reduce:transition-none group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                       >
                         <X className="h-3.5 w-3.5" aria-hidden="true" />
                       </button>
@@ -414,7 +424,7 @@ export function PhotoUpload(props: PhotoUploadProps) {
                           removePendingVideo(i);
                         }}
                         aria-label={`Remove video ${i + 1}`}
-                        className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none"
+                        className="absolute right-1 top-1 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity motion-reduce:transition-none group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                       >
                         <X className="h-3.5 w-3.5" aria-hidden="true" />
                       </button>
@@ -450,7 +460,7 @@ export function PhotoUpload(props: PhotoUploadProps) {
                         type="button"
                         onClick={() => removeUploaded(url)}
                         aria-label="Remove uploaded photo"
-                        className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none"
+                        className="absolute right-1 top-1 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity motion-reduce:transition-none group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                       >
                         <X className="h-3.5 w-3.5" aria-hidden="true" />
                       </button>
@@ -481,7 +491,7 @@ export function PhotoUpload(props: PhotoUploadProps) {
                         type="button"
                         onClick={() => removeUploaded(url)}
                         aria-label="Remove uploaded video"
-                        className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none"
+                        className="absolute right-1 top-1 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity motion-reduce:transition-none group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                       >
                         <X className="h-3.5 w-3.5" aria-hidden="true" />
                       </button>
@@ -503,13 +513,17 @@ export function PhotoUpload(props: PhotoUploadProps) {
           </div>
         )}
 
-        <p className="text-xs text-slate-400">Up to {maxFiles} files total (photos + videos).</p>
+        <p className="text-xs leading-relaxed text-slate-500">
+          Up to {maxFiles} files total. Upload only content you have permission to share. Avoid faces, licence plates,
+          documents, and other personal information; accepted media may be reviewed and displayed publicly.{' '}
+          <a href="/privacy" className="font-semibold text-primary-700 underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500">Privacy details</a>
+        </p>
       </div>
     );
   }
 
   /* ——— images-only variant (unchanged behavior, single zone) ——— */
-  const helpText = `JPEG, PNG or WebP · Max 10MB each · Up to ${maxFiles} photos`;
+  const helpText = `JPEG, PNG or WebP · Max 10MB each · Up to ${maxFiles} photos · Avoid faces, licence plates and personal information`;
 
   return (
     <div className="space-y-4">
@@ -517,7 +531,12 @@ export function PhotoUpload(props: PhotoUploadProps) {
         role="button"
         tabIndex={0}
         aria-label="Upload photos. Click or drag and drop image files here."
-        onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            fileInputRef.current?.click();
+          }
+        }}
         onClick={() => fileInputRef.current?.click()}
         onDragOver={(e) => {
           e.preventDefault();
@@ -591,7 +610,7 @@ export function PhotoUpload(props: PhotoUploadProps) {
                     removePreview(i);
                   }}
                   aria-label={`Remove photo ${i + 1}`}
-                  className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none"
+                  className="absolute right-1 top-1 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity motion-reduce:transition-none group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 >
                   <X className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
@@ -620,7 +639,7 @@ export function PhotoUpload(props: PhotoUploadProps) {
                   type="button"
                   onClick={() => removeUploaded(url)}
                   aria-label="Remove uploaded photo"
-                  className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none"
+                  className="absolute right-1 top-1 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity motion-reduce:transition-none group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 >
                   <X className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>

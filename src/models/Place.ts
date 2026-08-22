@@ -127,6 +127,17 @@ export interface Place {
     submittedByUserId?: ObjectId;
     submittedByRole?: string;
     submissionId?: ObjectId;
+    /** External dataset provenance. Presence does not imply community verification. */
+    external?: {
+      provider: string;
+      dataset: string;
+      recordId: string;
+      sourceUrl: string;
+      licenceName: string;
+      licenceUrl: string;
+      importedAt: Date;
+      sourceUpdatedAt?: Date;
+    };
   };
   claimedByUserId?: ObjectId;
   isClaimed: boolean;

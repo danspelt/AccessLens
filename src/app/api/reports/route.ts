@@ -6,6 +6,7 @@ import { reportSchema } from '@/lib/validation/schemas';
 import { Report } from '@/models/Report';
 import { Place } from '@/models/Place';
 import { ObjectId } from 'mongodb';
+import { requireAdmin } from '@/lib/auth/requireAdmin';
 
 export async function POST(request: NextRequest) {
   const session = await auth();
@@ -57,6 +58,10 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    const admin = await requireAdmin();
+    if (!admin.ok) {
+      return NextResponse.json({ error: admin.error }, { status: admin.status });
+    }
     const { searchParams } = new URL(request.url);
     const placeId = searchParams.get('placeId');
     const status = searchParams.get('status');
