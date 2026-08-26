@@ -14,7 +14,7 @@ End-to-end implementation plan, structured for Git feature branches + PRs.
 ## 1. Bootstrap & Core Stack ✅ COMPLETE
 
 - [x] Next.js 16 with TypeScript, Tailwind, ESLint, App Router, `src/` directory
-- [x] MongoDB (native driver), iron-session, bcryptjs, Zod, slugify, date-fns
+- [x] MongoDB (native driver), Auth.js (NextAuth v5) + iron-session helpers, bcryptjs, Zod, slugify, date-fns
 - [x] Leaflet + react-leaflet for maps
 - [x] Lucide React icons
 
@@ -78,7 +78,7 @@ Per-place boolean flags:
 
 ## 5. Auth ✅ COMPLETE
 
-- [x] `POST /api/auth/signup` — bcrypt password hash, iron-session
+- [x] `POST /api/auth/signup` — bcrypt password hash; sessions via Auth.js (credentials / Google / magic link). Legacy iron-session helpers remain for business portal cookies.
 - [x] `POST /api/auth/login` — verify password, create session
 - [x] `POST /api/auth/logout` — destroy session
 - [x] Beautiful login + signup pages
