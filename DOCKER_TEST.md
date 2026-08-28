@@ -27,6 +27,7 @@ docker run -p 3000:3000 --env-file .env.local accesslens:local
 docker run -p 3000:3000 \
   -e MONGODB_URI=mongodb://localhost:27017 \
   -e MONGODB_DB=accesslens_dev \
+  -e AUTH_SECRET=your-32-char-secret-change-in-production \
   -e SESSION_SECRET=your-32-char-secret-change-in-production \
   -e SESSION_COOKIE_NAME=accesslens_session \
   -e NEXT_PUBLIC_APP_URL=http://localhost:3000 \
@@ -38,6 +39,7 @@ docker run -p 3000:3000 \
 docker run -p 3000:3000 \
   -e MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net \
   -e MONGODB_DB=accesslens_prod \
+  -e AUTH_SECRET=your-32-char-secret-change-in-production \
   -e SESSION_SECRET=your-32-char-secret-change-in-production \
   -e SESSION_COOKIE_NAME=accesslens_session \
   -e NEXT_PUBLIC_APP_URL=http://localhost:3000 \

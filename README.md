@@ -6,6 +6,8 @@ A community-driven accessibility platform where people upload photos, accessibil
 
 > Think: Google Maps + Yelp + Accessibility Data
 
+**Live:** [accesslens.ca](https://www.accesslens.ca/) · **Portfolio / case study:** [danspelt.com](https://danspelt.com/case-studies/accesslens)
+
 ## What It Does
 
 AccessLens helps people with disabilities navigate cities by providing:
