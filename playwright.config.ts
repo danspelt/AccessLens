@@ -1,6 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:3000';
+// Keep the test server separate from a developer's usual local app port. That
+// avoids silently running smoke tests against an unrelated service on :3000.
+const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:3100';
 
 export default defineConfig({
   testDir: 'e2e',
@@ -15,9 +17,10 @@ export default defineConfig({
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
     : {
-        command: 'npm run build && npm run start',
+        command: 'npm run build && node --env-file=.env.local .next/standalone/server.js',
+        env: { PORT: '3100' },
         url: baseURL,
-        reuseExistingServer: !process.env.CI,
+        reuseExistingServer: false,
         timeout: 300_000,
       },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
