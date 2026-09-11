@@ -383,49 +383,59 @@ export default async function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(websiteJsonLd) }}
       />
-      {/* Hero */}
-      <section className="relative overflow-hidden">
+      {/* Hero — map atmosphere at edges; dark center for readable white type */}
+      <section className="relative overflow-hidden bg-[#072f46]">
         <div
           className="absolute inset-0 bg-[url('/hero-map-bg.png')] bg-cover bg-center bg-no-repeat"
           aria-hidden="true"
         />
+        {/* Base wash: keep map visible but never bright behind copy */}
         <div
-          className="absolute inset-0 bg-gradient-to-br from-primary-900/96 via-primary-900/94 to-primary-800/95"
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(160deg, rgba(7,47,70,0.92) 0%, rgba(12,74,110,0.88) 45%, rgba(7,89,133,0.90) 100%)',
+          }}
           aria-hidden="true"
         />
-        <div className="absolute inset-0 opacity-10" aria-hidden="true">
-          <div className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-white/20 blur-3xl" />
-          <div className="absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-white/20 blur-3xl" />
-        </div>
+        {/* Center scrim so headline/body always clear over street detail */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(ellipse 70% 65% at 50% 42%, rgba(2,24,38,0.82) 0%, rgba(2,24,38,0.55) 55%, rgba(2,24,38,0.25) 100%)',
+          }}
+          aria-hidden="true"
+        />
         <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
           <div className="motion-safe:animate-fade-up mx-auto max-w-3xl text-center">
-            <p className="font-display text-sm font-semibold tracking-[0.22em] text-primary-200 uppercase drop-shadow-sm">
+            <p className="font-display text-sm font-semibold tracking-[0.22em] text-sky-200 uppercase [text-shadow:0_1px_2px_rgba(0,0,0,0.55)]">
               AccessLens
             </p>
-            <div className="mt-5 mb-6 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-sm font-semibold text-white shadow-chip-icon backdrop-blur-sm">
-              <MapPin className="h-4 w-4 text-primary-200" aria-hidden="true" />
+            <div className="mt-5 mb-6 inline-flex items-center gap-2 rounded-full border border-white/30 bg-[#0c4a6e]/90 px-4 py-1.5 text-sm font-semibold text-white shadow-lg backdrop-blur-sm">
+              <MapPin className="h-4 w-4 text-sky-200" aria-hidden="true" />
               {liveCityLabel}
             </div>
-            <h1 className="font-display text-5xl font-bold tracking-tight text-white drop-shadow-sm sm:text-6xl lg:text-7xl">
+            <h1 className="font-display text-5xl font-bold tracking-tight text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.55)] sm:text-6xl lg:text-7xl">
               {hero.titleLine1}
-              <span className="mt-1 block text-primary-200"> {hero.titleLine2}</span>
+              <span className="mt-1 block text-sky-200"> {hero.titleLine2}</span>
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-xl font-medium leading-relaxed text-slate-100/95">
+            <p className="mx-auto mt-6 max-w-2xl text-xl font-medium leading-relaxed text-white [text-shadow:0_1px_8px_rgba(0,0,0,0.5)]">
               {hero.description}
             </p>
 
             {stats.totalPlaces > 0 && (
-              <dl className="motion-safe:animate-fade-up mx-auto mt-8 grid max-w-lg grid-cols-3 gap-4 rounded-2xl border border-white/20 bg-white/10 px-4 py-4 shadow-sheet backdrop-blur-md [animation-delay:90ms]">
+              <dl className="motion-safe:animate-fade-up mx-auto mt-8 grid max-w-lg grid-cols-3 gap-4 rounded-2xl border border-white/25 bg-[#031824]/85 px-4 py-4 shadow-xl backdrop-blur-md [animation-delay:90ms]">
                 <div>
-                  <dt className="text-xs font-semibold uppercase tracking-wider text-primary-100/80">Places</dt>
+                  <dt className="text-xs font-semibold uppercase tracking-wider text-sky-200">Places</dt>
                   <dd className="mt-1 text-2xl font-bold tabular-nums text-white">{stats.totalPlaces}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs font-semibold uppercase tracking-wider text-primary-100/80">Categories</dt>
+                  <dt className="text-xs font-semibold uppercase tracking-wider text-sky-200">Categories</dt>
                   <dd className="mt-1 text-2xl font-bold tabular-nums text-white">{stats.totalCategories}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs font-semibold uppercase tracking-wider text-primary-100/80">Avg score</dt>
+                  <dt className="text-xs font-semibold uppercase tracking-wider text-sky-200">Avg score</dt>
                   <dd className="mt-1 text-2xl font-bold tabular-nums text-white">
                     {stats.avgScore !== null ? `${stats.avgScore}/100` : '—'}
                   </dd>
@@ -443,7 +453,7 @@ export default async function HomePage() {
               </Link>
               <Link
                 href={hero.secondaryCtaHref}
-                className="inline-flex items-center gap-2 rounded-xl border border-white/40 bg-white/10 px-8 py-4 text-base font-semibold text-white shadow-sm backdrop-blur-sm transition-[transform,box-shadow,background-color] hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2 focus-visible:ring-offset-primary-900 active:translate-y-[3px]"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-8 py-4 text-base font-semibold text-slate-900 shadow-lg transition-[transform,background-color] hover:bg-sky-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary-900 active:translate-y-[3px]"
               >
                 {hero.secondaryCtaLabel}
               </Link>
