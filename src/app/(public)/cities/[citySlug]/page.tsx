@@ -7,7 +7,8 @@ import { getCollection } from '@/lib/db/mongoClient';
 import { getCityBySlug } from '@/lib/db/cities';
 import { Place, PLACE_CATEGORIES, CATEGORY_ICONS } from '@/models/Place';
 import { buildPageMetadata } from '@/lib/seo';
-import { MapPin, ArrowRight } from 'lucide-react';
+import { PublicHero } from '@/components/layout/PublicHero';
+import { ArrowRight } from 'lucide-react';
 
 interface Props {
   params: Promise<{ citySlug: string }>;
@@ -53,30 +54,29 @@ export default async function CityPage({ params }: Props) {
     .toArray();
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Hero */}
-      <div className="bg-gradient-to-br from-primary-900 to-primary-700 text-white">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2 mb-4">
-            <MapPin className="h-5 w-5 text-primary-300" aria-hidden="true" />
-            <span className="text-primary-300 text-sm font-medium">Accessibility Map</span>
+    <div>
+      <PublicHero
+        size="compact"
+        eyebrow={`${city.name} accessibility map`}
+        title={
+          <>
+            Accessible places in {city.name},{' '}
+            <span className="text-primary-200">{city.province}</span>
+          </>
+        }
+        description={city.description}
+      >
+        <div className="flex flex-wrap justify-center gap-4">
+          <div className="rounded-xl border border-white/25 bg-white/10 px-5 py-3 text-center backdrop-blur-sm">
+            <p className="text-2xl font-bold tabular-nums">{totalPlaces}</p>
+            <p className="text-xs text-primary-200">Places reviewed</p>
           </div>
-          <h1 className="text-4xl font-bold">
-            Accessible places in {city.name}, <span className="text-primary-300">{city.province}</span>
-          </h1>
-          <p className="mt-3 text-lg text-primary-200 max-w-2xl">{city.description}</p>
-          <div className="mt-6 flex flex-wrap gap-4">
-            <div className="rounded-xl bg-white/10 px-4 py-3 backdrop-blur-sm text-center">
-              <p className="text-2xl font-bold">{totalPlaces}</p>
-              <p className="text-xs text-primary-200">Places reviewed</p>
-            </div>
-            <div className="rounded-xl bg-white/10 px-4 py-3 backdrop-blur-sm text-center">
-              <p className="text-2xl font-bold">{categoryCounts.length}</p>
-              <p className="text-xs text-primary-200">Categories</p>
-            </div>
+          <div className="rounded-xl border border-white/25 bg-white/10 px-5 py-3 text-center backdrop-blur-sm">
+            <p className="text-2xl font-bold tabular-nums">{categoryCounts.length}</p>
+            <p className="text-xs text-primary-200">Categories</p>
           </div>
         </div>
-      </div>
+      </PublicHero>
 
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         {/* Categories */}

@@ -8,10 +8,10 @@ import {
   ArrowRight,
   Smartphone,
   CheckCircle,
-  Users,
 } from 'lucide-react';
 import { PARTNER_LABEL_DISPLAY } from '@/models/Place';
 import { buildPageMetadata } from '@/lib/seo';
+import { PublicHero } from '@/components/layout/PublicHero';
 
 export const metadata: Metadata = buildPageMetadata({
   title: 'Accessibility Listings for Victoria Businesses',
@@ -24,132 +24,90 @@ const STEPS = [
   {
     step: '1',
     title: 'A student ambassador visits',
-    text: 'They leave a QR card and a simple six-digit code — about two minutes to explain. No forms, no inspection.',
+    text: 'They leave a QR card and a simple six-digit code — about two minutes to explain.',
   },
   {
     step: '2',
     title: 'You update on any phone',
-    text: 'Large buttons, plain language, no password. Add notes and photos if you want — takes about five minutes.',
+    text: 'Large buttons, plain language, no password. Add notes and photos if you want.',
   },
   {
     step: '3',
     title: 'You appear as a partner',
-    text: `Published businesses receive the "${PARTNER_LABEL_DISPLAY.accessibility_partner}" badge on the public map.`,
+    text: `Published businesses receive the "${PARTNER_LABEL_DISPLAY.accessibility_partner}" badge on the map.`,
   },
 ];
 
 const BENEFITS = [
-  {
-    icon: MapPin,
-    title: 'Visibility',
-    text: 'Reach customers who search specifically for accessible places in Victoria.',
-  },
-  {
-    icon: Heart,
-    title: 'Trust',
-    text: 'Real notes and photos from your team — not generic icons copied from elsewhere.',
-  },
-  {
-    icon: Award,
-    title: 'Recognition',
-    text: 'Positive marketing for participating. Not a scorecard. Not an audit.',
-  },
+  { icon: MapPin, title: 'Visibility', text: 'Reach customers searching for accessible places.' },
+  { icon: Heart, title: 'Trust', text: 'Real notes and photos — not generic icons.' },
+  { icon: Award, title: 'Recognition', text: 'Positive marketing, not a scorecard.' },
 ];
 
 export default function ForBusinessesPage() {
   return (
-    <div className="min-h-screen bg-white">
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700 text-white">
-        <div
-          className="pointer-events-none absolute -right-40 top-0 h-[36rem] w-[36rem] rounded-full bg-white/5 blur-3xl"
-          aria-hidden="true"
-        />
-        <div
-          className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-sky-400/10 blur-3xl"
-          aria-hidden="true"
-        />
-        <div className="relative mx-auto max-w-4xl px-5 py-20 text-center sm:px-8 sm:py-28">
-          <p className="font-display text-sm font-semibold tracking-[0.22em] text-primary-200 uppercase">
-            AccessLens
-          </p>
-          <div className="mt-5 mb-6 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-sm font-semibold backdrop-blur-sm">
-            <QrCode className="h-4 w-4 text-primary-200" aria-hidden="true" />
-            Free Victoria QR · No password required
-          </div>
-          <h1 className="font-display text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-            Share how accessible your business really is
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-primary-100 sm:text-xl">
-            AccessLens is not an inspection. It is a free, community-driven listing so people with
-            disabilities, seniors, and families can know before they go — and so participating
-            businesses get recognized on the map.
-          </p>
-          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Link
-              href="/update-accessibility"
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-semibold text-primary-900 shadow-lg transition-colors hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-            >
-              <QrCode className="h-5 w-5" aria-hidden="true" />
-              I have my six-digit code
-              <ArrowRight className="h-5 w-5" aria-hidden="true" />
-            </Link>
-            <Link
-              href="/explore"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/40 bg-white/10 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-            >
-              <MapPin className="h-5 w-5" aria-hidden="true" />
-              See the live map
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <section className="border-b border-slate-100 bg-slate-50 py-16" aria-labelledby="how-heading">
-        <div className="mx-auto max-w-5xl px-5 sm:px-8">
-          <p className="eyebrow text-center">Simple by design</p>
-          <h2
-            id="how-heading"
-            className="mt-2 text-center text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl"
+    <div>
+      <PublicHero
+        eyebrow="Free Victoria QR pilot"
+        title="Share how accessible your business really is"
+        description="Not an inspection — a free listing so customers know before they go, and participating businesses get recognized on the map."
+      >
+        <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+          <Link
+            href="/update-accessibility"
+            className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-semibold text-primary-900 shadow-lg transition-colors hover:bg-primary-50"
           >
-            How it works
-          </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-center text-lg text-slate-600">
-            A QR card, a six-digit code, and a few minutes on your phone.
-          </p>
-          <ol className="mt-12 grid gap-6 sm:grid-cols-3">
-            {STEPS.map(({ step, title, text }) => (
-              <li key={step} className="relative rounded-2xl panel-surface p-6">
-                <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-b from-primary-400 to-primary-700 text-lg font-bold text-white shadow-orb">
-                  {step}
-                </span>
-                <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">{text}</p>
-              </li>
-            ))}
-          </ol>
+            <QrCode className="h-5 w-5" aria-hidden="true" />
+            I have my six-digit code
+            <ArrowRight className="h-5 w-5" aria-hidden="true" />
+          </Link>
+          <Link
+            href="/explore"
+            className="inline-flex items-center gap-2 rounded-xl border border-white/40 bg-white/10 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+          >
+            See the live map
+          </Link>
+        </div>
+      </PublicHero>
 
-          <div className="mt-10 rounded-2xl border border-primary-200 bg-primary-50/80 p-6 sm:flex sm:items-center sm:gap-6">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary-600 text-white shadow-md">
-              <Smartphone className="h-7 w-7" aria-hidden="true" />
-            </div>
-            <div className="mt-4 sm:mt-0">
-              <p className="font-semibold text-primary-900">Already have a code?</p>
-              <p className="mt-1 text-sm text-primary-800">
-                Open{' '}
-                <Link
-                  href="/update-accessibility"
-                  className="font-bold underline underline-offset-2 hover:no-underline"
-                >
-                  the business update portal
-                </Link>{' '}
-                on any phone — no account required for the QR pilot.
-              </p>
-            </div>
+      <section className="mx-auto max-w-5xl px-5 py-16 sm:px-8" aria-labelledby="how-heading">
+        <p className="eyebrow text-center">Simple by design</p>
+        <h2
+          id="how-heading"
+          className="mt-2 text-center text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl"
+        >
+          How it works
+        </h2>
+        <ol className="mt-12 grid gap-6 sm:grid-cols-3">
+          {STEPS.map(({ step, title, text }) => (
+            <li key={step} className="rounded-2xl panel-surface p-6">
+              <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-b from-primary-400 to-primary-700 text-lg font-bold text-white shadow-orb">
+                {step}
+              </span>
+              <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">{text}</p>
+            </li>
+          ))}
+        </ol>
+
+        <div className="mt-10 rounded-2xl border border-primary-200 bg-primary-50/80 p-6 sm:flex sm:items-center sm:gap-6">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary-600 text-white shadow-md">
+            <Smartphone className="h-7 w-7" aria-hidden="true" />
+          </div>
+          <div className="mt-4 sm:mt-0">
+            <p className="font-semibold text-primary-900">Already have a code?</p>
+            <p className="mt-1 text-sm text-primary-800">
+              Open{' '}
+              <Link href="/update-accessibility" className="font-bold underline underline-offset-2">
+                the business update portal
+              </Link>{' '}
+              — no account required.
+            </p>
           </div>
         </div>
       </section>
 
-      <section className="py-16" aria-labelledby="why-heading">
+      <section className="border-y border-slate-100/80 bg-white/50 py-16" aria-labelledby="why-heading">
         <div className="mx-auto max-w-5xl px-5 sm:px-8">
           <p className="eyebrow text-center">Why participate</p>
           <h2
@@ -169,8 +127,7 @@ export default function ForBusinessesPage() {
               </li>
             ))}
           </ul>
-
-          <ul className="mx-auto mt-12 max-w-2xl space-y-3" role="list">
+          <ul className="mx-auto mt-10 max-w-xl space-y-3" role="list">
             {[
               'Free to join during the Victoria pilot',
               'Owner-confirmed details, not guessed icons',
@@ -185,14 +142,13 @@ export default function ForBusinessesPage() {
         </div>
       </section>
 
-      <section className="border-t border-slate-100 bg-slate-50 py-16" aria-labelledby="cta-heading">
+      <section className="py-16" aria-labelledby="cta-heading">
         <div className="mx-auto max-w-3xl px-5 text-center sm:px-8">
-          <Users className="mx-auto mb-4 h-10 w-10 text-primary-600" aria-hidden="true" />
           <h2 id="cta-heading" className="text-3xl font-bold tracking-tight text-slate-900">
             Ready to update your listing?
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-lg text-slate-600">
-            Enter your six-digit code, or explore the map to see how partners appear to customers.
+            Enter your six-digit code, or explore the map to see how partners appear.
           </p>
           <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Link href="/update-accessibility" className="link-cta-primary gap-2 px-8 py-4 text-base">
@@ -205,10 +161,7 @@ export default function ForBusinessesPage() {
           </div>
           <p className="mt-8 text-sm text-slate-500">
             Questions?{' '}
-            <a
-              href="mailto:hello@accesslens.ca"
-              className="font-semibold text-primary-600 hover:underline"
-            >
+            <a href="mailto:hello@accesslens.ca" className="font-semibold text-primary-600 hover:underline">
               hello@accesslens.ca
             </a>
           </p>

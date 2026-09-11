@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { MapPin } from 'lucide-react';
 import { Alert } from '@/components/ui/Alert';
+import { AuthCanvas } from '@/components/auth/AuthCanvas';
 import { SIGNUP_INTENT_STORAGE_KEY } from '@/lib/signupIntent';
 
 export default function SignupOAuthCompletePage() {
@@ -71,21 +72,23 @@ export default function SignupOAuthCompletePage() {
   }, [router]);
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center bg-slate-50 px-4 py-12">
-      <div className="mx-auto max-w-md text-center">
-        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-600">
-          <MapPin className="h-6 w-6 text-white" aria-hidden="true" />
+    <AuthCanvas>
+      <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center px-4 py-12">
+        <div className="mx-auto max-w-md text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-500 shadow-btn-primary">
+            <MapPin className="h-6 w-6 text-white" aria-hidden="true" />
+          </div>
+          <h1 className="font-display text-xl font-semibold text-white">Finishing your account</h1>
+          <p className="mt-2 text-sm text-slate-300">
+            {phase !== 'done' && !error ? 'Setting up your AccessLens profile…' : null}
+          </p>
+          {error && (
+            <Alert variant="error" className="mt-6 text-left">
+              {error}
+            </Alert>
+          )}
         </div>
-        <h1 className="text-xl font-semibold text-slate-900">Finishing your account</h1>
-        <p className="mt-2 text-sm text-slate-600">
-          {phase !== 'done' && !error ? 'Setting up your AccessLens profile…' : null}
-        </p>
-        {error && (
-          <Alert variant="error" className="mt-6 text-left">
-            {error}
-          </Alert>
-        )}
       </div>
-    </div>
+    </AuthCanvas>
   );
 }

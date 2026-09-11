@@ -3,7 +3,8 @@ export const dynamic = 'force-dynamic';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { MapPin, ArrowRight, Compass } from 'lucide-react';
+import { PublicHero } from '@/components/layout/PublicHero';
+import { MapPin, ArrowRight } from 'lucide-react';
 import { getQrAnchor } from '@/lib/qr/anchors';
 import { getPlacesNearbyQrAnchor, summarizeHighlights } from '@/lib/qr/nearbyForAnchor';
 import { PlaceCard } from '@/components/places/PlaceCard';
@@ -37,44 +38,38 @@ export default async function QrLocationPage({ params }: Props) {
   const cityHref = `/cities/${anchor.citySlug}`;
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="border-b border-slate-200 bg-gradient-to-br from-primary-900 to-primary-800 text-white">
-        <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6">
-          <p className="flex items-center gap-2 text-sm font-medium text-primary-200">
-            <Compass className="h-4 w-4 shrink-0" aria-hidden="true" />
-            You&apos;re here
-          </p>
-          <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">{anchor.title}</h1>
-          {anchor.subtitle ? (
-            <p className="mt-2 text-base text-primary-100 leading-relaxed">{anchor.subtitle}</p>
-          ) : null}
-          <p className="mt-4 text-sm text-primary-200 leading-relaxed">
-            Same AccessLens data as the full site — quick picks near this spot. No account needed to
-            browse.
-          </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <Link
-              href={exploreHref}
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-semibold text-primary-900 shadow-md transition-colors hover:bg-primary-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary-800"
-            >
-              Open full map
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-            <Link
-              href={cityHref}
-              className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/35 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary-800"
-            >
-              Browse city hub
-            </Link>
-            <Link
-              href="/"
-              className="inline-flex items-center justify-center rounded-lg px-5 py-3 text-sm font-medium text-primary-200 underline-offset-4 hover:text-white hover:underline"
-            >
-              AccessLens home
-            </Link>
-          </div>
+    <div>
+      <PublicHero
+        size="compact"
+        eyebrow="You are here"
+        title={anchor.title}
+        description={
+          <>
+            {anchor.subtitle ? <p className="mb-2">{anchor.subtitle}</p> : null}
+            <p>
+              Same AccessLens data as the full site — quick picks near this spot. No account needed to
+              browse.
+            </p>
+          </>
+        }
+      >
+        <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:flex-wrap">
+          <Link
+            href={exploreHref}
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-primary-900 shadow-lg transition-colors hover:bg-primary-50"
+          >
+            Open full map
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+          <Link
+            href={cityHref}
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/40 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+          >
+            <MapPin className="h-4 w-4" aria-hidden="true" />
+            {anchor.citySlug} city guide
+          </Link>
         </div>
-      </header>
+      </PublicHero>
 
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6">
         {places.length > 0 ? (

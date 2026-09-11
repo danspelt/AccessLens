@@ -166,7 +166,7 @@ export function BusinessAccessWizard({
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-[50vh]">
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto max-w-lg px-4 py-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-primary-600">

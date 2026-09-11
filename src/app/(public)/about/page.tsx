@@ -11,6 +11,7 @@ import {
   MessageSquare,
 } from 'lucide-react';
 import { buildPageMetadata } from '@/lib/seo';
+import { PublicHero } from '@/components/layout/PublicHero';
 
 export const metadata: Metadata = buildPageMetadata({
   title: 'About Our Community Accessibility Map',
@@ -39,29 +40,11 @@ const PILLARS = [
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-white">
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700 text-white">
-        <div
-          className="pointer-events-none absolute -right-32 top-0 h-96 w-96 rounded-full bg-white/5 blur-3xl"
-          aria-hidden="true"
-        />
-        <div
-          className="pointer-events-none absolute -left-20 bottom-0 h-64 w-64 rounded-full bg-sky-400/10 blur-3xl"
-          aria-hidden="true"
-        />
-        <div className="relative mx-auto max-w-3xl px-5 py-20 text-center sm:px-8 sm:py-28">
-          <p className="font-display text-sm font-semibold tracking-[0.22em] text-primary-200 uppercase">
-            AccessLens
-          </p>
-          <h1 className="mt-5 font-display text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-            Know before you go
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-primary-100 sm:text-xl">
-            We help communities document and share real-world accessibility information for places in
-            Victoria and Vancouver — so people can plan visits with more confidence.
-          </p>
-        </div>
-      </section>
+    <div>
+      <PublicHero
+        title="Know before you go"
+        description="We help communities document and share real-world accessibility information for places in Victoria and Vancouver — so people can plan visits with more confidence."
+      />
 
       <section className="mx-auto max-w-5xl px-5 py-16 sm:px-8" aria-labelledby="what-heading">
         <p className="eyebrow text-center">What we map</p>
@@ -88,7 +71,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="border-y border-slate-100 bg-slate-50 py-16" aria-labelledby="outreach-heading">
+      <section className="border-y border-slate-100/80 bg-white/50 py-16" aria-labelledby="outreach-heading">
         <div className="mx-auto max-w-3xl px-5 sm:px-8">
           <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
             <span className="orb-3d flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-primary-700">
@@ -139,18 +122,6 @@ export default function AboutPage() {
               Business update portal
             </Link>
           </div>
-          <p className="mt-8 text-sm text-slate-500">
-            <Link href="/pitch" className="font-semibold text-primary-600 hover:underline">
-              For government &amp; partners
-            </Link>
-            {' · '}
-            <a
-              href="mailto:hello@accesslens.ca"
-              className="font-semibold text-primary-600 hover:underline"
-            >
-              hello@accesslens.ca
-            </a>
-          </p>
         </div>
       </section>
     </div>

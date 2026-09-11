@@ -87,7 +87,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
 
   if (sessionLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+      <div className="min-h-[50vh] flex items-center justify-center px-4">
         <p className="text-sm text-slate-600">Loading…</p>
       </div>
     );
@@ -96,7 +96,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
   if (!session?.user?.id) {
     const next = `/places/${id}/report`;
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+      <div className="min-h-[50vh] flex items-center justify-center px-4">
         <div className="max-w-md w-full rounded-2xl panel-surface p-8 text-center">
           <h1 className="text-lg font-semibold text-slate-900">Sign in to report an issue</h1>
           <p className="mt-2 text-sm text-slate-600">
@@ -123,7 +123,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
 
   if (session?.user?.accountType === 'business') {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+      <div className="min-h-[50vh] flex items-center justify-center px-4">
         <div className="max-w-md w-full rounded-2xl panel-surface p-8 text-center">
           <h1 className="text-lg font-semibold text-slate-900">Reports are for community accounts</h1>
           <p className="mt-2 text-sm text-slate-600">
@@ -144,7 +144,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
 
   if (success) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+      <div className="min-h-[50vh] flex items-center justify-center px-4">
         <div className="max-w-md w-full rounded-2xl panel-surface p-8 text-center">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-green-100">
             <AlertTriangle className="h-7 w-7 text-green-600" aria-hidden="true" />
@@ -166,7 +166,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-[50vh]">
       <div className="bg-white border-b border-slate-200">
         <div className="mx-auto max-w-2xl px-4 py-5 sm:px-6">
           <Link

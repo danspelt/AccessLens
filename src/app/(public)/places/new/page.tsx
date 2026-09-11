@@ -408,7 +408,7 @@ export default function NewPlacePage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+      <div className="min-h-[50vh] flex items-center justify-center px-4">
         <div className="max-w-md w-full rounded-2xl panel-surface p-10 text-center shadow-card">
           <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-b from-green-100 to-green-200 shadow-inner">
             <CheckCircle2 className="h-10 w-10 text-green-600 drop-shadow-sm" aria-hidden="true" />
@@ -448,7 +448,7 @@ export default function NewPlacePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-[50vh]">
       {/* Header */}
       <div className="bg-white border-b border-slate-200">
         <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 lg:px-8">

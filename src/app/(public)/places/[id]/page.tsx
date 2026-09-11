@@ -261,7 +261,7 @@ export default async function PlaceDetailPage({ params }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-[50vh]">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(placeJsonLd) }}

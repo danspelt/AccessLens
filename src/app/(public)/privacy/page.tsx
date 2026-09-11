@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { buildPageMetadata } from '@/lib/seo';
+import { PublicPageHeader } from '@/components/layout/PublicPageHeader';
 
 export const metadata: Metadata = buildPageMetadata({
   title: 'Privacy and Community Data',
@@ -10,19 +11,22 @@ export const metadata: Metadata = buildPageMetadata({
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
-        <p className="eyebrow">Community data</p>
-        <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
-          Privacy and contribution notice
-        </h1>
-        <p className="mt-4 text-lg leading-relaxed text-slate-700">
-          AccessLens combines community reports with clearly attributed official-source starter data.
-          Accessibility information can change and should not be treated as a guarantee that a place will
-          meet every person&apos;s needs.
-        </p>
+    <div className="pb-16">
+      <PublicPageHeader
+        narrow
+        eyebrow="Community data"
+        title="Privacy and contribution notice"
+        description={
+          <>
+            AccessLens combines community reports with clearly attributed official-source starter data.
+            Accessibility information can change and should not be treated as a guarantee that a place will
+            meet every person&apos;s needs.
+          </>
+        }
+      />
 
-        <div className="mt-10 space-y-8 rounded-2xl panel-surface p-6 sm:p-8">
+      <article className="mx-auto max-w-2xl px-4 pt-6 sm:px-6">
+        <div className="space-y-8 rounded-2xl panel-surface p-6 sm:p-8">
           <section aria-labelledby="public-content">
             <h2 id="public-content" className="text-xl font-bold text-slate-950">
               What may be public
@@ -65,7 +69,7 @@ export default function PrivacyPage() {
           </section>
         </div>
 
-        <p className="mt-8 rounded-xl border border-slate-200 bg-white p-4 text-sm leading-relaxed text-slate-600">
+        <p className="mt-8 text-sm leading-relaxed text-slate-600">
           Questions about your data? Contact{' '}
           <a
             href="mailto:hello@accesslens.ca"
@@ -73,23 +77,15 @@ export default function PrivacyPage() {
           >
             hello@accesslens.ca
           </a>
-          . This notice describes current product behaviour for community contributors.
+          .
         </p>
 
-        <div className="mt-8 flex flex-wrap gap-4 text-sm font-semibold">
-          <Link
-            href="/explore"
-            className="text-primary-700 underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-          >
-            Return to Explore
-          </Link>
-          <Link
-            href="/about"
-            className="text-slate-600 underline underline-offset-2 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-          >
-            About AccessLens
-          </Link>
-        </div>
+        <Link
+          href="/explore"
+          className="mt-6 inline-flex min-h-11 items-center font-semibold text-primary-700 underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+        >
+          Return to Explore
+        </Link>
       </article>
     </div>
   );

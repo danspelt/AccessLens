@@ -85,7 +85,7 @@ export default function ClaimPage({ params }: { params: Promise<{ id: string }> 
 
   if (pageLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-[50vh] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary-200 border-t-primary-600" />
           <p className="text-sm text-slate-600">Loading...</p>
@@ -96,7 +96,7 @@ export default function ClaimPage({ params }: { params: Promise<{ id: string }> 
 
   if (!place) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+      <div className="min-h-[50vh] flex items-center justify-center px-4">
         <div className="max-w-md w-full rounded-2xl panel-surface p-8 text-center shadow-card">
           <h1 className="text-lg font-bold text-slate-900">Place not found</h1>
           <p className="mt-2 text-sm text-slate-600">This place may have been removed or does not exist.</p>
@@ -114,7 +114,7 @@ export default function ClaimPage({ params }: { params: Promise<{ id: string }> 
 
   if (place.isClaimed) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+      <div className="min-h-[50vh] flex items-center justify-center px-4">
         <div className="max-w-md w-full rounded-2xl panel-surface p-10 text-center shadow-card">
           <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
             <Shield className="h-8 w-8 text-slate-400" aria-hidden="true" />
@@ -137,7 +137,7 @@ export default function ClaimPage({ params }: { params: Promise<{ id: string }> 
 
   if (success) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
+      <div className="min-h-[50vh] flex items-center justify-center px-4">
         <div className="max-w-md w-full rounded-2xl panel-surface p-10 text-center shadow-card">
           <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-b from-green-100 to-green-200 shadow-inner">
             <CheckCircle2 className="h-10 w-10 text-green-600 drop-shadow-sm" aria-hidden="true" />
@@ -159,7 +159,7 @@ export default function ClaimPage({ params }: { params: Promise<{ id: string }> 
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-[50vh]">
       <div className="bg-white border-b border-slate-200">
         <div className="mx-auto max-w-2xl px-4 py-5 sm:px-6">
           <Link

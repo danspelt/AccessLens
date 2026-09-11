@@ -19,7 +19,7 @@ export default function AccessibleParkingCandidatesPage() {
   const importedDate = new Date(candidateData.generatedAt).toLocaleDateString('en-CA', { dateStyle: 'long' });
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-[50vh]">
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
         <Link
           href="/explore"

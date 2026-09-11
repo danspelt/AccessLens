@@ -31,7 +31,8 @@ function useDarkNav(pathname: string) {
     pathname === '/for-businesses' ||
     pathname.startsWith('/for-businesses/') ||
     pathname === '/update-accessibility' ||
-    pathname.startsWith('/update-accessibility/')
+    pathname.startsWith('/cities/') ||
+    (pathname.startsWith('/qr/') && pathname !== '/qr')
   );
 }
 

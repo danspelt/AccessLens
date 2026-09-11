@@ -107,7 +107,7 @@ const QR_ZONES = [
 
 export default function PitchPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div>
 
       {/* ── Hero ── */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700 text-white">
