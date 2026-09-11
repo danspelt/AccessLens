@@ -688,6 +688,24 @@ export default async function HomePage() {
                     Sign in
                   </Link>
                 </li>
+                <li>
+                  <Link href="/about" className="transition-colors hover:text-primary-600">
+                    About
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/privacy" className="transition-colors hover:text-primary-600">
+                    Privacy
+                  </Link>
+                </li>
+                <li>
+                  <a
+                    href="mailto:hello@accesslens.ca"
+                    className="transition-colors hover:text-primary-600"
+                  >
+                    Contact
+                  </a>
+                </li>
               </ul>
             </div>
             <div>

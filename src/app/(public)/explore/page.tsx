@@ -10,7 +10,7 @@ import { buildPageMetadata } from '@/lib/seo';
 import { PlaceFilters } from '@/components/places/PlaceFilters';
 import { AccessLensMapClient } from '@/components/map/AccessLensMapClient';
 import { NearAddressSearch } from '@/components/explore/NearAddressSearch';
-import { Camera, ChevronDown, CircleParking, MapPin, MessageSquare, Plus } from 'lucide-react';
+import { Camera, ChevronDown, MapPin, MessageSquare, Plus } from 'lucide-react';
 import Link from 'next/link';
 
 function placeLatLng(p: {
@@ -283,8 +283,8 @@ export default async function ExplorePage({
                     Help build Victoria&apos;s accessibility record
                   </h2>
                   <p className="mt-1 max-w-3xl text-sm leading-relaxed text-primary-900">
-                    Add a missing place, then strengthen place records over time with entrance or barrier photos,
-                    confirmed checklist details, and written notes from a recent visit.
+                    Add a missing place, then strengthen records with entrance or barrier photos, confirmed
+                    checklist details, and notes from a recent visit.
                   </p>
                   <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs font-medium text-primary-800" aria-label="Useful community contributions">
                     <li className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" aria-hidden="true" />Place details</li>
@@ -301,11 +301,10 @@ export default async function ExplorePage({
                     Add a place
                   </Link>
                   <Link
-                    href="/official-data/accessible-parking"
+                    href="/for-businesses"
                     className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-primary-300 bg-white px-4 py-2.5 text-sm font-semibold text-primary-800 hover:bg-primary-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                   >
-                    <CircleParking className="h-4 w-4" aria-hidden="true" />
-                    Review parking candidates
+                    Business QR update
                   </Link>
                 </div>
               </div>

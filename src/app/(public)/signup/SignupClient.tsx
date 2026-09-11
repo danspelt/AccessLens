@@ -12,7 +12,7 @@ import {
   Building2,
   Check,
   ArrowLeft,
-  Sparkles,
+  QrCode,
 } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
@@ -148,8 +148,8 @@ export function SignupClient({ googleEnabled }: { googleEnabled: boolean }) {
             </p>
           </div>
           <p className="mt-6 text-base leading-relaxed text-slate-300 sm:text-lg">
-            Choose how you&apos;ll use AccessLens — community reviewers help everyone navigate with
-            real experiences; business accounts list their venues on the map (paid billing coming soon).
+            Choose how you&apos;ll use AccessLens — community reviewers share lived experience;
+            businesses manage listings. The Victoria QR pilot stays free and password-free.
           </p>
         </div>
 
@@ -215,32 +215,45 @@ export function SignupClient({ googleEnabled }: { googleEnabled: boolean }) {
                 <button
                   type="button"
                   onClick={() => selectType('business')}
-                  className="group flex w-full flex-col rounded-3xl border border-white/50 bg-gradient-to-b from-white to-slate-50 p-7 text-left shadow-sheet ring-1 ring-white/40 transition-all hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 sm:p-8"
+                  className="group flex w-full flex-col rounded-3xl border border-white/50 bg-gradient-to-b from-white to-slate-50 p-7 text-left shadow-sheet ring-1 ring-white/40 transition-all hover:shadow-card-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 sm:p-8"
                 >
                   <div className="flex items-start gap-4">
-                    <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-b from-amber-50 to-amber-100 text-amber-800 shadow-chip-icon ring-1 ring-amber-200/80">
+                    <span className="orb-3d flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-primary-700">
                       <Building2 className="h-7 w-7" aria-hidden="true" />
                     </span>
                     <div className="min-w-0 flex-1">
                       <p className="flex flex-wrap items-center gap-2 text-lg font-semibold text-slate-900 sm:text-xl">
-                        Business
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-amber-900">
-                          <Sparkles className="h-4 w-4" aria-hidden="true" />
-                          Paid (soon)
+                        Business partner
+                        <span className="rounded-full bg-primary-100 px-3 py-1 text-sm font-medium text-primary-800">
+                          Pilot
                         </span>
                       </p>
-                      <p className="mt-2 text-sm text-amber-800/90 sm:text-base">
-                        Subscription billing is not connected yet — your account is marked pending until
-                        payment launches.
+                      <p className="mt-2 text-sm text-slate-600 sm:text-base">
+                        Prefer a QR card? Skip signup and use your{' '}
+                        <Link
+                          href="/update-accessibility"
+                          className="font-semibold text-primary-700 underline underline-offset-2 hover:text-primary-800"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          six-digit code
+                        </Link>
+                        .
                       </p>
                       <ul className="mt-3 space-y-2.5 text-base text-slate-600 sm:text-lg">
                         <li className="flex items-center gap-3">
-                          <Check className="h-5 w-5 shrink-0 text-amber-600" aria-hidden="true" />
-                          List and manage your places
+                          <Check className="h-5 w-5 shrink-0 text-green-600" aria-hidden="true" />
+                          Claim and manage your places
                         </li>
-                        <li className="flex items-center gap-2 text-slate-500">
-                          <span className="ml-8 text-sm sm:text-base">
-                            Reviews and issue reports are for community accounts.
+                        <li className="flex items-center gap-3">
+                          <Check className="h-5 w-5 shrink-0 text-green-600" aria-hidden="true" />
+                          <span className="inline-flex items-center gap-1.5">
+                            <QrCode className="h-4 w-4 shrink-0" aria-hidden="true" />
+                            Works alongside the free QR update portal
+                          </span>
+                        </li>
+                        <li className="flex items-start gap-3 text-slate-500">
+                          <span className="mt-0.5 text-sm sm:text-base">
+                            Reviews and barrier reports stay with community accounts.
                           </span>
                         </li>
                       </ul>

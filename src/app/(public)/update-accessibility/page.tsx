@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { QrCode, ArrowRight } from 'lucide-react';
+import { QrCode, ArrowRight, Smartphone } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
@@ -45,24 +45,30 @@ export default function UpdateAccessibilityEntryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-lg px-4 py-10 sm:px-6">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-100 text-primary-700">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700 text-white">
+        <div
+          className="pointer-events-none absolute -right-24 top-0 h-72 w-72 rounded-full bg-white/5 blur-3xl"
+          aria-hidden="true"
+        />
+        <div className="relative mx-auto max-w-lg px-5 py-14 sm:px-6 sm:py-16">
+          <p className="font-display text-sm font-semibold tracking-[0.22em] text-primary-200 uppercase">
+            AccessLens
+          </p>
+          <div className="mt-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-white shadow-orb ring-1 ring-white/25 backdrop-blur-sm">
             <QrCode className="h-7 w-7" aria-hidden="true" />
           </div>
-          <h1 className="mt-5 text-3xl font-bold tracking-tight text-slate-900">
+          <h1 className="mt-5 font-display text-3xl font-bold tracking-tight sm:text-4xl">
             Update your accessibility info
           </h1>
-          <p className="mt-3 leading-relaxed text-slate-600">
-            Enter the six-digit code from the QR card our student ambassadors left at your business.
-            No account or password required.
+          <p className="mt-3 text-lg leading-relaxed text-primary-100">
+            Enter the six-digit code from your QR card. No account or password required.
           </p>
         </div>
-      </div>
+      </section>
 
-      <div className="mx-auto max-w-lg px-4 py-10 sm:px-6">
-        <form onSubmit={handleSubmit} className="rounded-2xl panel-surface p-6 shadow-card space-y-5">
+      <div className="mx-auto max-w-lg px-5 py-10 sm:px-6">
+        <form onSubmit={handleSubmit} className="space-y-5 rounded-2xl panel-surface p-6 shadow-card sm:p-8">
           {error ? <Alert variant="error">{error}</Alert> : null}
           <div>
             <Label htmlFor="access-code" className="text-base">
@@ -81,7 +87,7 @@ export default function UpdateAccessibilityEntryPage() {
               aria-describedby="code-hint"
             />
             <p id="code-hint" className="mt-2 text-sm text-slate-500">
-              Found on your pamphlet or door hanger
+              On your pamphlet or door hanger
             </p>
           </div>
           <Button type="submit" size="lg" loading={loading} className="w-full">
@@ -89,6 +95,18 @@ export default function UpdateAccessibilityEntryPage() {
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Button>
         </form>
+
+        <div className="mt-8 flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 text-sm text-slate-600">
+          <Smartphone className="mt-0.5 h-5 w-5 shrink-0 text-primary-600" aria-hidden="true" />
+          <p>
+            Works on any phone or tablet. Prefer a full account?{' '}
+            <Link href="/signup" className="font-semibold text-primary-700 hover:underline">
+              Join as a business partner
+            </Link>
+            .
+          </p>
+        </div>
+
         <p className="mt-8 text-center text-sm text-slate-500">
           Looking for places to visit?{' '}
           <Link href="/explore" className="font-semibold text-primary-600 hover:underline">

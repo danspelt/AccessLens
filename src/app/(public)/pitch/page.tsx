@@ -26,8 +26,8 @@ export const metadata: Metadata = {
 const STATS = [
   { label: 'Neighbourhoods mapped', value: '20+', icon: MapPin },
   { label: 'QR location codes active', value: '20', icon: QrCode },
-  { label: 'Businesses participating', value: '3', note: 'founding partners', icon: Building2 },
-  { label: 'Cost to government', value: '$0', note: 'fully self-funded', icon: DollarSign },
+  { label: 'Founding partners', value: 'Growing', note: 'Victoria pilot', icon: Building2 },
+  { label: 'Cost to government', value: '$0', note: 'community-funded model', icon: DollarSign },
 ];
 
 const HOW_IT_WORKS = [
@@ -56,23 +56,23 @@ const HOW_IT_WORKS = [
 const BUSINESS_MODEL = [
   {
     icon: Building2,
-    title: 'Business subscriptions pay the bills',
-    body: 'Three founding businesses are already paying subscribers. Each subscription covers the cost of ~50 student outreach visits. No government grant needed.',
+    title: 'Business partners fund the outreach',
+    body: 'A small number of founding partners cover student ambassador visits. Each partner subscription is designed to fund ~50 outreach visits — without a government grant.',
   },
   {
     icon: Users,
     title: 'Students earn while they contribute',
-    body: 'Student ambassadors are compensated through the business subscription pool — real work experience, real community impact.',
+    body: 'Student ambassadors are compensated through the partner pool — real work experience, real community impact.',
   },
   {
     icon: TrendingUp,
     title: 'Self-sustaining at scale',
-    body: 'As more businesses subscribe, more ambassadors can be employed, covering more of Victoria. The model grows without external funding.',
+    body: 'As more businesses join, more ambassadors can be employed, covering more of Victoria. The model grows without external funding.',
   },
   {
     icon: Globe,
     title: 'Expandable to every BC city',
-    body: 'The platform is already built for multiple cities. Once Victoria proves the model, replication to Victoria, Saanich, Langford, and beyond is immediate.',
+    body: 'The platform already supports multiple cities. Once Victoria proves the model, replication across the capital region and beyond is immediate.',
   },
 ];
 
@@ -116,15 +116,15 @@ export default function PitchPage() {
         <div className="relative mx-auto max-w-5xl px-5 py-20 sm:px-8 sm:py-28 text-center">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-sm font-semibold backdrop-blur-sm">
             <MapPin className="h-4 w-4 text-primary-200" aria-hidden="true" />
-            Victoria, BC — 2025 Initiative
+            Victoria, BC — 2026 Initiative
           </div>
           <h1 className="font-display text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
             Accessible Victoria.<br />
             <span className="text-primary-200">No Government Dollars.</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-xl leading-relaxed text-primary-100">
-            AccessLens is a community-built, business-funded accessibility map covering all of Victoria.
-            Local businesses pay a small subscription. Student ambassadors visit and update listings.
+            AccessLens is a community-built, business-supported accessibility map covering Victoria.
+            Local partners fund student ambassadors who visit and update listings.
             Everyone finds accessible places — for free.
           </p>
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
@@ -233,8 +233,8 @@ export default function PitchPage() {
             Self-funding, not grant-dependent
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-center text-lg text-slate-600">
-            Three Victoria businesses are already paying subscribers. That&apos;s enough to fund student
-            ambassadors for 150+ business visits — with no public money.
+            Founding partners fund student ambassadors for neighbourhood outreach — so the city gets a
+            living accessibility map without writing a cheque.
           </p>
           <div className="mt-10 grid gap-6 sm:grid-cols-2">
             {BUSINESS_MODEL.map(({ icon: Icon, title, body }) => (
@@ -368,8 +368,8 @@ export default function PitchPage() {
             no venture capital, no government grant, no corporate backing.
           </p>
           <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-slate-500">
-            Three local businesses believed in the idea first. They are our founding Accessibility Partners.
-            Their subscriptions prove the model works before we ever knock on a government door.
+            Local businesses that believe in the idea become Accessibility Partners. Their support funds
+            outreach and proves the model works before we ever ask government for dollars.
           </p>
         </div>
       </section>
