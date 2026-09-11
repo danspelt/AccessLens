@@ -1,11 +1,16 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { ObjectId } from 'mongodb';
 import { auth } from '@/auth';
 import { DashboardShell } from '@/components/dashboard/DashboardShell';
 import { getCollection } from '@/lib/db/mongoClient';
 import { User } from '@/models/User';
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export default async function ProtectedLayout({
   children,

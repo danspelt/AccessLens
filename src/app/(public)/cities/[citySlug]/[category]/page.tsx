@@ -9,6 +9,7 @@ import { Place, PLACE_CATEGORIES, CATEGORY_ICONS } from '@/models/Place';
 import { Review } from '@/models/Review';
 import { PlaceCard } from '@/components/places/PlaceCard';
 import { ArrowLeft, MapPin } from 'lucide-react';
+import { buildPageMetadata } from '@/lib/seo';
 
 interface Props {
   params: Promise<{ citySlug: string; category: string }>;
@@ -20,10 +21,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cityName = city ? `${city.name}, ${city.province}` : citySlug;
   const catLabel = PLACE_CATEGORIES[category as keyof typeof PLACE_CATEGORIES];
   if (!catLabel) return {};
-  return {
-    title: `${catLabel}s in ${cityName} — Accessibility`,
-    description: `Find accessible ${catLabel.toLowerCase()}s in ${cityName}. View accessibility scores, photos, and community reviews.`,
-  };
+  return buildPageMetadata({
+    title: `Accessible ${catLabel}s in ${cityName}`,
+    description: `Find accessible ${catLabel.toLowerCase()}s in ${cityName}. Compare entrance, washroom, parking, mobility, and sensory details with photos and community reviews.`,
+    path: `/cities/${citySlug}/${category}`,
+  });
 }
 
 export default async function CategoryPage({ params }: Props) {
@@ -94,7 +96,7 @@ export default async function CategoryPage({ params }: Props) {
             <span className="text-3xl" role="img" aria-hidden="true">{catIcon}</span>
             <div>
               <h1 className="text-2xl font-bold text-slate-900">
-                {catLabel}s in {cityName}
+                Accessible {catLabel}s in {cityName}
               </h1>
               <p className="mt-1 flex items-center gap-1 text-sm text-slate-500">
                 <MapPin className="h-3.5 w-3.5" aria-hidden="true" />

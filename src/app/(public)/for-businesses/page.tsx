@@ -2,12 +2,14 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { QrCode, Heart, MapPin, Award, ArrowRight } from 'lucide-react';
 import { PARTNER_LABEL_DISPLAY } from '@/models/Place';
+import { buildPageMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  title: 'For Businesses — AccessLens',
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Accessibility Listings for Victoria Businesses',
   description:
-    'Join the Victoria community accessibility project. Update your listing in minutes with a simple code — no audit, no account required.',
-};
+    'Help customers understand your Victoria business before they arrive. Add entrance, washroom, parking, sensory, and mobility details to your free AccessLens listing.',
+  path: '/for-businesses',
+});
 
 export default function ForBusinessesPage() {
   return (
@@ -18,7 +20,7 @@ export default function ForBusinessesPage() {
             Community accessibility project
           </p>
           <h1 className="mt-3 text-4xl font-bold tracking-tight text-slate-900">
-            Show customers what access looks like before they arrive
+            Share your business accessibility details with customers
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600 leading-relaxed">
             AccessLens is not an inspection or compliance audit. It is a free, community-driven way

@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { buildPageMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: 'Privacy and Community Data',
   description: 'How AccessLens handles community accessibility contributions and official-source starter data.',
-};
+  path: '/privacy',
+});
 
 export default function PrivacyPage() {
   return (

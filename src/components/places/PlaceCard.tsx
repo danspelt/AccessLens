@@ -53,7 +53,7 @@ export function PlaceCard({ place }: PlaceCardProps) {
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={thumbnail}
-            alt={`${place.name} photo`}
+            alt={`Accessibility at ${place.name} in ${place.city}`}
             className="h-full w-full object-cover transition-transform motion-safe:group-hover:scale-105"
           />
         ) : (

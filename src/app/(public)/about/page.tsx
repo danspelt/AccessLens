@@ -1,22 +1,24 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { MapPin, Users, Building2, Heart, ArrowRight } from 'lucide-react';
+import { buildPageMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  title: 'About AccessLens',
+export const metadata: Metadata = buildPageMetadata({
+  title: 'About Our Community Accessibility Map',
   description:
-    'AccessLens is a community-driven accessibility map for Victoria, BC — helping people know before they go.',
-};
+    'Learn how AccessLens combines accessibility checklists, photos, reviews, and a public map to help people find accessible places in Victoria and Vancouver, BC.',
+  path: '/about',
+});
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       <section className="border-b border-slate-200 bg-white">
         <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-slate-900">About AccessLens</h1>
+          <h1 className="text-4xl font-bold tracking-tight text-slate-900">About the AccessLens accessibility map</h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600 leading-relaxed">
-            We help communities document, improve, and share real-world accessibility information so
-            people can choose where to go with confidence.
+            We help communities document and share real-world accessibility information for places in
+            Victoria and Vancouver, so people can plan visits with more confidence.
           </p>
         </div>
       </section>

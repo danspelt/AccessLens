@@ -40,6 +40,7 @@ import {
 } from 'lucide-react';
 import { Favorite } from '@/models/Favorite';
 import { getApprovedPhotoUrls } from '@/lib/db/placePhotos';
+import { absoluteUrl, buildPageMetadata, serializeJsonLd } from '@/lib/seo';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -51,10 +52,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const collection = await getCollection<Place>('places');
   const place = await collection.findOne({ _id: new ObjectId(id) });
   if (!place) return {};
-  return {
-    title: `${place.name} — Accessibility Info`,
-    description: `Accessibility information for ${place.name} in ${place.city}, ${place.province}. Score: ${place.accessibilityScore ?? 'unknown'}/100.`,
-  };
+  if (place.status !== 'active') {
+    return {
+      title: place.name,
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const categoryLabel =
+    PLACE_CATEGORIES[place.category as keyof typeof PLACE_CATEGORIES] || place.category;
+  return buildPageMetadata({
+    title: `${place.name} Accessibility in ${place.city}, ${place.province}`,
+    description: `Check accessibility details for ${place.name}, a ${categoryLabel.toLowerCase()} in ${place.city}, ${place.province}. Review entrance, washroom, parking, mobility, and sensory information before you visit.`,
+    path: `/places/${place._id.toString()}`,
+  });
 }
 
 async function getPlaceData(id: string) {
@@ -190,9 +201,70 @@ export default async function PlaceDetailPage({ params }: Props) {
     { label: 'Accessible parking', value: place.checklist.accessibleParking },
     { label: 'Service animals', value: place.checklist.serviceAnimalWelcome },
   ];
+  const placeJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Place',
+    name: place.name,
+    url: absoluteUrl(`/places/${place._id}`),
+    description:
+      place.description ||
+      `Accessibility information for ${place.name} in ${place.city}, ${place.province}.`,
+    image:
+      place.displayPhotoUrls.length > 0
+        ? place.displayPhotoUrls.map((photoUrl) => absoluteUrl(photoUrl))
+        : undefined,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: place.address,
+      addressLocality: place.city,
+      addressRegion: place.province,
+      postalCode: place.postalCode,
+      addressCountry: place.country,
+    },
+    geo:
+      place.latitude !== undefined && place.longitude !== undefined
+        ? {
+            '@type': 'GeoCoordinates',
+            latitude: place.latitude,
+            longitude: place.longitude,
+          }
+        : undefined,
+    aggregateRating:
+      avgRating !== null && reviewCount > 0
+        ? {
+            '@type': 'AggregateRating',
+            ratingValue: avgRating,
+            reviewCount,
+            bestRating: 5,
+            worstRating: 1,
+          }
+        : undefined,
+    additionalProperty: [
+      ...(score !== undefined
+        ? [
+            {
+              '@type': 'PropertyValue',
+              name: 'AccessLens accessibility score',
+              value: `${score}/100`,
+            },
+          ]
+        : []),
+      ...quickSummaryItems
+        .filter(({ value }) => typeof value === 'boolean')
+        .map(({ label, value }) => ({
+          '@type': 'PropertyValue',
+          name: label,
+          value: value ? 'Available' : 'Not reported as available',
+        })),
+    ],
+  };
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(placeJsonLd) }}
+      />
       {/* Breadcrumb */}
       <div className="bg-white border-b border-slate-200">
         <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">

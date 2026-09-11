@@ -4,6 +4,7 @@ import './globals.css';
 import { Navbar } from '@/components/layout/Navbar';
 import { SkipLink } from '@/components/layout/SkipLink';
 import { AuthSessionProvider } from '@/components/auth/AuthSessionProvider';
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/seo';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -18,18 +19,33 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: SITE_URL,
   title: {
-    default: 'AccessLens — Accessibility Intelligence for Cities',
+    default: 'Accessible Places in Victoria & Vancouver, BC | AccessLens',
     template: '%s | AccessLens',
   },
-  description:
-    'Find accessible places in Victoria and Vancouver, BC. Community-driven accessibility reviews, photos, and checklists for libraries, restaurants, parks, theatres, and more.',
-  keywords: ['accessibility', 'Victoria BC', 'Vancouver BC', 'wheelchair accessible', 'disability', 'inclusive'],
-  applicationName: 'AccessLens',
+  description: SITE_DESCRIPTION,
+  keywords: [
+    'accessible places Victoria BC',
+    'accessible places Vancouver BC',
+    'wheelchair accessible places',
+    'accessibility map',
+    'accessibility reviews',
+  ],
+  applicationName: SITE_NAME,
+  robots: { index: true, follow: true },
   openGraph: {
-    title: 'AccessLens — Accessibility Intelligence for Cities',
-    description: 'Find accessible places in Victoria and Vancouver, BC.',
+    title: 'Accessible Places in Victoria & Vancouver, BC | AccessLens',
+    description: SITE_DESCRIPTION,
+    url: '/',
+    siteName: SITE_NAME,
+    locale: 'en_CA',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Accessible Places in Victoria & Vancouver, BC | AccessLens',
+    description: SITE_DESCRIPTION,
   },
 };
 

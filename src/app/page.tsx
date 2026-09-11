@@ -1,11 +1,19 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, MapPin } from 'lucide-react';
 import { getCollection } from '@/lib/db/mongoClient';
 import { getActiveCities } from '@/lib/db/cities';
 import { getSiteContentBatch } from '@/lib/db/siteContent';
 import { resolveIcon } from '@/lib/icons';
+import {
+  buildPageMetadata,
+  serializeJsonLd,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL,
+} from '@/lib/seo';
 import {
   CATEGORY_ICONS,
   PLACE_CATEGORIES,
@@ -28,13 +36,22 @@ import type {
 const FALLBACK_HERO: HomeHeroContent = {
   eyebrow: 'Community-driven accessibility map',
   titleLine1: 'Find Accessible Places',
-  titleLine2: 'in Your City',
+  titleLine2: 'in Victoria and Vancouver',
   description:
-    'AccessLens is the community-driven accessibility map for public places. Search, review, and report accessibility information so everyone can navigate their city with confidence.',
+    'Search accessibility details for entrances, washrooms, parking, mobility, and sensory needs. Community reviews, photos, and checklists help you know before you go.',
   primaryCtaLabel: 'Explore the map',
   primaryCtaHref: '/explore',
   secondaryCtaLabel: 'Join the Community',
   secondaryCtaHref: '/signup',
+};
+
+export const metadata: Metadata = {
+  ...buildPageMetadata({
+    title: 'Accessible Places in Victoria & Vancouver, BC',
+    description: SITE_DESCRIPTION,
+    path: '/',
+  }),
+  title: { absolute: 'Accessible Places in Victoria & Vancouver, BC | AccessLens' },
 };
 
 const FALLBACK_CTA: HomeCtaContent = {
@@ -351,8 +368,21 @@ export default async function HomePage() {
     })
     .slice(0, 8);
 
+  const websiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE_NAME,
+    url: SITE_URL.toString(),
+    description: SITE_DESCRIPTION,
+    inLanguage: 'en-CA',
+  };
+
   return (
     <div className="relative">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(websiteJsonLd) }}
+      />
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div

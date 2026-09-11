@@ -2,11 +2,14 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowLeft, CalendarClock, CheckCircle2, CircleParking, ExternalLink, MapPin } from 'lucide-react';
 import candidateData from '../../../../../data/victoria-accessible-parking.candidates.json';
+import { buildPageMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  title: 'Victoria Accessible Parking Candidates',
-  description: 'Official-source starter records awaiting current community accessibility details.',
-};
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Accessible Parking Data in Victoria, BC',
+  description:
+    'Review accessible-designated parking candidates from the City of Victoria open-data source, with clear provenance and notes for community verification.',
+  path: '/official-data/accessible-parking',
+});
 
 function text(value: unknown): string | null {
   return typeof value === 'string' && value.trim() ? value.trim() : null;
@@ -32,7 +35,7 @@ export default function AccessibleParkingCandidatesPage() {
             <CircleParking className="mt-1 h-8 w-8 shrink-0 text-primary-600" aria-hidden="true" />
             <div>
               <h1 className="font-display text-2xl font-bold text-slate-950 sm:text-3xl">
-                Victoria accessible parking candidates
+                Accessible parking data in Victoria, BC
               </h1>
               <p className="mt-3 max-w-3xl leading-relaxed text-slate-700">
                 These five records come from the City of Victoria&apos;s accessible-designated parking data. They are

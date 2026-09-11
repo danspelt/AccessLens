@@ -6,6 +6,7 @@ import { getCollection } from '@/lib/db/mongoClient';
 import { Place } from '@/models/Place';
 import { Review } from '@/models/Review';
 import { PlaceCard } from '@/components/places/PlaceCard';
+import { buildPageMetadata } from '@/lib/seo';
 import { PlaceFilters } from '@/components/places/PlaceFilters';
 import { AccessLensMapClient } from '@/components/map/AccessLensMapClient';
 import { NearAddressSearch } from '@/components/explore/NearAddressSearch';
@@ -28,10 +29,12 @@ function placeLatLng(p: {
   return null;
 }
 
-export const metadata: Metadata = {
-  title: 'Explore Accessible Places',
-  description: 'Browse accessible places in Victoria, BC — libraries, restaurants, parks, theatres, and more.',
-};
+export const metadata: Metadata = buildPageMetadata({
+  title: 'Find Accessible Places in Victoria & Vancouver, BC',
+  description:
+    'Search accessible restaurants, parks, libraries, shops, transit stops, and more in Victoria and Vancouver, BC. Compare accessibility checklists, photos, scores, and reviews.',
+  path: '/explore',
+});
 
 interface SearchParams {
   category?: string;
@@ -176,10 +179,10 @@ export default async function ExplorePage({
             <div className="min-w-0">
               <p className="eyebrow">Explore</p>
               <h1 className="mt-1 font-display text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-                Victoria &amp; Vancouver, BC
+                Find accessible places in Victoria &amp; Vancouver, BC
               </h1>
               <p className="mt-1 text-sm text-slate-500">
-                {places.length} place{places.length !== 1 ? 's' : ''} found
+                Compare accessibility checklists, photos, scores, and reviews for {places.length} place{places.length !== 1 ? 's' : ''}
                 {hasActiveFilters && ' with active filters'}
               </p>
             </div>

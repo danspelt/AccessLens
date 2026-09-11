@@ -18,6 +18,8 @@ const nextConfig: NextConfig = {
     ],
   },
   async headers() {
+    const noIndexHeaders = [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }];
+
     return [
       {
         source: '/uploads/:path*',
@@ -25,6 +27,27 @@ const nextConfig: NextConfig = {
           { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
         ],
       },
+      ...[
+        '/api/:path*',
+        '/admin/:path*',
+        '/dashboard/:path*',
+        '/student/:path*',
+        '/settings',
+        '/favorites',
+        '/my-reviews',
+        '/my-places',
+        '/activities',
+        '/add-place',
+        '/signin',
+        '/signup/:path*',
+        '/update-accessibility/:path*',
+        '/places/new',
+        '/places/:id/claim',
+        '/places/:id/report',
+        '/places/:id/update-accessibility',
+        '/qr/:path*',
+        '/pitch',
+      ].map((source) => ({ source, headers: noIndexHeaders })),
     ];
   },
 };

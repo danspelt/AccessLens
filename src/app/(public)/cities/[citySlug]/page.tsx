@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { getCollection } from '@/lib/db/mongoClient';
 import { getCityBySlug } from '@/lib/db/cities';
 import { Place, PLACE_CATEGORIES, CATEGORY_ICONS } from '@/models/Place';
+import { buildPageMetadata } from '@/lib/seo';
 import { MapPin, ArrowRight } from 'lucide-react';
 
 interface Props {
@@ -16,10 +17,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { citySlug } = await params;
   const city = await getCityBySlug(citySlug);
   if (!city) return {};
-  return {
+  return buildPageMetadata({
     title: `Accessible Places in ${city.name}, ${city.province}`,
-    description: `Find accessible places in ${city.name}, ${city.province} — libraries, restaurants, parks, transit, and more.`,
-  };
+    description: `Find accessible restaurants, parks, libraries, shops, transit stops, and more in ${city.name}, ${city.province}. Compare accessibility scores, checklists, photos, and reviews.`,
+    path: `/cities/${city.slug}`,
+  });
 }
 
 export default async function CityPage({ params }: Props) {
@@ -60,7 +62,7 @@ export default async function CityPage({ params }: Props) {
             <span className="text-primary-300 text-sm font-medium">Accessibility Map</span>
           </div>
           <h1 className="text-4xl font-bold">
-            {city.name}, <span className="text-primary-300">{city.province}</span>
+            Accessible places in {city.name}, <span className="text-primary-300">{city.province}</span>
           </h1>
           <p className="mt-3 text-lg text-primary-200 max-w-2xl">{city.description}</p>
           <div className="mt-6 flex flex-wrap gap-4">
