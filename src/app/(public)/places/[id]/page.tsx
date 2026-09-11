@@ -52,7 +52,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const collection = await getCollection<Place>('places');
   const place = await collection.findOne({ _id: new ObjectId(id) });
   if (!place) return {};
-  if (place.status !== 'active') {
+  // Records seeded before moderation was introduced have no status and remain public.
+  if (place.status && place.status !== 'active') {
     return {
       title: place.name,
       robots: { index: false, follow: false },

@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next';
+import type { Filter } from 'mongodb';
 import { getActiveCities } from '@/lib/db/cities';
 import { getCollection } from '@/lib/db/mongoClient';
 import type { Place } from '@/models/Place';
@@ -20,15 +21,18 @@ const staticPages: MetadataRoute.Sitemap = [
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const placesCollection = await getCollection<Place>('places');
+    const publicPlaceFilter: Filter<Place> = {
+      $or: [{ status: 'active' }, { status: { $exists: false } }],
+    };
     const [cities, places, categoryRows] = await Promise.all([
       getActiveCities(),
       placesCollection
-        .find({ status: 'active' })
+        .find(publicPlaceFilter)
         .project({ _id: 1, updatedAt: 1 })
         .toArray(),
       placesCollection
         .aggregate<{ citySlug: string; category: string; updatedAt?: Date }>([
-          { $match: { status: 'active' } },
+          { $match: publicPlaceFilter },
           {
             $group: {
               _id: { citySlug: '$citySlug', category: '$category' },
