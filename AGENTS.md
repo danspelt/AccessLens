@@ -1,9 +1,9 @@
-<!-- BEGIN:nextjs-agent-rules -->
+# Project Rules
 
-# This is NOT the Next.js you know
+## Required workflow
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
-
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
-
-<!-- END:nextjs-agent-rules -->
+- After every code or configuration change, run the relevant focused tests and checks.
+- Before considering any task complete, run the full verification suite: `npm run test`, `npm run lint`, `npm run typecheck`, and `npm run build`.
+- Only when every required check passes, review the diff for secrets and unintended changes, then commit and push the current branch.
+- Never push changes when any required check fails. Fix the failure and rerun the complete verification suite first.
+- Do not commit secrets, `.env` files, credentials, API keys, or production data.
