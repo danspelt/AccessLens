@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getCollection } from '@/lib/db/mongoClient';
 import { Place } from '@/models/Place';
+import { publicPlaceFilter, serializePublicPlace } from '@/lib/publicPlaces';
 
 const schema = z.object({
   lat: z.coerce.number().min(-90).max(90),
@@ -25,6 +26,7 @@ export async function GET(req: NextRequest) {
 
     const cursor = places
       .find({
+        ...publicPlaceFilter,
         location: {
           $near: {
             $geometry: { type: 'Point', coordinates: [parsed.lon, parsed.lat] },
@@ -35,13 +37,7 @@ export async function GET(req: NextRequest) {
       .limit(parsed.limit);
 
     const docs = await cursor.toArray();
-    const serialized = docs.map((p) => ({
-      ...p,
-      _id: p._id.toString(),
-      createdByUserId: p.createdByUserId.toString(),
-      createdAt: p.createdAt.toISOString(),
-      updatedAt: p.updatedAt.toISOString(),
-    }));
+    const serialized = docs.map(serializePublicPlace);
 
     return NextResponse.json({ places: serialized });
   } catch (error) {

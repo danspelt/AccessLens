@@ -7,6 +7,7 @@ import { ObjectId } from 'mongodb';
 import slugify from 'slugify';
 import { logActivity } from '@/lib/db/activity';
 import { scheduleBadgeEvaluation } from '@/lib/badges/awardBadges';
+import { publicPlaceFilter, serializePublicPlace } from '@/lib/publicPlaces';
 
 export async function GET(request: NextRequest) {
   try {
@@ -22,7 +23,7 @@ export async function GET(request: NextRequest) {
 
     const placesCollection = await getCollection<Place>('places');
 
-    const query: Record<string, unknown> = {};
+    const query: Record<string, unknown> = { ...publicPlaceFilter };
 
     if (city) query.citySlug = city;
     if (category) query.category = category;
@@ -38,13 +39,7 @@ export async function GET(request: NextRequest) {
       .limit(limit)
       .toArray();
 
-    const serialized = places.map((p) => ({
-      ...p,
-      _id: p._id.toString(),
-      createdByUserId: p.createdByUserId.toString(),
-      createdAt: p.createdAt.toISOString(),
-      updatedAt: p.updatedAt.toISOString(),
-    }));
+    const serialized = places.map(serializePublicPlace);
 
     return NextResponse.json({ places: serialized });
   } catch (error) {

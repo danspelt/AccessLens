@@ -5,6 +5,7 @@ import { placeSchema } from '@/lib/validation/schemas';
 import { Place, calculateAccessibilityScore } from '@/models/Place';
 import { Review } from '@/models/Review';
 import { ObjectId } from 'mongodb';
+import { publicPlaceFilter, serializePublicPlace } from '@/lib/publicPlaces';
 
 export async function GET(
   _request: NextRequest,
@@ -19,7 +20,7 @@ export async function GET(
     const placesCollection = await getCollection<Place>('places');
     const reviewsCollection = await getCollection<Review>('reviews');
 
-    const place = await placesCollection.findOne({ _id: new ObjectId(id) });
+    const place = await placesCollection.findOne({ _id: new ObjectId(id), ...publicPlaceFilter });
     if (!place) {
       return NextResponse.json({ error: 'Place not found' }, { status: 404 });
     }
@@ -34,13 +35,7 @@ export async function GET(
         : null;
 
     return NextResponse.json({
-      place: {
-        ...place,
-        _id: place._id.toString(),
-        createdByUserId: place.createdByUserId.toString(),
-        createdAt: place.createdAt.toISOString(),
-        updatedAt: place.updatedAt.toISOString(),
-      },
+      place: serializePublicPlace(place),
       stats: { reviewCount: reviews.length, avgRating },
     });
   } catch (error) {
