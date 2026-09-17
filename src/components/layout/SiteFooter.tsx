@@ -109,7 +109,18 @@ export async function SiteFooter() {
           </div>
         </div>
         <div className="mt-12 border-t border-slate-200 pt-8 text-center text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} AccessLens. Built with care for the accessibility community.</p>
+          <p>
+            © {new Date().getFullYear()} AccessLens. Built with care for the accessibility community
+            ·{' '}
+            <a
+              href="https://danspelt.com/?utm_source=accesslens&utm_medium=footer&utm_campaign=product-sites"
+              target="_blank"
+              rel="noopener"
+              className="transition-colors hover:text-primary-600"
+            >
+              Built by Dan Spelt
+            </a>
+          </p>
         </div>
       </div>
     </footer>
