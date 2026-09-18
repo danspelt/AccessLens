@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { CheckCircle, Landmark, ShieldCheck, Users } from 'lucide-react';
 import { buildPageMetadata } from '@/lib/seo';
 import { PublicPageHeader } from '@/components/layout/PublicPageHeader';
 
@@ -26,47 +27,45 @@ export default function PrivacyPage() {
       />
 
       <article className="mx-auto max-w-2xl px-4 pt-6 sm:px-6">
-        <div className="space-y-8 rounded-2xl panel-surface p-6 sm:p-8">
-          <section aria-labelledby="public-content">
-            <h2 id="public-content" className="text-xl font-bold text-slate-950">
-              What may be public
-            </h2>
-            <p className="mt-2 leading-relaxed text-slate-700">
-              Approved place details, accessibility notes, reviews, display names, ratings, and attached
-              media may appear publicly. Uploaded media uses a public URL and should never contain private
-              documents, faces without permission, licence plates, or other personal information.
-            </p>
-          </section>
-          <section aria-labelledby="private-content">
-            <h2 id="private-content" className="text-xl font-bold text-slate-950">
-              What is used for administration
-            </h2>
-            <p className="mt-2 leading-relaxed text-slate-700">
-              Account details and place-submission contact information are used to operate accounts, review
-              submissions, prevent abuse, and follow up about contributed records. Public review responses
-              do not include contributor database identifiers.
-            </p>
-          </section>
-          <section aria-labelledby="moderation">
-            <h2 id="moderation" className="text-xl font-bold text-slate-950">
-              Moderation and corrections
-            </h2>
-            <p className="mt-2 leading-relaxed text-slate-700">
-              New place submissions are queued for administrative review. Community reviews can appear
-              before an administrator marks them verified. Use the report action on a place record to flag
-              inaccurate, unsafe, or privacy-sensitive content.
-            </p>
-          </section>
-          <section aria-labelledby="official-source">
-            <h2 id="official-source" className="text-xl font-bold text-slate-950">
-              Official-source candidates
-            </h2>
-            <p className="mt-2 leading-relaxed text-slate-700">
-              Official-source candidates retain their provider, dataset, licence, record identifier, and
-              import date. They remain separate from published place records until current community details
-              are supplied and reviewed.
-            </p>
-          </section>
+        <div className="divide-y divide-slate-100 rounded-2xl panel-surface">
+          {[
+            {
+              id: 'public-content',
+              icon: Users,
+              title: 'What may be public',
+              body: 'Approved place details, accessibility notes, reviews, display names, ratings, and attached media may appear publicly. Uploaded media uses a public URL and should never contain private documents, faces without permission, licence plates, or other personal information.',
+            },
+            {
+              id: 'private-content',
+              icon: ShieldCheck,
+              title: 'What is used for administration',
+              body: 'Account details and place-submission contact information are used to operate accounts, review submissions, prevent abuse, and follow up about contributed records. Public review responses do not include contributor database identifiers.',
+            },
+            {
+              id: 'moderation',
+              icon: CheckCircle,
+              title: 'Moderation and corrections',
+              body: 'New place submissions are queued for administrative review. Community reviews can appear before an administrator marks them verified. Use the report action on a place record to flag inaccurate, unsafe, or privacy-sensitive content.',
+            },
+            {
+              id: 'official-source',
+              icon: Landmark,
+              title: 'Official-source candidates',
+              body: 'Official-source candidates retain their provider, dataset, licence, record identifier, and import date. They remain separate from published place records until current community details are supplied and reviewed.',
+            },
+          ].map(({ id, icon: Icon, title, body }) => (
+            <section key={id} aria-labelledby={id} className="flex gap-4 p-6 sm:p-7">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-50 text-primary-700">
+                <Icon className="h-5 w-5" aria-hidden="true" />
+              </div>
+              <div>
+                <h2 id={id} className="text-lg font-bold text-slate-950">
+                  {title}
+                </h2>
+                <p className="mt-1.5 text-sm leading-relaxed text-slate-700">{body}</p>
+              </div>
+            </section>
+          ))}
         </div>
 
         <p className="mt-8 text-sm leading-relaxed text-slate-600">
