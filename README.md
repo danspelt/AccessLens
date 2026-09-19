@@ -1,5 +1,11 @@
 # AccessLens
 
+## Followed-place notifications
+
+Signed-in users can follow a place independently of favoriting it. Meaningful changes to public place details create a durable in-app notification for every follower except the person making the change. Routine timestamps, counters, and private moderation metadata do not notify followers. The existing **Email notifications** setting controls only the optional email copy; in-app notifications are always retained. Email delivery uses `RESEND_API_KEY` and `RESEND_FROM_EMAIL` and is skipped when Resend is not configured. Delivery failures are recorded on the notification and never remove it.
+
+Run `npx tsx scripts/initIndexes.ts` after deployment to create the unique follow/deduplication indexes. Accessibility issues are currently private moderation reports without a public issue route, so issue following is not exposed until the product has a privacy-safe public issue model.
+
 **Accessibility Intelligence for Cities**
 
 A community-driven accessibility platform where people upload photos, accessibility data, and experiences about real-world public places — live in **Victoria** and **Vancouver**, BC.

@@ -157,6 +157,8 @@ export function NavbarClient({ user }: NavbarClientProps) {
     pathname.startsWith('/dashboard/') ||
     pathname === '/favorites' ||
     pathname.startsWith('/favorites/') ||
+    pathname === '/notifications' ||
+    pathname.startsWith('/notifications/') ||
     pathname === '/my-reviews' ||
     pathname.startsWith('/my-reviews/') ||
     pathname === '/activities' ||

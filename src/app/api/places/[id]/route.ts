@@ -6,6 +6,7 @@ import { Place, calculateAccessibilityScore } from '@/models/Place';
 import { Review } from '@/models/Review';
 import { ObjectId } from 'mongodb';
 import { publicPlaceFilter, serializePublicPlace } from '@/lib/publicPlaces';
+import { meaningfulPlaceChanges, notifyPlaceFollowers } from '@/lib/notifications/placeUpdates';
 
 export async function GET(
   _request: NextRequest,
@@ -61,8 +62,10 @@ export async function PATCH(
 
     const body = await request.json();
     const validated = placeSchema.partial().parse(body);
-    const checklist = validated.checklist || {};
-    const accessibilityScore = calculateAccessibilityScore(checklist);
+    const existing = await (await getCollection<Place>('places')).findOne({ _id: new ObjectId(id) });
+    if (!existing) return NextResponse.json({ error: 'Place not found' }, { status: 404 });
+    const checklist = validated.checklist;
+    const accessibilityScore = checklist ? calculateAccessibilityScore(checklist) : existing.accessibilityScore;
     const derivedLocation =
       validated.location ||
       (validated.latitude !== undefined && validated.longitude !== undefined
@@ -70,15 +73,20 @@ export async function PATCH(
         : undefined);
 
     const placesCollection = await getCollection<Place>('places');
+    const publicUpdate = { ...validated, ...(derivedLocation ? { location: derivedLocation } : {}), ...(accessibilityScore !== undefined ? { accessibilityScore } : {}) };
+    const changedFields = meaningfulPlaceChanges(existing, publicUpdate);
     const result = await placesCollection.updateOne(
       { _id: new ObjectId(id) },
-      { $set: { ...validated, ...(derivedLocation ? { location: derivedLocation } : {}), accessibilityScore, updatedAt: new Date() } }
+      { $set: { ...publicUpdate, updatedAt: new Date() } }
     );
 
     if (result.matchedCount === 0) {
       return NextResponse.json({ error: 'Place not found' }, { status: 404 });
     }
 
+    if (changedFields.length > 0) {
+      await notifyPlaceFollowers({ place: existing, actorUserId: new ObjectId(session.user.id), changedFields });
+    }
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('PATCH /api/places/[id] error:', error);

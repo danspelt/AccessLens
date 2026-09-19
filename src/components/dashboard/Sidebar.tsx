@@ -19,6 +19,7 @@ import {
   Camera,
   Shield,
   FileInput,
+  Bell,
 } from 'lucide-react';
 import type { UserRole } from '@/models/User';
 import { canAccessAdminOutreach, canAccessStudentOutreach } from '@/lib/auth/outreachRoles';
@@ -26,6 +27,7 @@ import { canAccessAdminOutreach, canAccessStudentOutreach } from '@/lib/auth/out
 const navItems = [
   { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { label: 'Favorites', href: '/favorites', icon: Heart },
+  { label: 'Notifications', href: '/notifications', icon: Bell },
   { label: 'My Reviews', href: '/my-reviews', icon: Star },
   { label: 'My Activity', href: '/activities', icon: Activity },
   { label: 'My Places', href: '/my-places', icon: MapPin },

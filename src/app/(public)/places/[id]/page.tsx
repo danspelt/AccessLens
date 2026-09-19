@@ -26,6 +26,8 @@ import { NoMapPlaceholder } from '@/components/map/PlaceMap';
 import { PlaceMiniMap } from '@/components/map/PlaceMiniMap';
 import { Badge } from '@/components/ui/Badge';
 import { FavoriteButton } from '@/components/favorites/FavoriteButton';
+import { FollowButton } from '@/components/follows/FollowButton';
+import { Follow } from '@/models/Follow';
 import {
   MapPin,
   Globe,
@@ -154,12 +156,17 @@ export default async function PlaceDetailPage({ params }: Props) {
     ? canSubmitCommunityFeedback(currentUser.accountType)
     : false;
   const favoritesCollection = await getCollection<Favorite>('favorites');
+  const followsCollection = await getCollection<Follow>('follows');
   const isFavorited =
     currentUser?._id && ObjectId.isValid(place._id)
       ? !!(await favoritesCollection.findOne({
           userId: currentUser._id,
           placeId: new ObjectId(place._id),
         }))
+      : false;
+  const isFollowing =
+    currentUser?._id && ObjectId.isValid(place._id)
+      ? !!(await followsCollection.findOne({ userId: currentUser._id, entityType: 'place', entityId: new ObjectId(place._id) }))
       : false;
 
   const score = place.accessibilityScore;
@@ -310,7 +317,10 @@ export default async function PlaceDetailPage({ params }: Props) {
 
               <div className="mt-4 flex flex-wrap items-center gap-2">
                 {currentUser && (
-                  <FavoriteButton placeId={place._id} initialFavorited={isFavorited} />
+                  <>
+                    <FavoriteButton placeId={place._id} initialFavorited={isFavorited} />
+                    <FollowButton placeId={place._id} initialFollowing={isFollowing} />
+                  </>
                 )}
               </div>
 

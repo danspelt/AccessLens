@@ -69,6 +69,16 @@ async function initIndexes() {
     await safeIndex(favorites, { userId: 1, createdAt: -1 });
     console.log('✓ favorites indexes');
 
+    const follows = db.collection('follows');
+    await safeIndex(follows, { userId: 1, entityType: 1, entityId: 1 }, { unique: true });
+    await safeIndex(follows, { entityType: 1, entityId: 1 });
+    console.log('✓ follows indexes');
+
+    const notifications = db.collection('notifications');
+    await safeIndex(notifications, { dedupeKey: 1 }, { unique: true });
+    await safeIndex(notifications, { userId: 1, readAt: 1, createdAt: -1 });
+    console.log('✓ notifications indexes');
+
     // Activities collection
     const activities = db.collection('activities');
     await safeIndex(activities, { userId: 1, createdAt: -1 });
