@@ -16,6 +16,9 @@ const staticPages: MetadataRoute.Sitemap = [
     priority: 0.7,
   },
   { url: absoluteUrl('/privacy'), changeFrequency: 'yearly', priority: 0.2 },
+  { url: absoluteUrl('/terms'), changeFrequency: 'yearly', priority: 0.2 },
+  { url: absoluteUrl('/cookies'), changeFrequency: 'yearly', priority: 0.2 },
+  { url: absoluteUrl('/accessibility'), changeFrequency: 'yearly', priority: 0.2 },
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

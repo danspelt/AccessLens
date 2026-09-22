@@ -82,6 +82,21 @@ export async function SiteFooter() {
                 </Link>
               </li>
               <li>
+                <Link href="/terms" className="transition-colors hover:text-primary-600">
+                  Terms
+                </Link>
+              </li>
+              <li>
+                <Link href="/cookies" className="transition-colors hover:text-primary-600">
+                  Cookies
+                </Link>
+              </li>
+              <li>
+                <Link href="/accessibility" className="transition-colors hover:text-primary-600">
+                  Accessibility
+                </Link>
+              </li>
+              <li>
                 <a href="mailto:hello@accesslens.ca" className="transition-colors hover:text-primary-600">
                   Contact
                 </a>
