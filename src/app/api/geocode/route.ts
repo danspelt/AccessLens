@@ -53,6 +53,85 @@ type NominatimReverseHit = {
   address?: Record<string, string>;
 };
 
+type PhotonFeature = {
+  geometry?: { coordinates?: number[] };
+  properties?: {
+    name?: string;
+    street?: string;
+    housenumber?: string;
+    city?: string;
+    district?: string;
+    state?: string;
+    postcode?: string;
+    country?: string;
+    osm_type?: string;
+    osm_id?: number;
+    osm_key?: string;
+    osm_value?: string;
+  };
+};
+
+function photonDisplayName(p: PhotonFeature['properties']): string {
+  const streetPart = [p?.housenumber, p?.street].filter(Boolean).join(' ');
+  return [p?.name, streetPart, p?.city, p?.state, p?.country]
+    .filter(Boolean)
+    .join(', ');
+}
+
+async function photonFetch(url: URL): Promise<PhotonFeature[]> {
+  const res = await fetch(url.toString(), {
+    headers: {
+      'User-Agent': userAgent(),
+      Accept: 'application/json',
+      'Accept-Language': 'en',
+    },
+    cache: 'no-store',
+  });
+  if (!res.ok) throw new Error('photon_http');
+  const data: unknown = await res.json();
+  const features = (data as { features?: unknown })?.features;
+  return Array.isArray(features) ? (features as PhotonFeature[]) : [];
+}
+
+async function photonForwardHits(query: string, limit: number): Promise<NominatimSearchHit[]> {
+  const url = new URL('https://photon.komoot.io/api/');
+  url.searchParams.set('q', query);
+  url.searchParams.set('limit', String(limit));
+  const features = await photonFetch(url);
+  return features
+    .map((f): NominatimSearchHit => {
+      const [lon, lat] = f.geometry?.coordinates ?? [];
+      return {
+        lat: String(lat),
+        lon: String(lon),
+        display_name: photonDisplayName(f.properties) || `${lat}, ${lon}`,
+        place_id: f.properties?.osm_id,
+        osm_type: f.properties?.osm_type,
+        type: f.properties?.osm_value,
+      };
+    })
+    .filter((h) => Number.isFinite(Number(h.lat)) && Number.isFinite(Number(h.lon)));
+}
+
+async function photonReverse(lat: number, lon: number): Promise<NominatimReverseHit | null> {
+  const url = new URL('https://photon.komoot.io/reverse');
+  url.searchParams.set('lat', String(lat));
+  url.searchParams.set('lon', String(lon));
+  const features = await photonFetch(url);
+  const f = features[0];
+  if (!f) return null;
+  const [flon, flat] = f.geometry?.coordinates ?? [];
+  return {
+    lat: String(flat ?? lat),
+    lon: String(flon ?? lon),
+    display_name: photonDisplayName(f.properties) || `${lat}, ${lon}`,
+    place_id: f.properties?.osm_id,
+    osm_type: f.properties?.osm_type,
+    type: f.properties?.osm_value,
+    address: undefined,
+  };
+}
+
 async function applyRateLimit(req: NextRequest): Promise<NextResponse | null> {
   const ip = getClientIp(req);
   const now = Date.now();
@@ -208,20 +287,27 @@ export async function GET(req: NextRequest) {
       });
 
       const bodyText = await res.text();
-      if (!res.ok) {
+      let top: NominatimReverseHit | null = null;
+      if (res.ok) {
+        try {
+          top = JSON.parse(bodyText) as NominatimReverseHit;
+        } catch {
+          return NextResponse.json({ error: 'Invalid reverse geocode response' }, { status: 502 });
+        }
+      } else {
         console.error(
           '[geocode] Nominatim reverse failed',
           res.status,
           bodyText.slice(0, 400),
         );
-        return NextResponse.json({ error: 'Reverse geocoding failed' }, { status: 502 });
-      }
-
-      let top: NominatimReverseHit;
-      try {
-        top = JSON.parse(bodyText) as NominatimReverseHit;
-      } catch {
-        return NextResponse.json({ error: 'Invalid reverse geocode response' }, { status: 502 });
+        try {
+          top = await photonReverse(lat, lon);
+        } catch (fallbackErr) {
+          console.error('[geocode] Photon reverse fallback failed:', fallbackErr);
+        }
+        if (!top) {
+          return NextResponse.json({ error: 'Reverse geocoding failed' }, { status: 502 });
+        }
       }
       if (!top || typeof top.display_name !== 'string') {
         const fallback = {
@@ -341,9 +427,19 @@ export async function GET(req: NextRequest) {
     } catch (e) {
       const msg = e instanceof Error ? e.message : '';
       if (msg === 'nominatim_forward_http' || msg === 'nominatim_forward_json') {
-        return NextResponse.json({ error: 'Geocoding failed' }, { status: 502 });
+        try {
+          const fallbackQ = hasStructuredFwd
+            ? [street, city, state, postalcode, country].filter(Boolean).join(', ')
+            : q;
+          hits = await photonForwardHits(fallbackQ, limit);
+          cacheWriteKey = hasStructuredFwd ? sKey : q;
+        } catch (fallbackErr) {
+          console.error('[geocode] Photon forward fallback failed:', fallbackErr);
+          return NextResponse.json({ error: 'Geocoding failed' }, { status: 502 });
+        }
+      } else {
+        throw e;
       }
-      throw e;
     }
 
     if (hits.length === 0) {

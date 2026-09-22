@@ -1,7 +1,9 @@
 /** Client-safe access code formatting (no database). */
 
 export function generateAccessCode(): string {
-  return String(Math.floor(100000 + Math.random() * 900000));
+  const buf = new Uint32Array(1);
+  globalThis.crypto.getRandomValues(buf);
+  return String(100000 + (buf[0] % 900000));
 }
 
 export function normalizeAccessCode(input: string): string {

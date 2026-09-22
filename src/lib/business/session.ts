@@ -9,23 +9,30 @@ export interface BusinessAccessSessionData {
 
 export type BusinessAccessSession = IronSession<BusinessAccessSessionData>;
 
-const businessSessionOptions = {
-  cookieName: 'accesslens_business_access',
-  password:
-    process.env.BUSINESS_SESSION_SECRET ||
-    process.env.SESSION_SECRET ||
-    'default-business-secret-change-in-production-32',
-  cookieOptions: {
-    secure: process.env.NODE_ENV === 'production',
-    httpOnly: true,
-    maxAge: 60 * 60 * 24, // 24 hours
-    sameSite: 'lax' as const,
-  },
-};
+function resolveSessionPassword(): string {
+  const secret =
+    process.env.BUSINESS_SESSION_SECRET || process.env.SESSION_SECRET;
+  if (secret && secret.length >= 32) return secret;
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error(
+      'BUSINESS_SESSION_SECRET (32+ chars) must be configured in production'
+    );
+  }
+  return 'dev-only-insecure-secret-not-for-production';
+}
 
 export async function getBusinessAccessSession(): Promise<BusinessAccessSession> {
   const cookieStore = await cookies();
-  return getIronSession<BusinessAccessSessionData>(cookieStore, businessSessionOptions);
+  return getIronSession<BusinessAccessSessionData>(cookieStore, {
+    cookieName: 'accesslens_business_access',
+    password: resolveSessionPassword(),
+    cookieOptions: {
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      maxAge: 60 * 60 * 24, // 24 hours
+      sameSite: 'lax' as const,
+    },
+  });
 }
 
 export async function setBusinessAccessSession(placeId: string, accessCode: string): Promise<void> {

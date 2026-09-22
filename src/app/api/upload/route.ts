@@ -6,6 +6,7 @@ import { randomUUID } from 'crypto';
 import { logActivity } from '@/lib/db/activity';
 import { scheduleBadgeEvaluation } from '@/lib/badges/awardBadges';
 import { ALLOWED_UPLOAD_CONTEXTS, classifyUpload, contentMatchesType } from '@/lib/uploads/validation';
+import { clientIp, rateLimit } from '@/lib/rateLimit';
 
 const PUBLIC_UPLOAD_CONTEXTS = new Set(['places', 'submissions']);
 
@@ -13,7 +14,12 @@ export async function POST(request: NextRequest) {
   const session = await auth();
 
   try {
-    const formData = await request.formData();
+    let formData: FormData;
+    try {
+      formData = await request.formData();
+    } catch {
+      return NextResponse.json({ error: 'Invalid form data' }, { status: 400 });
+    }
     const files = formData.getAll('files') as File[];
     const context = (formData.get('context') as string) || 'general';
 
@@ -26,6 +32,12 @@ export async function POST(request: NextRequest) {
     }
 
     if (!session?.user?.id && PUBLIC_UPLOAD_CONTEXTS.has(context)) {
+      if (!rateLimit(`upload-anon:${clientIp(request)}`, 20, 60 * 60 * 1000)) {
+        return NextResponse.json(
+          { error: 'Upload limit reached. Please sign in or try again later.' },
+          { status: 429 }
+        );
+      }
       const hasVideo = files.some((file) => classifyUpload(file.type)?.kind === 'video');
       if (hasVideo) {
         return NextResponse.json(
