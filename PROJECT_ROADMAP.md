@@ -195,6 +195,29 @@ Per-place boolean flags:
 
 ---
 
+## Business Model — Stage Gates
+
+Model: **free public resource, funded by institutions that benefit when it succeeds.**
+The person who needs accessibility information never pays.
+
+**Guardrail:** payment never affects listing inclusion or accessibility score.
+Paid = enhanced profile only. Score credibility is the product.
+
+| Stage | Gate to enter | Revenue motion |
+|---|---|---|
+| 1 — Now | — | Free public service. Grow dataset to ~250 places. Land first sponsor. |
+| 2 — First revenue | Traction in Victoria/Vancouver | Sponsors ($1k–$5k/yr) + enhanced business profiles ($50–$150/yr) + one paid pilot report |
+| 3 — Institutional | Proven usage + sponsor references | Municipal/tourism reports ($2.5k–$10k/yr); regional portals |
+| 4 — Later | Stage 3 working | License platform to communities beyond BC |
+
+- [ ] Sponsor prospectus (one-pager) for tourism orgs / BIAs / foundations
+- [ ] "Victoria Accessibility Snapshot" sample report generated from live data
+- [ ] Stripe billing → flip `businessSubscriptionStatus: pending` → `active` (only when a business asks to pay)
+- [ ] Enhanced business profile tier (photos, links, verified status, printable QR) — score stays independent
+- [ ] Grants/incorporation: defer until traction exists
+
+---
+
 ## Recently completed (2026-08)
 
 - [x] **Admin moderation hub** — `/admin` with pending counts; place submissions, photos, outreach, review verification
