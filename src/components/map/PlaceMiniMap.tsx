@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
-import maplibregl, { Map as MlMap } from 'maplibre-gl';
+import * as maplibregl from 'maplibre-gl';
+import type { Map as MlMap } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { MapPin } from 'lucide-react';
 

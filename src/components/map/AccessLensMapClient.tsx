@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useMemo, useRef } from 'react';
-import maplibregl, { Map as MlMap, GeoJSONSource } from 'maplibre-gl';
+import * as maplibregl from 'maplibre-gl';
+import type { Map as MlMap, GeoJSONSource } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { getScoreLabel } from '@/models/Place';
 
