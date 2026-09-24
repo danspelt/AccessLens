@@ -26,7 +26,7 @@ Business model: **free public resource funded by institutions** — the person n
 
 ## What Needs To Get Done
 
-- [ ] Confirm `/app/public/uploads` is mounted to persistent, backed-up storage in Coolify — container-local uploads are lost on redeploy (or swap to S3/MinIO)
+- [ ] Set `UPLOAD_ROOT` to persistent, backed-up storage in Coolify and serve `/uploads` from that mount — container-local uploads are lost on redeploy (or swap to S3/MinIO)
 - [ ] Run `npm run check:env` with `NODE_ENV=production` against the deployed env and close any gaps
 - [ ] Manual WCAG 2.2 AA review per the README launch checklist (focus order, zoom/reflow, contrast, screen reader, touch targets, reduced motion)
 - [ ] Sponsor prospectus one-pager for tourism orgs / BIAs / foundations
@@ -47,6 +47,6 @@ npm run test:e2e    # Playwright — needs build + seeded Mongo
 
 ## Known Issues
 
-- Photo uploads use the local filesystem (`/public/uploads`) — not durable without a mounted volume
+- Photo uploads use the configurable local filesystem (`UPLOAD_ROOT`, default `/public/uploads`) — not durable until production points it at a mounted volume and serves `/uploads` from it
 - `businessSubscriptionStatus` remains `pending` for all business accounts until Stripe is wired
 - Geocoding depends on Nominatim; cached in MongoDB but still an external dependency

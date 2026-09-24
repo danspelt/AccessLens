@@ -18,7 +18,7 @@ There is no separate API service, SQL database, CMS, or billing service in the a
    - Google OAuth for sign-in.
    - Resend for email magic links.
    - OpenStreetMap Nominatim for geocoding, with MongoDB caching.
-6. Uploaded files are stored under `public/uploads`. A production deployment must mount persistent storage there or replace this adapter before launch.
+6. Uploaded files are stored under `UPLOAD_ROOT` (default: `public/uploads`). Public URLs remain under `/uploads`. Production must set `UPLOAD_ROOT` to a persistent, backed-up mounted volume and serve/proxy `/uploads` from that directory, or replace this adapter before launch.
 
 ## Authentication model
 
@@ -58,7 +58,7 @@ Before staging or production promotion:
 1. Run `npm run check:env` with the target environment variables.
 2. Connect to the intended MongoDB database and run the documented index initialization once.
 3. Seed only the approved city/content data; do not treat candidate imports as verified public accessibility data.
-4. Confirm persistent storage for `public/uploads`.
+4. Confirm `UPLOAD_ROOT` points to persistent, backed-up storage and `/uploads` is served from it.
 5. Run lint, type checking, unit tests, build, and Playwright smoke tests against staging.
 6. Verify Auth.js callback URLs, Google OAuth redirect URLs if enabled, and a monitored Nominatim contact identity.
 

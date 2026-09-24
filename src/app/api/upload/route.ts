@@ -7,6 +7,7 @@ import { logActivity } from '@/lib/db/activity';
 import { scheduleBadgeEvaluation } from '@/lib/badges/awardBadges';
 import { ALLOWED_UPLOAD_CONTEXTS, classifyUpload, contentMatchesType } from '@/lib/uploads/validation';
 import { clientIp, rateLimit } from '@/lib/rateLimit';
+import { getUploadDirectory, getUploadUrl } from '@/lib/uploads/storage';
 
 const PUBLIC_UPLOAD_CONTEXTS = new Set(['places', 'submissions']);
 
@@ -86,12 +87,12 @@ export async function POST(request: NextRequest) {
       }
 
       const filename = `${randomUUID()}.${classified.extension}`;
-      const uploadDir = join(process.cwd(), 'public', 'uploads', context);
+      const uploadDir = getUploadDirectory(context);
 
       await mkdir(uploadDir, { recursive: true });
-      await writeFile(join(uploadDir, filename), buffer);
+      await writeFile(join(/* turbopackIgnore: true */ uploadDir, filename), buffer);
 
-      uploadedUrls.push(`/uploads/${context}/${filename}`);
+      uploadedUrls.push(getUploadUrl(context, filename));
       kinds.push(classified.kind);
     }
 

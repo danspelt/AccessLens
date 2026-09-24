@@ -38,7 +38,7 @@ Libraries · Restaurants · Movie Theatres · Parks · Government Buildings · T
 | Database | MongoDB (native driver) |
 | Auth | Auth.js (NextAuth v5) — Google, email magic link, credentials |
 | Maps | Leaflet + OpenStreetMap |
-| Uploads | Local filesystem (`/public/uploads`) → swap for S3/MinIO |
+| Uploads | Configurable local filesystem (`UPLOAD_ROOT`, default `/public/uploads`) → swap for S3/MinIO |
 | Validation | Zod |
 
 ## Authentication & account types
@@ -241,7 +241,7 @@ Before launch, all of the following must be true:
 
 - `MONGODB_URI`, `MONGODB_DB`, `AUTH_SECRET` (32+ characters), `BUSINESS_SESSION_SECRET` (32+ characters), `AUTH_URL`, and `NEXT_PUBLIC_APP_URL` are configured; production URLs use HTTPS.
 - `GET /api/health` returns HTTP 200 with `database: connected`. It returns 503 when MongoDB is unavailable so an unhealthy instance does not receive traffic.
-- `/app/public/uploads` is mounted to private, persistent, backed-up storage, or the local upload implementation is replaced with object storage. Container-local files are otherwise lost on redeploy.
+- `UPLOAD_ROOT` points at a private, persistent, backed-up mounted volume (for example, `/data/uploads`), or the local upload implementation is replaced with object storage. The default is `<app>/public/uploads` for local development. Public media URLs remain `/uploads/...`; configure the deployment to serve or proxy that URL prefix from the same mounted directory when `UPLOAD_ROOT` is outside `public/uploads`. Container-local files are otherwise lost on redeploy.
 - The reverse proxy overwrites untrusted `Host` headers when `AUTH_TRUST_HOST` is enabled.
 - An administrator has tested sign-up, sign-in, sign-out, password reset/magic link if enabled, Google OAuth if enabled, authorization boundaries, upload/rejection/moderation, and account deletion/data-request procedures.
 - Manual WCAG 2.2 AA review covers keyboard focus order and unobscured focus, 200%/400% zoom and reflow, contrast in every state, screen-reader announcements, map/list equivalence, mobile touch targets, validation errors, and reduced motion.

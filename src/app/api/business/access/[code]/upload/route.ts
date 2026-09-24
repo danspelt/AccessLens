@@ -6,6 +6,7 @@ import { findPlaceByAccessCode } from '@/lib/db/placesByAccessCode';
 import { requireBusinessAccessForPlace } from '@/lib/business/session';
 import { normalizeAccessCode } from '@/lib/access/codeFormat';
 import { classifyUpload, contentMatchesType } from '@/lib/uploads/validation';
+import { getUploadDirectory, getUploadUrl } from '@/lib/uploads/storage';
 
 interface RouteContext {
   params: Promise<{ code: string }>;
@@ -53,10 +54,10 @@ export async function POST(request: NextRequest, context: RouteContext) {
         return NextResponse.json({ error: `${file.name} content does not match its declared file type` }, { status: 400 });
       }
       const filename = `${randomUUID()}.${classification.extension}`;
-      const uploadDir = join(process.cwd(), 'public', 'uploads', 'places');
+      const uploadDir = getUploadDirectory('places');
       await mkdir(uploadDir, { recursive: true });
-      await writeFile(join(uploadDir, filename), buffer);
-      uploadedUrls.push(`/uploads/places/${filename}`);
+      await writeFile(join(/* turbopackIgnore: true */ uploadDir, filename), buffer);
+      uploadedUrls.push(getUploadUrl('places', filename));
     }
 
     return NextResponse.json({ urls: uploadedUrls, kinds: uploadedUrls.map(() => 'image') }, { status: 201 });
