@@ -7,7 +7,7 @@
 
 AccessLens is a free, community-driven guide to accessibility information about public places. It helps people compare reported features, read community experiences, and find practical details before they travel.
 
-**Live in Victoria and Vancouver, British Columbia:** [accesslens.ca](https://www.accesslens.ca)
+**Live in Victoria and Vancouver, British Columbia:** [accesslens.ca](https://www.accesslens.ca) — Victoria has an active community dataset; Vancouver coverage is at an early seed stage.
 
 ## Why sponsorship matters
 
@@ -15,7 +15,7 @@ People who need accessibility information should not have to pay to access it. L
 
 ## A current snapshot
 
-The Victoria public dataset contained **48 active place records** when checked on September 25, 2026. The records span restaurants, government, parks, shopping, transit, sidewalks, sports, libraries, hospitals, schools, movie theatres, and other places.
+The Victoria public dataset contained **48 active place records** when checked on September 25, 2026. The records span restaurants, government, parks, shopping, transit, sidewalks, sports, libraries, hospitals, schools, movie theatres, and other places. Vancouver coverage is in early seed stage, so no Vancouver figure is quoted here.
 
 The accompanying [Victoria Accessibility Snapshot](VICTORIA_ACCESSIBILITY_SNAPSHOT.md) reports checklist data and its limitations. These are community-submitted records, not independent inspections or accessibility certifications.
 

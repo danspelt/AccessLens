@@ -61,3 +61,7 @@ Counts below are the number of records where that item is explicitly marked true
 The records provide a starting point for comparing reported features across places and identifying information gaps. Coverage is uneven across categories, and checklist entries can become outdated. The next useful dataset improvements are community verification, more current photos, and follow-up on unknown or unreported features.
 
 This sample should be refreshed from the live endpoint before external use. Do not describe the counts as city-wide coverage or claim that the places have been independently verified.
+
+## Refreshing This Snapshot
+
+Fetch `GET https://www.accesslens.ca/api/places?city=victoria-bc&limit=200`, regroup the returned records by category, score band, and checklist "yes" counts, then update the generation date. Do not edit the counts by hand.
