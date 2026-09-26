@@ -333,7 +333,7 @@ export default async function ExplorePage({
             ) : (
               <section aria-label="List of accessible places">
                 <h2 className="mb-3 font-display text-sm font-semibold text-slate-900">Places</h2>
-                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {places.map((place) => (
                     <PlaceCard key={place._id} place={place} />
                   ))}

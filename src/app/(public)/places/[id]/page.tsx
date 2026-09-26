@@ -334,7 +334,7 @@ export default async function PlaceDetailPage({ params }: Props) {
                   >
                     <span className="text-2xl font-bold">{score}</span>
                     <div>
-                      <p className="text-xs font-semibold opacity-70">/ 100</p>
+                      <p className="text-xs font-semibold">/ 100</p>
                       <p className="text-xs font-medium">{scoreLabel}</p>
                     </div>
                   </div>
@@ -419,7 +419,7 @@ export default async function PlaceDetailPage({ params }: Props) {
               <h2 id="mobile-summary-heading" className="mb-3 text-base font-semibold text-slate-900">
                 At a glance
               </h2>
-              <dl className="grid gap-2 sm:grid-cols-2">
+              <dl className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {quickSummaryItems.map(({ label, value }) => (
                   <div key={label} className="flex min-h-9 items-center justify-between gap-3 border-b border-slate-100 py-1.5">
                     <dt className="text-sm text-slate-700">{label}</dt>

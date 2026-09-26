@@ -108,6 +108,9 @@ export function PlaceMiniMap({
     marker.style.border = '3px solid white';
     marker.style.boxShadow = '0 2px 8px rgba(0,0,0,0.25)';
 
+    marker.setAttribute('role', 'button');
+    marker.setAttribute('aria-label', `${name} location, show address`);
+
     new maplibregl.Marker({ element: marker })
       .setLngLat([lng, lat])
       .setPopup(new maplibregl.Popup({ offset: 16 }).setHTML(`<strong>${name}</strong><br/><small>${address}</small>`))

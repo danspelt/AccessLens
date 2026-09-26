@@ -222,7 +222,6 @@ export function SignInForm({
               id="email"
               type="email"
               autoComplete="email"
-              autoFocus
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"

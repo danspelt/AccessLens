@@ -84,7 +84,7 @@ export default async function CityPage({ params }: Props) {
           <h2 id="categories-heading" className="text-2xl font-bold text-slate-900 mb-6">
             Browse by Category
           </h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {categoryCounts.map(({ _id: cat, count, avgScore }) => {
               const label = PLACE_CATEGORIES[cat as keyof typeof PLACE_CATEGORIES] || cat;
               const icon = CATEGORY_ICONS[cat as keyof typeof CATEGORY_ICONS] || '📍';
@@ -133,7 +133,7 @@ export default async function CityPage({ params }: Props) {
                 View all →
               </Link>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {recentPlaces.map((place) => {
                 const cat = place.category as keyof typeof PLACE_CATEGORIES;
                 const label = PLACE_CATEGORIES[cat] || place.category;

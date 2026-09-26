@@ -193,7 +193,7 @@ function FeaturesSection({ items }: { items: HomeFeatureItem[] }) {
             Real information from people who use these spaces — not generic listings.
           </p>
         </div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {items.map((feature) => {
             const Icon = resolveIcon(feature.icon);
             return (
@@ -473,7 +473,7 @@ export default async function HomePage() {
               Where AccessLens is live
             </h2>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {cities.map((c) => (
               <Link
                 key={c.slug}
@@ -553,7 +553,7 @@ export default async function HomePage() {
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {featuredPlaces.map((p) => {
                 const icon = CATEGORY_ICONS[p.category as PlaceCategory] || '📍';
                 const label = PLACE_CATEGORIES[p.category as PlaceCategory] || p.category;

@@ -536,7 +536,7 @@ export default function NewPlacePage() {
                 {errors.address && <p className="mt-1 text-xs text-red-600">{errors.address}</p>}
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-3">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div>
                   <Label htmlFor="place-city" required>City</Label>
                   <Input
@@ -584,7 +584,7 @@ export default function NewPlacePage() {
                 />
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-3">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div>
                   <Label htmlFor="place-phone">Phone (optional)</Label>
                   <Input
@@ -658,7 +658,7 @@ export default function NewPlacePage() {
               )}
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <Label htmlFor="place-lat">Latitude</Label>
                 <Input

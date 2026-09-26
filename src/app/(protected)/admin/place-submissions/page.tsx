@@ -236,7 +236,7 @@ export default function AdminPlaceSubmissionsPage() {
                   {expanded && (
                     <div className="border-t border-slate-100 bg-gradient-to-b from-slate-50/50 to-white">
                       <div className="p-5 sm:p-6 space-y-5">
-                        <div className="grid gap-5 sm:grid-cols-2">
+                        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                           {/* Place Details */}
                           <div className="rounded-xl border border-slate-200 bg-white p-4">
                             <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">

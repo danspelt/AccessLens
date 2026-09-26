@@ -177,7 +177,7 @@ export function SignupClient({ googleEnabled }: { googleEnabled: boolean }) {
           {step === 1 && (
             <div className="space-y-6">
               <p className="text-lg font-semibold text-white sm:text-xl">How will you use AccessLens?</p>
-              <div className="grid gap-6 sm:grid-cols-1">
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-1">
                 <button
                   type="button"
                   onClick={() => selectType('reviewer')}
@@ -228,17 +228,6 @@ export function SignupClient({ googleEnabled }: { googleEnabled: boolean }) {
                           Pilot
                         </span>
                       </p>
-                      <p className="mt-2 text-sm text-slate-600 sm:text-base">
-                        Prefer a QR card? Skip signup and use your{' '}
-                        <Link
-                          href="/update-accessibility"
-                          className="font-semibold text-primary-700 underline underline-offset-2 hover:text-primary-800"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          six-digit code
-                        </Link>
-                        .
-                      </p>
                       <ul className="mt-3 space-y-2.5 text-base text-slate-600 sm:text-lg">
                         <li className="flex items-center gap-3">
                           <Check className="h-5 w-5 shrink-0 text-green-600" aria-hidden="true" />
@@ -260,6 +249,16 @@ export function SignupClient({ googleEnabled }: { googleEnabled: boolean }) {
                     </div>
                   </div>
                 </button>
+                <p className="-mt-3 text-sm text-slate-300 sm:text-base">
+                  Business with a QR card? Skip signup and use your{' '}
+                  <Link
+                    href="/update-accessibility"
+                    className="rounded font-semibold text-primary-200 underline underline-offset-2 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300"
+                  >
+                    six-digit code
+                  </Link>
+                  .
+                </p>
               </div>
               <p className="text-center text-base text-slate-300 sm:text-lg">
                 Already have an account?{' '}

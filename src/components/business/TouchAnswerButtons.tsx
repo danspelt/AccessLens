@@ -16,7 +16,7 @@ export function TouchAnswerButtons<T extends string>({
   ariaLabel: string;
 }) {
   return (
-    <div role="group" aria-label={ariaLabel} className="grid gap-3 sm:grid-cols-2">
+    <div role="group" aria-label={ariaLabel} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       {options.map((opt) => {
         const selected = value === opt.value;
         return (

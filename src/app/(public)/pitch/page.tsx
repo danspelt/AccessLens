@@ -151,11 +151,13 @@ export default function PitchPage() {
         <div className="mx-auto max-w-5xl px-5 py-10 sm:px-8">
           <dl className="grid grid-cols-2 gap-6 sm:grid-cols-4">
             {STATS.map(({ label, value, note, icon: Icon }) => (
-              <div key={label} className="rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-sm">
-                <Icon className="mx-auto mb-2 h-6 w-6 text-primary-600" aria-hidden="true" />
-                <dd className="text-3xl font-bold tabular-nums text-slate-900">{value}</dd>
-                <dt className="mt-1 text-sm font-medium text-slate-700">{label}</dt>
-                {note && <p className="mt-0.5 text-xs text-slate-500">{note}</p>}
+              <div key={label} className="flex flex-col rounded-2xl border border-slate-200 bg-white p-5 text-center shadow-sm">
+                <dt className="order-2 mt-1 text-sm font-medium text-slate-700">{label}</dt>
+                <dd className="order-1">
+                  <Icon className="mx-auto mb-2 h-6 w-6 text-primary-600" aria-hidden="true" />
+                  <span className="block text-3xl font-bold tabular-nums text-slate-900">{value}</span>
+                </dd>
+                {note && <dd className="order-3 mt-0.5 text-xs text-slate-500">{note}</dd>}
               </div>
             ))}
           </dl>
@@ -256,7 +258,7 @@ export default function PitchPage() {
               <BarChart3 className="h-6 w-6 text-green-700" aria-hidden="true" />
               <h3 className="font-semibold text-green-900">Revenue model at a glance</h3>
             </div>
-            <div className="grid gap-4 sm:grid-cols-3 text-center">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 text-center">
               {[
                 { label: 'Starter plan', price: '$29/mo', note: 'for small businesses' },
                 { label: 'Professional', price: '$79/mo', note: 'for multi-location' },
