@@ -576,10 +576,10 @@ export default async function PlaceDetailPage({ params }: Props) {
                     <dd
                       className={`text-xs font-semibold ${
                         value === true
-                          ? 'text-green-600'
+                          ? 'text-green-700'
                           : value === false
-                          ? 'text-red-500'
-                          : 'text-slate-400'
+                          ? 'text-red-700'
+                          : 'text-slate-600'
                       }`}
                     >
                       {value === true ? '✓ Yes' : value === false ? '✗ No' : '? Unknown'}

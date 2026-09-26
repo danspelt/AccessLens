@@ -189,7 +189,7 @@ export function BusinessAccessWizard({
         </div>
       </header>
 
-      <main className="mx-auto max-w-lg px-4 py-6 pb-24">
+      <div className="mx-auto max-w-lg px-4 py-6 pb-24">
         {error ? (
           <Alert variant="error" className="mb-4">
             {error}
@@ -379,7 +379,7 @@ export function BusinessAccessWizard({
             </div>
           </StepCard>
         )}
-      </main>
+      </div>
 
       {step !== 'preview' && (
         <footer className="fixed inset-x-0 bottom-0 border-t border-slate-200 bg-white/95 px-4 py-4 backdrop-blur">

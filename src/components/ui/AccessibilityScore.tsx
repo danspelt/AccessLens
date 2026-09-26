@@ -56,7 +56,7 @@ export function AccessibilityScore({
         aria-label={`Accessibility score: ${score} out of 100 — ${label}`}
       >
         <span className={clsx(colors.text, sizes.score)}>{score}</span>
-        <span className={clsx(colors.text, 'text-xs font-medium opacity-70')}>/100</span>
+        <span className={clsx(colors.text, 'text-xs font-medium')}>/100</span>
         {showLabel && (
           <span className={clsx(colors.text, sizes.label, 'font-medium')}>{label}</span>
         )}

@@ -43,9 +43,9 @@ export function ChecklistItem({ label, value, description }: ChecklistItemProps)
       <span
         className={clsx(
           'ml-2 text-xs font-medium',
-          isTrue && 'text-green-600',
-          isFalse && 'text-red-500',
-          isUnknown && 'text-slate-400'
+          isTrue && 'text-green-700',
+          isFalse && 'text-red-700',
+          isUnknown && 'text-slate-600'
         )}
       >
         {isTrue ? 'Yes' : isFalse ? 'No' : 'Unknown'}

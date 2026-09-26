@@ -15,7 +15,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         className={clsx(
           'block w-full rounded-xl border px-3 py-2 text-sm transition-[border-color,box-shadow]',
           'bg-gradient-to-b from-slate-50 to-white shadow-field ring-1 ring-slate-900/[0.05]',
-          'placeholder:text-slate-400',
+          'placeholder:text-slate-500',
           'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:shadow-md',
           error
             ? 'border-red-300 bg-gradient-to-b from-red-50 to-red-100/80 focus:ring-red-500 focus:border-red-500'

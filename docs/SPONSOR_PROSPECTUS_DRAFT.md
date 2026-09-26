@@ -1,7 +1,7 @@
 # AccessLens Sponsor Prospectus
 
 **Draft for Dan's review — not approved for distribution**  
-**Prepared:** September 25, 2026
+**Prepared:** September 26, 2026
 
 ## Make local accessibility information easier to find
 
@@ -15,7 +15,7 @@ People who need accessibility information should not have to pay to access it. L
 
 ## A current snapshot
 
-The Victoria public dataset contained **48 active place records** when checked on September 25, 2026. The records span restaurants, government, parks, shopping, transit, sidewalks, sports, libraries, hospitals, schools, movie theatres, and other places. Vancouver coverage is in early seed stage, so no Vancouver figure is quoted here.
+The Victoria public dataset contained **48 active place records** when checked on September 26, 2026. Of those, 23 show higher accessibility indicators (score 70–100), 17 show partial accessibility indicators (40–69), and 8 indicate accessibility barriers (0–39). The records span restaurants, government, parks, shopping, transit, sidewalks, sports, libraries, hospitals, schools, movie theatres, and other places. Vancouver coverage is in early seed stage, so no Vancouver figure is quoted here.
 
 The accompanying [Victoria Accessibility Snapshot](VICTORIA_ACCESSIBILITY_SNAPSHOT.md) reports checklist data and its limitations. These are community-submitted records, not independent inspections or accessibility certifications.
 
@@ -27,12 +27,14 @@ The current planning range is **$1,000–$5,000 per year**, subject to a mutuall
 
 A sponsor may receive appropriate acknowledgement and an opportunity to support dataset growth or a local information initiative. Final benefits, recognition, reporting, and terms must be agreed before any offer is made.
 
+A first pilot could be narrowly scoped — for example, a $1,000 community sponsorship supporting a defined Victoria dataset-expansion initiative — and arranged by invoice.
+
 ## Independence is essential
 
-Sponsorship will not determine which places are included, change accessibility checklist data, or influence accessibility scores. The public resource remains free to visitors, and any enhanced business profile is separate from the score and public dataset.
+Sponsorship will not determine which places are included, change accessibility checklist data, or influence accessibility scores. Sponsors cannot suppress negative accessibility information, alter community reports, or buy a better accessibility rating. The public resource remains free to visitors, and any enhanced business profile is separate from the score and public dataset.
 
 ## Next step
 
 Discuss a pilot sponsorship and agree on a narrowly scoped, measurable use of funds—such as community-reviewed place coverage or a recurring accessibility information snapshot—before making a public commitment.
 
-**Contact:** Dan Spelt — confirm the preferred business contact address before distribution.
+**Contact:** Dan Spelt — [danspelt24@gmail.com](mailto:danspelt24@gmail.com)

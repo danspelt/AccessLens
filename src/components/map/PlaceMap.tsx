@@ -142,7 +142,7 @@ export function NoMapPlaceholder({ name, address }: NoMapProps) {
       <div className="text-center">
         <p className="text-sm font-medium text-slate-600">{name}</p>
         <p className="text-xs text-slate-500">{address}</p>
-        <p className="mt-1 text-xs text-slate-400">No coordinates available</p>
+        <p className="mt-1 text-xs text-slate-500">No coordinates available</p>
       </div>
     </div>
   );

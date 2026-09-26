@@ -116,7 +116,7 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
                   </div>
                   <span
                     className={`text-[10px] font-semibold leading-none sm:text-xs text-center transition-colors duration-200 ${
-                      isCurrent ? 'text-primary-700' : isComplete ? 'text-green-700' : 'text-slate-400'
+                      isCurrent ? 'text-primary-700' : isComplete ? 'text-green-700' : 'text-slate-500'
                     }`}
                   >
                     {step.label}
@@ -634,7 +634,7 @@ export default function NewPlacePage() {
               <h2 id="location-heading" className="text-xl font-bold text-slate-900 flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-primary-600" aria-hidden="true" />
                 Map Coordinates
-                <span className="text-sm font-normal text-slate-400">(optional)</span>
+                <span className="text-sm font-normal text-slate-500">(optional)</span>
               </h2>
               <p className="mt-1 text-sm text-slate-500">
                 Add coordinates to show this place on the map. If possible, pin the accessible entrance location.

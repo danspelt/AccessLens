@@ -290,6 +290,7 @@ export function PhotoUpload(props: PhotoUploadProps) {
               multiple
               className="sr-only"
               aria-hidden="true"
+              tabIndex={-1}
               onChange={(e) => e.target.files && addImageFiles(e.target.files)}
             />
           </div>
@@ -336,6 +337,7 @@ export function PhotoUpload(props: PhotoUploadProps) {
               multiple
               className="sr-only"
               aria-hidden="true"
+              tabIndex={-1}
               onChange={(e) => e.target.files && addVideoFiles(e.target.files)}
             />
           </div>
@@ -568,6 +570,7 @@ export function PhotoUpload(props: PhotoUploadProps) {
           multiple
           className="sr-only"
           aria-hidden="true"
+          tabIndex={-1}
           onChange={(e) => e.target.files && addFiles(e.target.files)}
         />
       </div>

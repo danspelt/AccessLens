@@ -1,6 +1,6 @@
 # Victoria Accessibility Snapshot
 
-**Sample report generated:** September 25, 2026  
+**Sample report generated:** September 26, 2026 (recomputed from the live endpoint; all counts unchanged from September 25)  
 **Source:** Public active-place records returned by `GET /api/places?city=victoria-bc&limit=200` on accesslens.ca  
 **Record count:** 48
 

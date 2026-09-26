@@ -303,7 +303,7 @@ export default function DashboardClient({
                             {item.title}
                           </p>
                           <p className="mt-0.5 text-xs text-slate-500 line-clamp-2">{item.subtitle}</p>
-                          <p className="mt-1 text-xs text-slate-400">
+                          <p className="mt-1 text-xs text-slate-500">
                             {formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}
                           </p>
                         </div>
@@ -416,7 +416,7 @@ export default function DashboardClient({
                               <p className="mt-0.5 text-xs text-slate-500 truncate">
                                 {p.categoryLabel} · {p.address}
                               </p>
-                              <p className="mt-1 text-xs text-slate-400">
+                              <p className="mt-1 text-xs text-slate-500">
                                 Added {formatDistanceToNow(new Date(p.createdAt), { addSuffix: true })}
                               </p>
                             </div>
@@ -511,7 +511,7 @@ export default function DashboardClient({
                                 {r.placeName}
                               </p>
                               <p className="mt-0.5 text-xs text-slate-500 line-clamp-2">{r.comment}</p>
-                              <p className="mt-1 text-xs text-slate-400">
+                              <p className="mt-1 text-xs text-slate-500">
                                 {formatDistanceToNow(new Date(r.createdAt), { addSuffix: true })}
                               </p>
                             </div>

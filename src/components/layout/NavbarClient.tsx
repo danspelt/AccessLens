@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { signOut } from 'next-auth/react';
 import { Menu, X, Plus, LogOut, LogIn, UserPlus } from 'lucide-react';
 import { clsx } from 'clsx';
@@ -50,10 +50,23 @@ function NavbarMobile({
   dark: boolean;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key !== 'Escape') return;
+      setMobileOpen(false);
+      toggleRef.current?.focus();
+    }
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [mobileOpen]);
 
   return (
     <>
       <button
+        ref={toggleRef}
         type="button"
         onClick={() => setMobileOpen(!mobileOpen)}
         className={clsx(
@@ -237,28 +250,28 @@ export function NavbarClient({ user }: NavbarClientProps) {
             </span>
           </Link>
 
-          <div className="hidden items-center gap-1 md:flex" role="list">
+          <ul className="hidden items-center gap-1 md:flex">
             {navLinks.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                role="listitem"
-                className={clsx(
-                  'rounded-lg px-3 py-2 text-sm font-medium transition-[color,background-color,box-shadow,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
-                  dark
-                    ? isActive(href)
-                      ? 'bg-white/20 text-white shadow-sm ring-1 ring-white/35'
-                      : 'text-white/90 hover:bg-white/15 hover:text-white active:translate-y-px'
-                    : isActive(href)
-                      ? 'bg-gradient-to-b from-primary-50 to-primary-100/90 text-primary-800 shadow-nav-pill-active ring-1 ring-primary-200/60'
-                      : 'text-slate-600 shadow-sm shadow-transparent hover:bg-gradient-to-b hover:from-white hover:to-slate-100/90 hover:text-slate-900 hover:shadow-nav-pill-hover hover:ring-1 hover:ring-slate-200/80 active:translate-y-px'
-                )}
-                aria-current={isActive(href) ? 'page' : undefined}
-              >
-                {label}
-              </Link>
+              <li key={href}>
+                <Link
+                  href={href}
+                  className={clsx(
+                    'block rounded-lg px-3 py-2 text-sm font-medium transition-[color,background-color,box-shadow,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
+                    dark
+                      ? isActive(href)
+                        ? 'bg-white/20 text-white shadow-sm ring-1 ring-white/35'
+                        : 'text-white/90 hover:bg-white/15 hover:text-white active:translate-y-px'
+                      : isActive(href)
+                        ? 'bg-gradient-to-b from-primary-50 to-primary-100/90 text-primary-800 shadow-nav-pill-active ring-1 ring-primary-200/60'
+                        : 'text-slate-600 shadow-sm shadow-transparent hover:bg-gradient-to-b hover:from-white hover:to-slate-100/90 hover:text-slate-900 hover:shadow-nav-pill-hover hover:ring-1 hover:ring-slate-200/80 active:translate-y-px'
+                  )}
+                  aria-current={isActive(href) ? 'page' : undefined}
+                >
+                  {label}
+                </Link>
+              </li>
             ))}
-          </div>
+          </ul>
 
           <div className="hidden items-center gap-3 md:flex">
             {user ? (

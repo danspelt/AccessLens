@@ -12,6 +12,7 @@ import { Alert } from '@/components/ui/Alert';
 import { StarRating } from '@/components/ui/StarRating';
 import { PhotoUpload } from '@/components/photos/PhotoUpload';
 import { clsx } from 'clsx';
+import { useDialogFocus } from '@/hooks/useDialogFocus';
 
 type PlaceSearchResult = {
   _id: string;
@@ -45,6 +46,7 @@ export function AddReviewModal({
   const [videoUrls, setVideoUrls] = useState<string[]>([]);
 
   const canSubmit = rating > 0 && comment.trim().length >= 10 && !!selected;
+  const dialogRef = useDialogFocus<HTMLDivElement>(open, onClose);
 
   useEffect(() => {
     if (!open) return;
@@ -146,16 +148,17 @@ export function AddReviewModal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto px-4 py-6 sm:py-10" role="dialog" aria-modal="true" aria-label="Add review">
+    <div className="fixed inset-0 z-50 overflow-y-auto px-4 py-6 sm:py-10" role="dialog" aria-modal="true" aria-label={title}>
       <button
         type="button"
         className="fixed inset-0 bg-slate-900/40"
-        aria-label="Close"
+        aria-hidden="true"
+        tabIndex={-1}
         onClick={onClose}
       />
 
       <div className="flex min-h-full items-center justify-center">
-        <div className="relative z-10 w-full max-w-2xl py-4 sm:py-0">
+        <div ref={dialogRef} tabIndex={-1} className="relative z-10 w-full max-w-2xl py-4 outline-none sm:py-0">
           <Card
             padding="md"
             className="flex max-h-[min(90vh,820px)] flex-col overflow-hidden p-0 shadow-lg"

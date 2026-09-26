@@ -66,8 +66,8 @@ export function PlaceCard({ place }: PlaceCardProps) {
         {score !== undefined && color && (
           <div
             className={`absolute right-2 top-2 rounded-full border px-2.5 py-0.5 text-xs font-bold shadow-chip-icon ${scoreColors[color]}`}
-            aria-label={`Accessibility score: ${score} out of 100 — ${scoreLabel}`}
           >
+            <span className="sr-only">Accessibility score: </span>
             <span>{score}/100</span>
             <span className="ml-1 font-medium">{scoreLabel}</span>
           </div>

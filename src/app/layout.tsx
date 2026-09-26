@@ -56,7 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthSessionProvider>
           <SkipLink />
           <Navbar />
-          <main id="main">{children}</main>
+          <main id="main" tabIndex={-1} className="outline-none">{children}</main>
         </AuthSessionProvider>
       </body>
     </html>

@@ -56,7 +56,7 @@ export default function QrHubPage() {
                   {a.subtitle ? (
                     <span className="mt-0.5 block text-sm text-slate-600">{a.subtitle}</span>
                   ) : null}
-                  <span className="mt-1 block font-mono text-xs text-slate-400">/qr/{a.slug}</span>
+                  <span className="mt-1 block font-mono text-xs text-slate-500">/qr/{a.slug}</span>
                 </span>
                 <ArrowRight className="ml-auto h-5 w-5 shrink-0 text-slate-400" aria-hidden="true" />
               </Link>

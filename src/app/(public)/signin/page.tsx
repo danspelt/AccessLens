@@ -1,8 +1,11 @@
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import { Suspense } from 'react';
 import { isGoogleAuthConfigured, isResendAuthConfigured } from '@/lib/auth/providers';
 import { SignInForm } from '@/components/auth/SignInForm';
 import { AuthCanvas } from '@/components/auth/AuthCanvas';
+
+export const metadata: Metadata = { title: 'Sign in' };
 
 export default function SignInPage() {
   const googleEnabled = isGoogleAuthConfigured();

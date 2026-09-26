@@ -218,7 +218,7 @@ export default function AdminPlaceSubmissionsPage() {
                         <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                         {sub.placeData.address}, {sub.placeData.city}, {sub.placeData.province}
                       </p>
-                      <p className="mt-1 text-xs text-slate-400">
+                      <p className="mt-1 text-xs text-slate-500">
                         Submitted by <span className="font-medium text-slate-500">{sub.submittedBy.name}</span> ({sub.submittedBy.role}) on{' '}
                         {new Date(sub.createdAt).toLocaleDateString('en-CA', { year: 'numeric', month: 'short', day: 'numeric' })}
                       </p>
@@ -268,7 +268,7 @@ export default function AdminPlaceSubmissionsPage() {
                                 </dd>
                               )}
                               {sub.latitude && sub.longitude && (
-                                <dd className="text-xs text-slate-400">
+                                <dd className="text-xs text-slate-500">
                                   Coordinates: {sub.latitude.toFixed(4)}, {sub.longitude.toFixed(4)}
                                   {sub.entrancePinned && ' (entrance)'}
                                 </dd>
@@ -330,7 +330,7 @@ export default function AdminPlaceSubmissionsPage() {
                               </span>
                             ))}
                             {Object.keys(sub.accessibilityData.checklist).length === 0 && (
-                              <span className="text-sm text-slate-400 italic">None provided</span>
+                              <span className="text-sm text-slate-500 italic">None provided</span>
                             )}
                           </div>
                           {sub.accessibilityData.generalNotes && (
