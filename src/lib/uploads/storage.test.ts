@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { join, resolve } from 'path';
-import { getUploadDirectory, getUploadRoot, getUploadUrl, UPLOAD_ROOT_ENV } from './storage';
+import { getUploadDirectory, getUploadRoot, getUploadUrl, resolveUploadFile, UPLOAD_ROOT_ENV } from './storage';
 
 describe('upload storage', () => {
   afterEach(() => {
@@ -26,5 +26,22 @@ describe('upload storage', () => {
   it('keeps public URLs under /uploads regardless of the storage root', () => {
     vi.stubEnv(UPLOAD_ROOT_ENV, resolve(process.cwd(), 'mounted-uploads'));
     expect(getUploadUrl('submissions', 'photo.webp')).toBe('/uploads/submissions/photo.webp');
+  });
+
+  it('resolves served upload URLs inside the configured root', () => {
+    const root = resolve(process.cwd(), 'mounted-uploads');
+    vi.stubEnv(UPLOAD_ROOT_ENV, root);
+    expect(resolveUploadFile(['places', 'a.png'])).toEqual({ path: join(root, 'places', 'a.png'), contentType: 'image/png' });
+    expect(resolveUploadFile(['places', 'clip.MP4'])?.contentType).toBe('video/mp4');
+  });
+
+  it('rejects traversal, hidden files, and unsupported extensions', () => {
+    vi.stubEnv(UPLOAD_ROOT_ENV, resolve(process.cwd(), 'mounted-uploads'));
+    expect(resolveUploadFile([])).toBeNull();
+    expect(resolveUploadFile(['..', 'secret.png'])).toBeNull();
+    expect(resolveUploadFile(['places', 'a/../../x.png'])).toBeNull();
+    expect(resolveUploadFile(['places', 'a\\..\\..\\x.png'])).toBeNull();
+    expect(resolveUploadFile(['.env'])).toBeNull();
+    expect(resolveUploadFile(['places', 'script.html'])).toBeNull();
   });
 });

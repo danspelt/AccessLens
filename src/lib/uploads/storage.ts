@@ -1,6 +1,17 @@
-import { isAbsolute, join, resolve } from 'path';
+import { extname, isAbsolute, join, relative, resolve } from 'path';
 
 export const UPLOAD_ROOT_ENV = 'UPLOAD_ROOT';
+
+export const UPLOAD_CONTENT_TYPES: Record<string, string> = {
+  '.jpg': 'image/jpeg',
+  '.png': 'image/png',
+  '.webp': 'image/webp',
+  '.mp4': 'video/mp4',
+  '.m4v': 'video/x-m4v',
+  '.mov': 'video/quicktime',
+  '.webm': 'video/webm',
+  '.ogv': 'video/ogg',
+};
 
 /**
  * Filesystem root for uploaded media. Public URLs remain under `/uploads`.
@@ -23,4 +34,19 @@ export function getUploadDirectory(context: string): string {
 
 export function getUploadUrl(context: string, filename: string): string {
   return `/uploads/${context}/${filename}`;
+}
+
+/**
+ * Map `/uploads/...` URL segments to a file inside the upload root.
+ * Returns null for traversal attempts, hidden files, or unsupported extensions.
+ */
+export function resolveUploadFile(segments: string[]): { path: string; contentType: string } | null {
+  if (!segments.length || segments.some((s) => !s || s.startsWith('.') || /[\\/\0]/.test(s))) return null;
+  const contentType = UPLOAD_CONTENT_TYPES[extname(segments[segments.length - 1]).toLowerCase()];
+  if (!contentType) return null;
+  const root = getUploadRoot();
+  const path = resolve(/* turbopackIgnore: true */ root, ...segments);
+  const rel = relative(root, path);
+  if (!rel || rel.startsWith('..') || isAbsolute(rel)) return null;
+  return { path, contentType };
 }

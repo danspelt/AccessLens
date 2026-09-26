@@ -44,16 +44,15 @@ ENV MONGODB_DB=$MONGODB_DB
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Install wget for health check (must be done as root, before USER switch)
-RUN apk add --no-cache wget
+# wget for the health check; su-exec to drop root after preparing the upload volume
+RUN apk add --no-cache wget su-exec
 
 # Copy necessary files
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # Copy public directory (will be empty if no files, but directory exists)
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-
-USER nextjs
+RUN mkdir -p /app/public/uploads && chown nextjs:nodejs /app/public/uploads
 
 EXPOSE 3000
 
@@ -66,5 +65,6 @@ ENV HOSTNAME="0.0.0.0"
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
 
-CMD ["node", "server.js"]
+# Starts as root only to make a mounted (root-owned) upload volume writable, then runs as nextjs
+CMD ["sh", "-c", "UPLOAD_DIR=\"${UPLOAD_ROOT:-/app/public/uploads}\"; mkdir -p \"$UPLOAD_DIR\" && find \"$UPLOAD_DIR\" -maxdepth 1 -exec chown nextjs:nodejs {} +; exec su-exec nextjs node server.js"]
 

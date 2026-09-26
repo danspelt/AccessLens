@@ -5,6 +5,12 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ['mongodb', 'bcryptjs'],
   async redirects() {
     return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'accesslens.ca' }],
+        destination: 'https://www.accesslens.ca/:path*',
+        permanent: true,
+      },
       { source: '/login', destination: '/signin', permanent: true },
       { source: '/places', destination: '/explore', permanent: false },
     ];
