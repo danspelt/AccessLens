@@ -1,6 +1,5 @@
 # AccessLens Sponsor Prospectus
 
-**Draft for Dan's review — not approved for distribution**  
 **Prepared:** September 26, 2026
 
 ## Make local accessibility information easier to find
@@ -25,7 +24,7 @@ We are beginning conversations with tourism organizations, business improvement 
 
 The current planning range is **$1,000–$5,000 per year**, subject to a mutually agreed package and confirmed deliverables.
 
-A sponsor may receive appropriate acknowledgement and an opportunity to support dataset growth or a local information initiative. Final benefits, recognition, reporting, and terms must be agreed before any offer is made.
+A sponsor may receive appropriate acknowledgement and an opportunity to support dataset growth or a local information initiative. Benefits, recognition, reporting, and terms are agreed with each sponsor in writing before any commitment.
 
 A first pilot could be narrowly scoped — for example, a $1,000 community sponsorship supporting a defined Victoria dataset-expansion initiative — and arranged by invoice.
 

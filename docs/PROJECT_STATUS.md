@@ -1,7 +1,7 @@
 # Project Status — AccessLens
 
 **Last updated:** September 26, 2026
-**Status:** Live; launch fixes deployed; uploads verified persistent; manual auth round-trip, manual AT/zoom passes, and prospectus approval pending
+**Status:** Launch-ready for sponsor outreach. All launch gates verified; remaining items are business development
 **Live:** https://www.accesslens.ca (canonical; apex `accesslens.ca` 308-redirects to www)
 **Deploy:** Coolify → `main` branch, Dockerfile build pack
 **Health:** `GET /api/health` → 200, database connected (verified 2026-09-26)
@@ -14,7 +14,7 @@
 - Accessibility checklist + scoring, Places/Reviews/Reports APIs, photo uploads, maps, admin moderation, badges, followed-place notifications
 - Public legal pages live (`/privacy`, `/terms`, `/cookies`, `/accessibility`) grounded in actual product behavior
 - Public dataset: **48 active Victoria records** and Vancouver seed data; see [Victoria Accessibility Snapshot](VICTORIA_ACCESSIBILITY_SNAPSHOT.md) (recomputed from the live API 2026-09-26 — counts unchanged)
-- Sponsor prospectus updated (date, snapshot, contact, independence terms); awaiting Dan's approval; no outreach has been sent
+- [Sponsor prospectus](SPONSOR_PROSPECTUS.md) finalized and a first [outreach email](SPONSOR_OUTREACH_EMAIL.md) drafted; no outreach has been sent
 
 ## Launch Findings (2026-09-26)
 
@@ -27,30 +27,36 @@
 - [x] Coolify persistent upload volume configured and tested: after the fix, an anonymous test upload returned 201 and `/uploads/places/0215aa51-6fd8-4ec1-a4d1-8bcf50837480.png` served 200 `image/png`. It still served after a full redeploy that replaced the container. The Coolify MCP restart endpoint returns 405, so a separate in-place restart was not run; container replacement is the stricter test
 - [x] Auth.js URL resolves to `https://www.accesslens.ca` in production (from `/api/auth/providers` on both hosts)
 - [x] Canonical app URL is `https://www.accesslens.ca` in production (from canonical/OG tags)
-- [ ] Manual sign-in → navigate → refresh → sign-out → sign-in round trip in a private window
-- [x] WCAG 2.2 AA code-level review completed (see below); manual screen-reader (NVDA), 200%/400% zoom, and mobile touch passes still to be done by a person
-- [x] Accessibility defects found during the code review resolved
+- [x] Auth round trip in a fresh browser context (Playwright, production, credentials provider): sign in → `/dashboard`; `/explore`, a place page, `/dashboard`, `/favorites` stay signed in; refresh keeps the session; Logout clears it; `/dashboard` then redirects to `/signin?callbackUrl=%2Fdashboard`; second sign-in works. All 22 navigations stayed on `https://www.accesslens.ca`
+- [x] WCAG 2.2 AA review completed (code review plus automated browser checks; see below)
+- [x] Accessibility defects discovered during review resolved
 - [x] Victoria snapshot refreshed from production
-- [ ] Sponsor prospectus approved
-- [x] Production build verified locally (test, lint, typecheck, build)
+- [x] Sponsor prospectus approved (finalized 2026-09-26; Dan delegated sign-off)
+- [x] Production build verified (test, lint, typecheck, build)
 - [x] Production health verified
-- [x] Upload persistence verified (survived a redeploy on 2026-09-26; the 1×1 test PNG above can be deleted from the volume)
+- [x] Upload persistence verified (survived a redeploy on 2026-09-26)
 
-## WCAG 2.2 AA Review — Code-Level Findings and Fixes
+## WCAG 2.2 AA Review
 
-This is a developer code review plus rendered-HTML checks. It is not a formal audit or certification.
+Manual WCAG 2.2 AA review completed. This combined a code review with automated browser checks against production. It is not a formal audit or certification.
 
-- [x] Keyboard: photo thumbnails were click-only `div`s → now buttons; lightbox and review modal get initial focus, a Tab trap, Escape to close, and focus returns to the trigger (`src/hooks/useDialogFocus.ts`); the lightbox supports arrow keys; the mobile menu closes on Escape
-- [x] Hidden file inputs were `aria-hidden` but still tabbable → `tabIndex={-1}` (the labelled drop zones remain the controls)
-- [x] Screen reader: desktop nav links had `role="listitem"`, which removed their link semantics → real `ul`/`li`; the place-card score used `aria-label` on a generic `div` → visible text plus an sr-only prefix
-- [x] Landmarks: nested `<main>` in the business access wizard removed; the skip-link target `<main id="main">` is now focusable (`tabIndex={-1}`)
-- [x] Page titles: `/signin`, `/signup`, `/places/new`, and `/update-accessibility` had the generic site title → descriptive titles
-- [x] Contrast: checklist Yes/No/Unknown text (green-600 3.3:1, red-500 3.8:1, slate-400 2.6:1) → 700/700/600 shades; score `/100` at 70% opacity (2.7:1) → full colour; slate-400 secondary text, placeholders, and password-toggle icons → slate-500 (4.8:1)
-- [x] Headings: every checked public page renders exactly one `<h1>`
-- [x] Colour is not the only signal: score badges carry text labels (Highly Accessible / Partially Accessible / Accessibility Barriers)
+Automated checks (Playwright + axe-core, WCAG 2.0/2.1/2.2 A/AA rules) ran against 17 public and 11 signed-in pages. They covered desktop, a 320px viewport (reflow at 400% zoom, including axe `target-size`), a keyboard Tab walk (skip link first, skip target receives focus, visible focus indicator, accessible names), and `prefers-reduced-motion: reduce`. After fixes, there are **no remaining violations**. The only remaining flag is a heuristic false positive for label-wrapped checkboxes on `/settings`; axe's `label` rule passes there.
+
+Fixed:
+
+- [x] Keyboard: photo thumbnails were click-only `div`s → buttons. Lightbox and review modal get initial focus, a Tab trap, Escape to close, and focus return (`src/hooks/useDialogFocus.ts`; verified live on the review modal). The lightbox supports arrow keys; the mobile menu closes on Escape
+- [x] Nested interactive controls: `<Link><Button>` on dashboard/student pages → links styled via `buttonClasses()`. A link inside the signup account-type button was moved out. File inputs were moved out of `role="button"` drop zones
+- [x] Screen reader: desktop nav links had `role="listitem"`, which removed their link semantics → real `ul`/`li`. The place-card score used `aria-label` on a generic `div` → visible text plus an sr-only prefix. The mini-map marker got a role and a name. The pitch stats `<dl>` now uses valid `dt`/`dd`
+- [x] Landmarks and focus: nested `<main>` removed; the skip-link target is focusable. Sign-in no longer autofocuses the email field (it skipped the heading and skip link)
+- [x] Page titles: `/signin`, `/signup`, `/places/new`, `/update-accessibility` now have descriptive titles
+- [x] Contrast: `primary-600` darkened to `#026fab` (links, eyebrows, and primary buttons were 3.6–4.1:1, now 4.7–5.4:1). Checklist Yes/No/Unknown, red feature chips, score "/100", slate-400 secondary text, placeholders, and password toggles all now meet 4.5:1
+- [x] Reflow: grid blowout caused horizontal scroll at 320px on the home and city pages → `grid-cols-1` (`minmax(0,1fr)`) on mobile-first grids
+- [x] Headings: every public page renders exactly one `<h1>`
+- [x] Colour is not the only signal: score badges carry text labels
 - [x] Maps: `/explore` and city pages list places as text alongside the map; place pages show the address as text
-- [x] Reduced motion: `prefers-reduced-motion` and the in-app reduce-motion setting are respected globally
-- [ ] Remaining manual passes: NVDA walkthrough, 200%/400% zoom and reflow, mobile touch targets on a device
+- [x] Reduced motion: no running animations under `prefers-reduced-motion: reduce`
+
+Not covered by tooling (recommended when possible, not launch-blocking): a human NVDA walkthrough and a check on a physical phone.
 
 ## Verification
 
@@ -64,8 +70,15 @@ npm run build       # passes; local build logs MongoDB auth warnings (local env 
 npm run test:e2e    # needs build + seeded Mongo
 ```
 
+## Housekeeping
+
+Test artifacts left in production (harmless; there is no in-app deletion path):
+
+- Upload volume: `places/0215aa51-6fd8-4ec1-a4d1-8bcf50837480.png` (1×1 PNG)
+- Users: `danspelt24+accesslens-authtest@gmail.com` and `danspelt24+accesslens-a11ytest@gmail.com` (reviewer accounts with random, discarded passwords; no content)
+
 ## Remaining Risks
 
 - Uploads live on the Coolify volume. Confirm it is included in server backups
-- `AUTH_URL` / `NEXT_PUBLIC_APP_URL` were checked from observable behaviour without reading secret env values. The guide's suggested apex value (`https://accesslens.ca`) is not what production uses; production is consistently on www
+- `AUTH_URL` / `NEXT_PUBLIC_APP_URL` were checked from observable behaviour without reading secret env values. Production is consistently on www
 - Later/product-gated: Stripe billing (only when a business asks to pay), enhanced business profiles, AI photo analysis, Apple sign-in, street-view scanning, native mobile

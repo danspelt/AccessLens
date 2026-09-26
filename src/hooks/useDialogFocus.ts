@@ -8,6 +8,8 @@ const FOCUSABLE =
 /**
  * Modal dialog keyboard behaviour: moves focus into the dialog, keeps Tab inside it,
  * closes on Escape, and returns focus to the previously focused element on close.
+ * Mark the preferred initial field with `data-autofocus` (not `autoFocus`, which would
+ * move focus before the previous element is recorded).
  */
 export function useDialogFocus<T extends HTMLElement>(open: boolean, onClose: () => void) {
   const ref = useRef<T>(null);
@@ -22,7 +24,7 @@ export function useDialogFocus<T extends HTMLElement>(open: boolean, onClose: ()
     const previous = document.activeElement as HTMLElement | null;
     const dialog = ref.current;
     const focusables = () => Array.from(dialog?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? []);
-    (focusables()[0] ?? dialog)?.focus();
+    (dialog?.querySelector<HTMLElement>('[data-autofocus]') ?? focusables()[0] ?? dialog)?.focus();
 
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {

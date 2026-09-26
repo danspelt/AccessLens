@@ -200,7 +200,7 @@ export function AddReviewModal({
                       onChange={(e) => setQuery(e.target.value)}
                       placeholder="Search by name or address…"
                       className="pl-9"
-                      autoFocus
+                      data-autofocus
                     />
                   </div>
                   <p className="mt-1 text-xs text-slate-500">Type at least 2 characters, then tap a result.</p>
