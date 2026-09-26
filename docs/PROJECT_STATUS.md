@@ -1,7 +1,7 @@
 # Project Status — AccessLens
 
 **Last updated:** September 26, 2026
-**Status:** Live; launch fixes deployed; operator checks (auth sign-in round-trip, upload persistence across redeploy) and prospectus approval pending
+**Status:** Live; launch fixes deployed; uploads verified persistent; manual auth round-trip, manual AT/zoom passes, and prospectus approval pending
 **Live:** https://www.accesslens.ca (canonical; apex `accesslens.ca` 308-redirects to www)
 **Deploy:** Coolify → `main` branch, Dockerfile build pack
 **Health:** `GET /api/health` → 200, database connected (verified 2026-09-26)
@@ -24,7 +24,7 @@
 
 ## Launch Verification
 
-- [ ] Coolify persistent upload volume configured and tested (upload → redeploy → restart)
+- [x] Coolify persistent upload volume configured and tested: after the fix, an anonymous test upload returned 201 and `/uploads/places/0215aa51-6fd8-4ec1-a4d1-8bcf50837480.png` served 200 `image/png`. It still served after a full redeploy that replaced the container. The Coolify MCP restart endpoint returns 405, so a separate in-place restart was not run; container replacement is the stricter test
 - [x] Auth.js URL resolves to `https://www.accesslens.ca` in production (from `/api/auth/providers` on both hosts)
 - [x] Canonical app URL is `https://www.accesslens.ca` in production (from canonical/OG tags)
 - [ ] Manual sign-in → navigate → refresh → sign-out → sign-in round trip in a private window
@@ -34,7 +34,7 @@
 - [ ] Sponsor prospectus approved
 - [x] Production build verified locally (test, lint, typecheck, build)
 - [x] Production health verified
-- [ ] Upload persistence verified
+- [x] Upload persistence verified (survived a redeploy on 2026-09-26; the 1×1 test PNG above can be deleted from the volume)
 
 ## WCAG 2.2 AA Review — Code-Level Findings and Fixes
 
@@ -66,6 +66,6 @@ npm run test:e2e    # needs build + seeded Mongo
 
 ## Remaining Risks
 
-- Upload persistence depends on the Coolify storage mapping for `/app/public/uploads`. The Coolify API available here does not expose storage mounts, so verify it by uploading, redeploying, and restarting
+- Uploads live on the Coolify volume. Confirm it is included in server backups
 - `AUTH_URL` / `NEXT_PUBLIC_APP_URL` were checked from observable behaviour without reading secret env values. The guide's suggested apex value (`https://accesslens.ca`) is not what production uses; production is consistently on www
 - Later/product-gated: Stripe billing (only when a business asks to pay), enhanced business profiles, AI photo analysis, Apple sign-in, street-view scanning, native mobile

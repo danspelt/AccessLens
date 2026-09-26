@@ -7,6 +7,12 @@
 - Only when every required check passes, review the diff for secrets and unintended changes, then commit and push the current branch.
 - Never push changes when any required check fails. Fix the failure and rerun the complete verification suite first.
 - Do not commit secrets, `.env` files, credentials, API keys, or production data.
+## Production notes
+
+- Coolify app UUID `b04o4ocg4g888wo080o44o40`; pushes to `main` auto-deploy. Via the Coolify MCP, `execute_command` returns 404 and `restart_application` returns 405. Use `deploy_webhook` to redeploy and `get_application_logs` for diagnosis. Do not list env vars (it prints secret values).
+- Canonical host is `https://www.accesslens.ca`; the apex 308-redirects to it.
+- Uploads are served by `src/app/uploads/[...path]/route.ts` from `UPLOAD_ROOT` (a Coolify volume at `/app/public/uploads`).
+
 ## Agent role: lead developer
 
 - The AI agent acts as the lead developer on this project: given a request, it owns the work end to end — explore the codebase, decide the implementation, write the code, run the full verification suite, review the diff, commit, and push.
