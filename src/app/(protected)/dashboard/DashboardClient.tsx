@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
 import { clsx } from 'clsx';
 import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import { Button, buttonClasses } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { Badge } from '@/components/ui/Badge';
@@ -200,17 +200,13 @@ export default function DashboardClient({
           </div>
 
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <Link href="/places/new" className="w-full sm:w-auto">
-              <Button size="lg" className="w-full sm:w-auto">
-                <Plus className="h-4 w-4" aria-hidden="true" />
-                Add Place
-              </Button>
+            <Link href="/places/new" className={buttonClasses({ size: 'lg', className: 'w-full sm:w-auto' })}>
+              <Plus className="h-4 w-4" aria-hidden="true" />
+              Add Place
             </Link>
-            <Link href="/explore" className="w-full sm:w-auto">
-              <Button variant="outline" size="lg" className="w-full sm:w-auto">
-                Explore
-                <ChevronRight className="h-4 w-4" aria-hidden="true" />
-              </Button>
+            <Link href="/explore" className={buttonClasses({ variant: 'outline', size: 'lg', className: 'w-full sm:w-auto' })}>
+              Explore
+              <ChevronRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
         </div>
@@ -276,16 +272,12 @@ export default function DashboardClient({
                     </p>
                   </div>
                   <div className="flex w-full flex-col gap-2 sm:flex-row">
-                    <Link href="/places/new" className="flex-1">
-                      <Button className="w-full">
-                        <Plus className="h-4 w-4" aria-hidden="true" />
-                        Add place
-                      </Button>
+                    <Link href="/places/new" className={buttonClasses({ className: 'flex-1 w-full' })}>
+                      <Plus className="h-4 w-4" aria-hidden="true" />
+                      Add place
                     </Link>
-                    <Link href="/explore" className="flex-1">
-                      <Button variant="outline" className="w-full">
-                        Explore
-                      </Button>
+                    <Link href="/explore" className={buttonClasses({ variant: 'outline', className: 'flex-1 w-full' })}>
+                      Explore
                     </Link>
                   </div>
                 </div>
@@ -371,16 +363,12 @@ export default function DashboardClient({
                       </p>
                     </div>
                     <div className="flex w-full flex-col gap-2 sm:flex-row">
-                      <Link href="/places/new" className="flex-1">
-                        <Button className="w-full">
-                          <Plus className="h-4 w-4" aria-hidden="true" />
-                          Add place
-                        </Button>
+                      <Link href="/places/new" className={buttonClasses({ className: 'flex-1 w-full' })}>
+                        <Plus className="h-4 w-4" aria-hidden="true" />
+                        Add place
                       </Link>
-                      <Link href="/explore" className="flex-1">
-                        <Button variant="outline" className="w-full">
-                          Explore
-                        </Button>
+                      <Link href="/explore" className={buttonClasses({ variant: 'outline', className: 'flex-1 w-full' })}>
+                        Explore
                       </Link>
                     </div>
                   </div>
@@ -487,10 +475,8 @@ export default function DashboardClient({
                           : 'Try a different search term or change the sort.'}
                       </p>
                     </div>
-                    <Link href="/explore" className="w-full sm:w-auto">
-                      <Button variant="outline" className="w-full sm:w-auto">
-                        Explore places
-                      </Button>
+                    <Link href="/explore" className={buttonClasses({ variant: 'outline', className: 'w-full sm:w-auto' })}>
+                      Explore places
                     </Link>
                   </div>
                 ) : (

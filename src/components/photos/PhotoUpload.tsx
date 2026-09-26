@@ -283,16 +283,6 @@ export function PhotoUpload(props: PhotoUploadProps) {
               <p className="text-sm font-semibold text-slate-800">Photos</p>
               <p className="text-xs text-slate-500">JPEG, PNG, WebP · max 10MB each</p>
             </div>
-            <input
-              ref={photoInputRef}
-              type="file"
-              accept={acceptImagesOnly}
-              multiple
-              className="sr-only"
-              aria-hidden="true"
-              tabIndex={-1}
-              onChange={(e) => e.target.files && addImageFiles(e.target.files)}
-            />
           </div>
 
           {/* Videos drop zone */}
@@ -330,18 +320,24 @@ export function PhotoUpload(props: PhotoUploadProps) {
               <p className="text-sm font-semibold text-slate-800">Videos</p>
               <p className="text-xs text-slate-500">MP4, WebM, MOV · max 50MB each</p>
             </div>
-            <input
-              ref={videoInputRef}
-              type="file"
-              accept={acceptVideosOnly}
-              multiple
-              className="sr-only"
-              aria-hidden="true"
-              tabIndex={-1}
-              onChange={(e) => e.target.files && addVideoFiles(e.target.files)}
-            />
           </div>
         </div>
+        <input
+          ref={photoInputRef}
+          type="file"
+          accept={acceptImagesOnly}
+          multiple
+          className="hidden"
+          onChange={(e) => e.target.files && addImageFiles(e.target.files)}
+        />
+        <input
+          ref={videoInputRef}
+          type="file"
+          accept={acceptVideosOnly}
+          multiple
+          className="hidden"
+          onChange={(e) => e.target.files && addVideoFiles(e.target.files)}
+        />
 
         {error && (
           <div
@@ -563,17 +559,15 @@ export function PhotoUpload(props: PhotoUploadProps) {
           <p className="text-sm font-medium text-slate-700">Click to upload or drag and drop</p>
           <p className="text-xs text-slate-500">{helpText}</p>
         </div>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept={acceptImagesOnly}
-          multiple
-          className="sr-only"
-          aria-hidden="true"
-          tabIndex={-1}
-          onChange={(e) => e.target.files && addFiles(e.target.files)}
-        />
       </div>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept={acceptImagesOnly}
+        multiple
+        className="hidden"
+        onChange={(e) => e.target.files && addFiles(e.target.files)}
+      />
 
       {error && (
         <div

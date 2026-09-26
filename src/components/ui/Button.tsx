@@ -7,34 +7,43 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
 }
 
+/** Button styling for non-button elements (e.g. a Link that navigates), avoiding nested interactive controls. */
+export function buttonClasses({
+  variant = 'primary',
+  size = 'md',
+  className,
+}: Pick<ButtonProps, 'variant' | 'size' | 'className'> = {}) {
+  return clsx(
+    'inline-flex items-center justify-center rounded-xl font-medium',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+    'disabled:pointer-events-none disabled:opacity-50',
+    'transition-[transform,box-shadow,background-color,color,filter] duration-150',
+    {
+      'bg-gradient-to-b from-primary-400 to-primary-700 text-white shadow-btn-primary ring-1 ring-white/25 hover:from-primary-400 hover:to-primary-600 focus-visible:ring-primary-500 active:translate-y-[3px] active:shadow-btn-primary-active':
+        variant === 'primary',
+      'border border-slate-300/90 bg-gradient-to-b from-slate-50 to-slate-200 text-slate-800 shadow-btn-secondary hover:to-slate-100 focus-visible:ring-slate-500 active:translate-y-[3px] active:shadow-btn-outline-active':
+        variant === 'secondary',
+      'border border-slate-300/90 bg-gradient-to-b from-white to-slate-100 text-slate-700 shadow-btn-outline hover:to-slate-50 focus-visible:ring-slate-500 active:translate-y-[3px] active:shadow-btn-outline-active':
+        variant === 'outline',
+      'text-slate-600 hover:bg-slate-100 hover:shadow-chip-icon focus-visible:ring-slate-500 active:translate-y-px':
+        variant === 'ghost',
+      'bg-gradient-to-b from-red-400 to-red-700 text-white shadow-btn-danger ring-1 ring-white/20 hover:from-red-400 hover:to-red-600 focus-visible:ring-red-500 active:translate-y-[3px] active:shadow-btn-danger-active':
+        variant === 'danger',
+      'px-3 py-1.5 text-sm gap-1.5': size === 'sm',
+      'px-4 py-2 text-sm gap-2': size === 'md',
+      'px-6 py-3 text-base gap-2': size === 'lg',
+    },
+    className
+  );
+}
+
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', loading, children, disabled, ...props }, ref) => {
     return (
       <button
         ref={ref}
         disabled={disabled || loading}
-        className={clsx(
-          'inline-flex items-center justify-center rounded-xl font-medium',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-          'disabled:pointer-events-none disabled:opacity-50',
-          'transition-[transform,box-shadow,background-color,color,filter] duration-150',
-          {
-            'bg-gradient-to-b from-primary-400 to-primary-700 text-white shadow-btn-primary ring-1 ring-white/25 hover:from-primary-400 hover:to-primary-600 focus-visible:ring-primary-500 active:translate-y-[3px] active:shadow-btn-primary-active':
-              variant === 'primary',
-            'border border-slate-300/90 bg-gradient-to-b from-slate-50 to-slate-200 text-slate-800 shadow-btn-secondary hover:to-slate-100 focus-visible:ring-slate-500 active:translate-y-[3px] active:shadow-btn-outline-active':
-              variant === 'secondary',
-            'border border-slate-300/90 bg-gradient-to-b from-white to-slate-100 text-slate-700 shadow-btn-outline hover:to-slate-50 focus-visible:ring-slate-500 active:translate-y-[3px] active:shadow-btn-outline-active':
-              variant === 'outline',
-            'text-slate-600 hover:bg-slate-100 hover:shadow-chip-icon focus-visible:ring-slate-500 active:translate-y-px':
-              variant === 'ghost',
-            'bg-gradient-to-b from-red-400 to-red-700 text-white shadow-btn-danger ring-1 ring-white/20 hover:from-red-400 hover:to-red-600 focus-visible:ring-red-500 active:translate-y-[3px] active:shadow-btn-danger-active':
-              variant === 'danger',
-            'px-3 py-1.5 text-sm gap-1.5': size === 'sm',
-            'px-4 py-2 text-sm gap-2': size === 'md',
-            'px-6 py-3 text-base gap-2': size === 'lg',
-          },
-          className
-        )}
+        className={buttonClasses({ variant, size, className })}
         {...props}
       >
         {loading && (

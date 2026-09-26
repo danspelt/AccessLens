@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
+import { Button, buttonClasses } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
 import { OUTREACH_STATUS_LABELS } from '@/models/Place';
 import { MapPin, ClipboardList, Calendar } from 'lucide-react';
@@ -81,11 +81,9 @@ export default function StudentOutreachPage() {
             {label}
           </Button>
         ))}
-        <Link href="/student/visit-log" className="ml-auto">
-          <Button type="button" size="sm" variant="outline">
-            <ClipboardList className="h-4 w-4" aria-hidden="true" />
-            Log a visit
-          </Button>
+        <Link href="/student/visit-log" className={buttonClasses({ variant: 'outline', size: 'sm', className: 'ml-auto' })}>
+          <ClipboardList className="h-4 w-4" aria-hidden="true" />
+          Log a visit
         </Link>
       </div>
 

@@ -3,7 +3,7 @@
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, QrCode, ClipboardList } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
+import { Button, buttonClasses } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { OUTREACH_STATUS_LABELS } from '@/models/Place';
 
@@ -63,17 +63,13 @@ export default function StudentBusinessPage({ params }: { params: Promise<{ id: 
       ) : null}
 
       <div className="mt-6 flex flex-col gap-3">
-        <Link href={updateUrl}>
-          <Button type="button" className="w-full">
-            <QrCode className="h-4 w-4" aria-hidden="true" />
-            Open business update link
-          </Button>
+        <Link href={updateUrl} className={buttonClasses({ className: 'w-full' })}>
+          <QrCode className="h-4 w-4" aria-hidden="true" />
+          Open business update link
         </Link>
-        <Link href={`/student/visit-log?placeId=${id}`}>
-          <Button type="button" variant="outline" className="w-full">
-            <ClipboardList className="h-4 w-4" aria-hidden="true" />
-            Log visit for this business
-          </Button>
+        <Link href={`/student/visit-log?placeId=${id}`} className={buttonClasses({ variant: 'outline', className: 'w-full' })}>
+          <ClipboardList className="h-4 w-4" aria-hidden="true" />
+          Log visit for this business
         </Link>
         <Link href={`/places/${id}`} className="text-center text-sm font-medium text-primary-600 hover:underline">
           View public listing
