@@ -5,7 +5,9 @@ import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth/getCurrentUser';
 import { getCollection } from '@/lib/db/mongoClient';
 import { User } from '@/models/User';
+import { SSO_PROVIDER_ID, isSsoConfigured, ssoDisplayName } from '@/lib/auth/sso';
 import SettingsClient from './settingsClient';
+import { ConnectedAccountCard } from './ConnectedAccountCard';
 
 export const metadata: Metadata = { title: 'Settings' };
 
@@ -31,6 +33,16 @@ export default async function SettingsPage() {
     emailNotifications: fresh?.emailNotifications ?? false,
   };
 
-  return <SettingsClient initial={prefs} />;
+  if (!isSsoConfigured()) return <SettingsClient initial={prefs} />;
+
+  const accounts = await getCollection('accounts');
+  const ssoLinked = Boolean(await accounts.findOne({ userId: user._id, provider: SSO_PROVIDER_ID }));
+
+  return (
+    <div className="space-y-4">
+      <SettingsClient initial={prefs} />
+      <ConnectedAccountCard ssoName={ssoDisplayName()} linked={ssoLinked} />
+    </div>
+  );
 }
 

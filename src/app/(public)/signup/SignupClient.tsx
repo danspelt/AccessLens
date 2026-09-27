@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Label } from '@/components/ui/Label';
 import { Alert } from '@/components/ui/Alert';
+import { safeCallbackPath } from '@/lib/auth/sso';
 import { AuthCanvas } from '@/components/auth/AuthCanvas';
 import type { AccountType } from '@/models/User';
 import { SIGNUP_INTENT_STORAGE_KEY } from '@/lib/signupIntent';
@@ -48,7 +49,7 @@ function GoogleIcon({ className }: { className?: string }) {
 export function SignupClient({ googleEnabled }: { googleEnabled: boolean }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+  const callbackUrl = safeCallbackPath(searchParams.get('callbackUrl'));
   const [step, setStep] = useState<1 | 2>(1);
   const [accountType, setAccountType] = useState<AccountType | null>(null);
 

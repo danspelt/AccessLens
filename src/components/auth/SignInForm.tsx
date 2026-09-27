@@ -4,7 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
-import { Eye, EyeOff, Mail } from 'lucide-react';
+import { Eye, EyeOff, KeyRound, Mail } from 'lucide-react';
+import { SSO_PROVIDER_ID, safeCallbackPath } from '@/lib/auth/sso';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Label } from '@/components/ui/Label';
@@ -36,7 +37,10 @@ function GoogleIcon({ className }: { className?: string }) {
 function errorMessage(code: string | null | undefined): string | null {
   if (!code) return null;
   if (code === 'OAuthAccountNotLinked') {
-    return 'This email is already associated with another sign-in method. Use email and password.';
+    return 'An AccessLens account already uses this email. Sign in the way you usually do, then connect this sign-in method from Settings.';
+  }
+  if (code === 'AccessDenied') {
+    return "We couldn't sign you in. Make sure your email address is verified with your sign-in provider, then try again.";
   }
   if (code === 'CredentialsSignin') {
     return 'Invalid email or password. Create a free account if you do not have one yet.';
@@ -50,13 +54,15 @@ function errorMessage(code: string | null | undefined): string | null {
 export function SignInForm({
   googleEnabled,
   resendEnabled,
+  ssoName = null,
 }: {
   googleEnabled: boolean;
   resendEnabled: boolean;
+  ssoName?: string | null;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
+  const callbackUrl = safeCallbackPath(searchParams.get('callbackUrl'));
   const verifyParam = searchParams.get('verify');
   const errorParam = searchParams.get('error');
 
@@ -65,6 +71,7 @@ export function SignInForm({
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [ssoLoading, setSsoLoading] = useState(false);
   const [error, setError] = useState<string | null>(errorMessage(errorParam));
 
   const [magicLinkMode, setMagicLinkMode] = useState(false);
@@ -103,6 +110,12 @@ export function SignInForm({
     setGoogleLoading(true);
     setError(null);
     await signIn('google', { callbackUrl });
+  }
+
+  async function handleSso() {
+    setSsoLoading(true);
+    setError(null);
+    await signIn(SSO_PROVIDER_ID, { callbackUrl });
   }
 
   async function handleMagicLink(e: React.FormEvent) {
@@ -157,20 +170,36 @@ export function SignInForm({
     <div className="space-y-6">
       {error && <Alert variant="error">{error}</Alert>}
 
-      {googleEnabled ? (
+      {googleEnabled || ssoName ? (
         <>
-          <Button
-            type="button"
-            variant="outline"
-            size="lg"
-            className="w-full"
-            onClick={handleGoogle}
-            disabled={googleLoading}
-            loading={googleLoading}
-          >
-            {!googleLoading && <GoogleIcon className="h-5 w-5" />}
-            Continue with Google
-          </Button>
+          {ssoName ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              className="w-full"
+              onClick={handleSso}
+              disabled={ssoLoading}
+              loading={ssoLoading}
+            >
+              {!ssoLoading && <KeyRound className="h-5 w-5" aria-hidden="true" />}
+              Continue with {ssoName}
+            </Button>
+          ) : null}
+          {googleEnabled ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              className="w-full"
+              onClick={handleGoogle}
+              disabled={googleLoading}
+              loading={googleLoading}
+            >
+              {!googleLoading && <GoogleIcon className="h-5 w-5" />}
+              Continue with Google
+            </Button>
+          ) : null}
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-slate-200" />

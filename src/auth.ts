@@ -9,6 +9,7 @@ import getClientPromise from '@/lib/db/mongoClient';
 import { getCollection } from '@/lib/db/mongoClient';
 import { verifyPassword } from '@/lib/auth/authHelpers';
 import { isGoogleAuthConfigured, isResendAuthConfigured } from '@/lib/auth/providers';
+import { SSO_PROVIDER_ID, buildSsoProvider, isSsoConfigured, isVerifiedSsoProfile } from '@/lib/auth/sso';
 import { ObjectId } from 'mongodb';
 import type { AccountType, BusinessSubscriptionStatus, User } from '@/models/User';
 
@@ -96,9 +97,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           }),
         ]
       : []),
+    ...(isSsoConfigured() ? [buildSsoProvider()] : []),
   ] as Provider[],
   callbacks: {
     ...authConfig.callbacks,
+    signIn({ account, profile }) {
+      if (account?.provider === SSO_PROVIDER_ID && !isVerifiedSsoProfile(profile)) {
+        console.warn('auth.signin.denied', { provider: SSO_PROVIDER_ID, reason: 'unverified_email' });
+        return false;
+      }
+      return true;
+    },
     async jwt({ token, user, ...rest }) {
       const base = await authConfig.callbacks.jwt({ token, user, ...rest });
       const userId = [user?.id, base.id, base.sub].find(
@@ -130,6 +139,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
   },
   events: {
+    signIn({ user, account, isNewUser }) {
+      console.info('auth.signin', { provider: account?.provider, userId: user.id, isNewUser: Boolean(isNewUser) });
+    },
+    linkAccount({ user, account }) {
+      console.info('auth.link', { provider: account.provider, userId: user.id });
+    },
     async createUser({ user }) {
       if (!user.id) return;
       const { ObjectId } = await import('mongodb');

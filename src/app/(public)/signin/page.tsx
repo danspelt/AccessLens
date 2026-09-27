@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import { Suspense } from 'react';
 import { isGoogleAuthConfigured, isResendAuthConfigured } from '@/lib/auth/providers';
+import { isSsoConfigured, ssoDisplayName } from '@/lib/auth/sso';
 import { SignInForm } from '@/components/auth/SignInForm';
 import { AuthCanvas } from '@/components/auth/AuthCanvas';
 
@@ -10,6 +11,7 @@ export const metadata: Metadata = { title: 'Sign in' };
 export default function SignInPage() {
   const googleEnabled = isGoogleAuthConfigured();
   const resendEnabled = isResendAuthConfigured();
+  const ssoName = isSsoConfigured() ? ssoDisplayName() : null;
 
   return (
     <AuthCanvas className="items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
@@ -35,7 +37,7 @@ export default function SignInPage() {
         </div>
         <div className="rounded-2xl border border-white/40 bg-gradient-to-b from-white to-slate-50 p-8 shadow-sheet ring-1 ring-white/50 backdrop-blur-md motion-safe:animate-fade-up [animation-delay:80ms]">
           <Suspense fallback={<div className="h-48 animate-pulse rounded-lg bg-slate-100" />}>
-            <SignInForm googleEnabled={googleEnabled} resendEnabled={resendEnabled} />
+            <SignInForm googleEnabled={googleEnabled} resendEnabled={resendEnabled} ssoName={ssoName} />
           </Suspense>
         </div>
       </div>
