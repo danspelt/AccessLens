@@ -14,7 +14,7 @@
 - Accessibility checklist + scoring, Places/Reviews/Reports APIs, photo uploads, maps, admin moderation, badges, followed-place notifications
 - Public legal pages live (`/privacy`, `/terms`, `/cookies`, `/accessibility`) grounded in actual product behavior
 - Public dataset: **48 active Victoria records** and Vancouver seed data; see [Victoria Accessibility Snapshot](VICTORIA_ACCESSIBILITY_SNAPSHOT.md) (recomputed from the live API 2026-09-26 — counts unchanged)
-- [Sponsor prospectus](SPONSOR_PROSPECTUS.md) finalized and a first [outreach email](SPONSOR_OUTREACH_EMAIL.md) drafted; no outreach has been sent
+- [Sponsor prospectus](SPONSOR_PROSPECTUS.md) finalized; [outreach email](SPONSOR_OUTREACH_EMAIL.md) drafted plus 10 verified Victoria-area targets with tailored openings in [SPONSOR_TARGETS.md](SPONSOR_TARGETS.md); no outreach has been sent (sending requires Dan)
 
 ## Launch Findings (2026-09-26)
 
@@ -35,6 +35,8 @@
 - [x] Production build verified (test, lint, typecheck, build)
 - [x] Production health verified
 - [x] Upload persistence verified (survived a redeploy on 2026-09-26)
+- [x] Sponsor outreach prepared: 10 targets with verified contacts and tailored drafts (2026-09-27)
+- [ ] Sponsor outreach sent — sending under Dan's identity requires Dan
 
 ## WCAG 2.2 AA Review
 

@@ -2,7 +2,7 @@
 
 Send from danspelt24@gmail.com and attach or link [SPONSOR_PROSPECTUS.md](SPONSOR_PROSPECTUS.md) (export it to PDF first). Refresh the snapshot figures from the live endpoint before sending if more than a few weeks have passed.
 
-Suggested first targets: Tourism Victoria (Destination Greater Victoria), Downtown Victoria Business Association, Victoria Foundation, and local disability-serving organizations.
+Targets and send order are in [SPONSOR_TARGETS.md](SPONSOR_TARGETS.md) — 10 verified Victoria-area contacts with a tailored opening line for each.
 
 ---
 
