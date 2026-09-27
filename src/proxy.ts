@@ -26,6 +26,8 @@ export const proxy = auth((req) => {
     pathname.startsWith('/api/business') ||
     pathname.startsWith('/about') ||
     pathname.startsWith('/pitch') ||
+    pathname.startsWith('/sponsor') ||
+    pathname.startsWith('/api/stripe') ||
     pathname.startsWith('/official-data') ||
     pathname.startsWith('/privacy') ||
     pathname.startsWith('/terms') ||

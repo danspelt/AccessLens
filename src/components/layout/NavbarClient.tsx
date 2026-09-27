@@ -26,6 +26,8 @@ function useDarkNav(pathname: string) {
     pathname.startsWith('/signup/') ||
     pathname === '/pitch' ||
     pathname.startsWith('/pitch/') ||
+    pathname === '/sponsor' ||
+    pathname.startsWith('/sponsor/') ||
     pathname === '/about' ||
     pathname.startsWith('/about/') ||
     pathname === '/for-businesses' ||
