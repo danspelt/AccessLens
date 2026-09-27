@@ -405,7 +405,11 @@ export default function PitchPage() {
             </Link>
           </div>
           <p className="mt-6 text-sm text-slate-500">
-            To get in touch:{' '}
+            Ready to fund the work directly?{' '}
+            <Link href="/sponsor" className="font-semibold text-primary-600 hover:underline">
+              Become a sponsor
+            </Link>{' '}
+            · To get in touch:{' '}
             <a href="mailto:hello@accesslens.ca" className="font-medium text-primary-600 hover:underline">
               hello@accesslens.ca
             </a>

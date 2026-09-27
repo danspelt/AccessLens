@@ -192,6 +192,7 @@ export function NavbarClient({ user }: NavbarClientProps) {
     { href: '/explore', label: 'Find Places' },
     { href: '/about', label: 'About' },
     { href: '/for-businesses', label: 'For Businesses' },
+    { href: '/sponsor', label: 'Sponsor' },
     { href: '/pitch', label: 'For Government' },
     { href: '/places/new', label: 'Add a Place' },
     ...(user
