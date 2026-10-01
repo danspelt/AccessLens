@@ -40,7 +40,8 @@ export const proxy = auth((req) => {
     pathname.startsWith('/api/place-submissions') ||
     pathname.startsWith('/api/upload') ||
     pathname.startsWith('/api/reports') ||
-    pathname.startsWith('/uploads');
+    pathname.startsWith('/uploads') ||
+    pathname.startsWith('/opengraph-image');
 
   if (isPublicRoute) return;
 

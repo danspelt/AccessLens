@@ -1,6 +1,11 @@
 import Link from 'next/link';
-import { MapPin } from 'lucide-react';
+import { Facebook, Linkedin, MapPin } from 'lucide-react';
 import { getActiveCities } from '@/lib/db/cities';
+
+const SOCIAL_LINKS = [
+  { network: 'LinkedIn', href: 'https://www.linkedin.com/company/accesslens-ca/', Icon: Linkedin },
+  { network: 'Facebook', href: 'https://www.facebook.com/profile.php?id=61594813536930', Icon: Facebook },
+];
 
 export async function SiteFooter() {
   let cities: Awaited<ReturnType<typeof getActiveCities>> = [];
@@ -27,6 +32,21 @@ export async function SiteFooter() {
             <p className="mt-3 text-xs leading-relaxed text-slate-500">
               Inspired by goals aligned with the Accessible Canada Act and BC Accessibility Act.
             </p>
+            <ul className="mt-4 flex items-center gap-2" aria-label="AccessLens on social media">
+              {SOCIAL_LINKS.map(({ network, href, Icon }) => (
+                <li key={network}>
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`AccessLens on ${network}`}
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition-colors hover:border-primary-500 hover:text-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                  >
+                    <Icon className="h-4 w-4" aria-hidden="true" />
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-900">Platform</h3>
