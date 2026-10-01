@@ -8,6 +8,13 @@ export const SITE_URL = new URL(
 export const SITE_DESCRIPTION =
   'Find accessible places in Victoria and Vancouver, BC. Compare entrance, washroom, parking, sensory, and mobility details from community reviews, photos, and accessibility checklists.';
 
+export const SHARE_IMAGE = {
+  url: '/opengraph-image',
+  width: 1200,
+  height: 630,
+  alt: 'AccessLens: accessible places in Victoria and Vancouver, BC',
+};
+
 export function absoluteUrl(path: string): string {
   return new URL(path, SITE_URL).toString();
 }
@@ -34,11 +41,13 @@ export function buildPageMetadata({
       siteName: SITE_NAME,
       locale: 'en_CA',
       type: 'website',
+      images: [SHARE_IMAGE],
     },
     twitter: {
-      card: 'summary',
+      card: 'summary_large_image',
       title: socialTitle,
       description,
+      images: [SHARE_IMAGE.url],
     },
   };
 }

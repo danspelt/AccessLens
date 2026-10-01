@@ -4,7 +4,7 @@ import './globals.css';
 import { Navbar } from '@/components/layout/Navbar';
 import { SkipLink } from '@/components/layout/SkipLink';
 import { AuthSessionProvider } from '@/components/auth/AuthSessionProvider';
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/seo';
+import { SHARE_IMAGE, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/seo';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -41,11 +41,13 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     locale: 'en_CA',
     type: 'website',
+    images: [SHARE_IMAGE],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Accessible Places in Victoria & Vancouver, BC | AccessLens',
     description: SITE_DESCRIPTION,
+    images: [SHARE_IMAGE.url],
   },
 };
 
